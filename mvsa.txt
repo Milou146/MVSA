@@ -1,0 +1,8 @@
+"mvsa"
+{
+	"base"		"base"
+	"title"		"Marines VS Aliens"
+	"maps"		"mvsa_"
+	"category"	"rp"
+	"menusystem"	"1"
+}
