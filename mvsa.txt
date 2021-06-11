@@ -1,6 +1,6 @@
 "mvsa"
 {
-	"base"		"base"
+	"base"		"sandbox"
 	"title"		"Marines VS Aliens"
 	"maps"		"mvsa_"
 	"category"	"rp"

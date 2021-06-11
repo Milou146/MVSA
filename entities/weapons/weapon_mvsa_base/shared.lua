@@ -44,12 +44,15 @@ function SWEP:Initialize()
 	self:SetNWBool("IsDeploying", true)
 	self:SetNWBool("IsLowered", true)
 	self:SetHoldType( "passive" )
-	if CLIENT and IsValid(self:GetOwner()) then
+	if CLIENT and IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() then
 		self:SendWeaponAnim( ACT_VM_DEPLOY )
-		timer.Simple( self:GetOwner():GetViewModel():SequenceDuration() , function()
-			self:SetNWBool("IsDeploying", false)
-			self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
-		end )
+		local vm = self:GetOwner():GetViewModel()
+			if IsValid(vm) then
+			timer.Simple( vm:SequenceDuration() , function()
+				self:SetNWBool("IsDeploying", false)
+				self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+			end )
+		end
 	end
 end
 

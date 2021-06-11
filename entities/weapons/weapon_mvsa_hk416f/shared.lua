@@ -1,9 +1,13 @@
 SWEP.PrintName		= "HK 416 F"
+SWEP.Category       = "MVSA"
 
 SWEP.Base = "weapon_mvsa_base"
 
 SWEP.ViewModel		= "models/weapons/c_hk416f.mdl"
 SWEP.WorldModel		= "models/weapons/w_357.mdl"
+
+SWEP.Spawnable		= true
+SWEP.AdminOnly		= false
 
 SWEP.HoldType		= "ar2"
 
