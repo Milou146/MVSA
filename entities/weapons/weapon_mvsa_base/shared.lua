@@ -35,6 +35,7 @@ function SWEP:Initialize()
 	IsLowering = false -- needed
 	IsSelectingFireMode = false -- needed
 	HaveToBeSwitchedAuto = false -- needed
+	self:SetNWBool("IsDeploying", true)
 	IsDeployed = false -- needed
 	IsLowered = false -- needed
 	HaveToBeLowered = false
@@ -96,56 +97,62 @@ end
 function SWEP:Think()
 	if !IsDeployed and self:GetOwner():IsPlayer() then
 		self:SendWeaponAnim(ACT_VM_DEPLOY)
+		timer.Simple(self:GetOwner():GetViewModel():SequenceDuration(),
+		function()
+			self:SetNWBool("IsDeploying", false)
+		end)
 		IsDeployed = true
 	end
-	if !IsLowering and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
-		if !IsLowered then
-			IsLowering = true
-			IsLowered = true
-		else
-			IsLowering = true
-			IsLowered = false
+	if !self:GetNWBool("IsDeploying") then
+		if !IsLowering and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
+			if !IsLowered then
+				IsLowering = true
+				IsLowered = true
+			else
+				IsLowering = true
+				IsLowered = false
+			end
 		end
-	end
-	if IsLowering and !self:GetOwner():KeyDown(IN_RELOAD) then
-		IsLowering = false
-	end
-	if IsLowered then
-		self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
-		self:SetHoldType( "passive" )
-	else
-		self:SendWeaponAnim( ACT_VM_IDLE )
-		self:SetHoldType( self.HoldType )
-	end
-	if !IsSelectingFireMode and !self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode then
-		IsSelectingFireMode = true
-		if self.Primary.Automatic then
-			self.Primary.Automatic = false
-			if CLIENT then
-				self:GetOwner():PrintMessage(HUD_PRINTTALK, "Semi-automatic selected.")
-			end
-			self:EmitSound("Weapon_AR2.Empty")
-		else
-			self.Primary.Automatic = true
-			if CLIENT then
-				self:GetOwner():PrintMessage(HUD_PRINTTALK, "Automatic selected.")
-			end
-			self:EmitSound("Weapon_AR2.Empty")
+		if IsLowering and !self:GetOwner():KeyDown(IN_RELOAD) then
+			IsLowering = false
 		end
-	end
-	if IsSelectingFireMode and !self:GetOwner():KeyDown(IN_RELOAD) then
-		IsSelectingFireMode = false
-	end
-	if self:GetOwner():KeyDown(IN_SPEED) then
-		self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
-		self:SetHoldType( "passive" )
-		timer.Simple( 0.1 ,
-		function()
-			if !self:GetOwner():KeyDown(IN_SPEED) and !IsLowered then
-				self:SendWeaponAnim( ACT_VM_IDLE )
-				self:SetHoldType( self.HoldType )
+		if IsLowered then
+			self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+			self:SetHoldType( "passive" )
+		else
+			self:SendWeaponAnim( ACT_VM_IDLE )
+			self:SetHoldType( self.HoldType )
+		end
+		if !IsSelectingFireMode and !self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode then
+			IsSelectingFireMode = true
+			if self.Primary.Automatic then
+				self.Primary.Automatic = false
+				if CLIENT then
+					self:GetOwner():PrintMessage(HUD_PRINTTALK, "Semi-automatic selected.")
+				end
+				self:EmitSound("Weapon_AR2.Empty")
+			else
+				self.Primary.Automatic = true
+				if CLIENT then
+					self:GetOwner():PrintMessage(HUD_PRINTTALK, "Automatic selected.")
+				end
+				self:EmitSound("Weapon_AR2.Empty")
 			end
-		end)
+		end
+		if IsSelectingFireMode and !self:GetOwner():KeyDown(IN_RELOAD) then
+			IsSelectingFireMode = false
+		end
+		if self:GetOwner():KeyDown(IN_SPEED) then
+			self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+			self:SetHoldType( "passive" )
+			timer.Simple( 0.1 ,
+			function()
+				if !self:GetOwner():KeyDown(IN_SPEED) and !IsLowered then
+					self:SendWeaponAnim( ACT_VM_IDLE )
+					self:SetHoldType( self.HoldType )
+				end
+			end)
+		end
 	end
 end
 
