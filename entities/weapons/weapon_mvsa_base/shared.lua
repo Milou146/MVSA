@@ -21,12 +21,7 @@ SWEP.Primary.Ammo			= ""
 SWEP.Primary.RPM			= 150
 SWEP.Primary.Sound			= Sound("")
 
-SWEP.Secondary.ClipSize		= 8			-- Size of a clip
-SWEP.Secondary.DefaultClip	= 32		-- Default number of bullets in a clip
-SWEP.Secondary.Automatic	= false		-- Automatic/Semi Auto
 SWEP.Secondary.Ammo			= ""
-
-SWEP.MuzzleAttachment		= "1"
 
 SWEP.IronSightsPos = Vector (2.4537, 1.0923, 0.2696)
 SWEP.IronSightsAng = Vector (0.0186, -0.0547, 0)
@@ -35,25 +30,15 @@ SWEP.IronSightsAng = Vector (0.0186, -0.0547, 0)
 	Name: SWEP:Initialize()
 	Desc: Called when the weapon is first loaded
 -----------------------------------------------------------]]
-local IsLowering = false
-local IsSelectingFireMode = false
-local IsReloading = false
-local HaveToBeSwitchedAuto = false
 
 function SWEP:Initialize()
-	self:SetNWBool("IsDeploying", true)
-	self:SetNWBool("IsLowered", true)
-	self:SetHoldType( "passive" )
-	if CLIENT and IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() then
-		self:SendWeaponAnim( ACT_VM_DEPLOY )
-		local vm = self:GetOwner():GetViewModel()
-		if IsValid(vm) then
-			timer.Simple( vm:SequenceDuration() , function()
-				self:SetNWBool("IsDeploying", false)
-				self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
-			end )
-		end
-	end
+	IsLowering = false -- needed
+	IsSelectingFireMode = false -- needed
+	HaveToBeSwitchedAuto = false -- needed
+	IsDeployed = false -- needed
+	IsLowered = false -- needed
+	HaveToBeLowered = false
+	self:SetHoldType(self.HoldType)
 end
 
 --[[---------------------------------------------------------
@@ -82,19 +67,6 @@ end
 	Desc: +attack2 has been pressed
 -----------------------------------------------------------]]
 function SWEP:SecondaryAttack()
-
-	-- Make sure we can shoot first
-	if ( !self:CanSecondaryAttack() ) then return end
-
-	-- Play shoot sound
-	self:EmitSound("Weapon_Shotgun.Single")
-
-	-- Shoot 9 bullets, 150 damage, 0.75 aimcone
-	self:ShootBullet( 150, 9, 0.2, self.Secondary.Ammo )
-
-	-- Remove 1 bullet from our clip
-	self:TakeSecondaryAmmo( 1 )
-
 end
 
 --[[---------------------------------------------------------
@@ -102,22 +74,16 @@ end
 	Desc: Reload is being pressed
 -----------------------------------------------------------]]
 function SWEP:Reload()
-	if !IsReloading and !IsSelectingFireMode and !IsLowering and !(self:GetOwner():KeyDown(IN_SPEED)) and !(self:GetOwner():KeyDown(IN_USE)) then
+	if !IsSelectingFireMode and !IsLowering and !(self:GetOwner():KeyDown(IN_SPEED)) and !(self:GetOwner():KeyDown(IN_USE)) then
 		if self:Clip1() <= 0 then
-			IsReloading = true
 			self:DefaultReload( ACT_VM_RELOAD_EMPTY )
 			self:GetOwner():SetAnimation( PLAYER_RELOAD )
-			self:SetNWBool("IsLowered", false)
-			self:SetHoldType( self.HoldType )
 			if HaveToBeSwitchedAuto then
 				self.Primary.Automatic = true
 			end
 		else if self:Clip1() < self.Primary.ClipSize then
-			IsReloading = true
 			self:DefaultReload( ACT_VM_RELOAD )
 			self:GetOwner():SetAnimation( PLAYER_RELOAD )
-			self:SetNWBool("IsLowered", false)
-			self:SetHoldType( self.HoldType )
 		end end
 	end
 end
@@ -128,56 +94,58 @@ end
 -----------------------------------------------------------]]
 
 function SWEP:Think()
-	if !self:GetNWBool("IsDeploying") and IsValid(self) and IsValid(self:GetOwner()) then
-		if !IsLowering and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
-			if !self:GetNWBool("IsLowered") then
-				self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
-				IsLowering = true
-				self:SetHoldType( "passive" )
-				self:SetNWBool("IsLowered", true)
-			else
-				IsLowering = true
+	if !IsDeployed and self:GetOwner():IsPlayer() then
+		self:SendWeaponAnim(ACT_VM_DEPLOY)
+		IsDeployed = true
+	end
+	if !IsLowering and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
+		if !IsLowered then
+			IsLowering = true
+			IsLowered = true
+		else
+			IsLowering = true
+			IsLowered = false
+		end
+	end
+	if IsLowering and !self:GetOwner():KeyDown(IN_RELOAD) then
+		IsLowering = false
+	end
+	if IsLowered then
+		self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+		self:SetHoldType( "passive" )
+	else
+		self:SendWeaponAnim( ACT_VM_IDLE )
+		self:SetHoldType( self.HoldType )
+	end
+	if !IsSelectingFireMode and !self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode then
+		IsSelectingFireMode = true
+		if self.Primary.Automatic then
+			self.Primary.Automatic = false
+			if CLIENT then
+				self:GetOwner():PrintMessage(HUD_PRINTTALK, "Semi-automatic selected.")
+			end
+			self:EmitSound("Weapon_AR2.Empty")
+		else
+			self.Primary.Automatic = true
+			if CLIENT then
+				self:GetOwner():PrintMessage(HUD_PRINTTALK, "Automatic selected.")
+			end
+			self:EmitSound("Weapon_AR2.Empty")
+		end
+	end
+	if IsSelectingFireMode and !self:GetOwner():KeyDown(IN_RELOAD) then
+		IsSelectingFireMode = false
+	end
+	if self:GetOwner():KeyDown(IN_SPEED) then
+		self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+		self:SetHoldType( "passive" )
+		timer.Simple( 0.1 ,
+		function()
+			if !self:GetOwner():KeyDown(IN_SPEED) and !IsLowered then
 				self:SendWeaponAnim( ACT_VM_IDLE )
 				self:SetHoldType( self.HoldType )
-				self:SetNWBool("IsLowered", false)
 			end
-		end
-		if IsLowering and !self:GetOwner():KeyDown(IN_RELOAD) then
-			IsLowering = false
-		end
-		if !IsSelectingFireMode and !self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode then
-			IsSelectingFireMode = true
-			if self.Primary.Automatic then
-				self.Primary.Automatic = false
-				if CLIENT then
-					self:GetOwner():PrintMessage(HUD_PRINTTALK, "Semi-automatic selected.")
-				end
-				self:EmitSound("Weapon_AR2.Empty")
-			else
-				self.Primary.Automatic = true
-				if CLIENT then
-					self:GetOwner():PrintMessage(HUD_PRINTTALK, "Automatic selected.")
-				end
-				self:EmitSound("Weapon_AR2.Empty")
-			end
-		end
-		if IsSelectingFireMode and !self:GetOwner():KeyDown(IN_RELOAD) then
-			IsSelectingFireMode = false
-		end
-		if IsReloading and !self:GetOwner():KeyDown(IN_RELOAD) then
-			IsReloading = false
-		end
-		if self:GetOwner():KeyDown(IN_SPEED) and !self:GetNWBool("IsDeploying") and !IsReloading then
-			self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
-			self:SetHoldType( "passive" )
-			timer.Simple( 0.1 ,
-			function()
-				if !self:GetOwner():KeyDown(IN_SPEED) and !self:GetNWBool("IsLowered") then
-					self:SendWeaponAnim( ACT_VM_IDLE )
-					self:SetHoldType( self.HoldType )
-				end
-			end)
-		end
+		end)
 	end
 end
 
@@ -187,9 +155,6 @@ end
 	RetV: Return true to allow the weapon to holster
 -----------------------------------------------------------]]
 function SWEP:Holster( wep )
-	if self:GetNWBool("IsDeploying") then
-		return false
-	end
 	return true
 end
 
@@ -198,7 +163,7 @@ end
 	Desc: Whip it out
 -----------------------------------------------------------]]
 function SWEP:Deploy()
-	self:SendWeaponAnim( ACT_VM_DRAW )
+	self:SendWeaponAnim(ACT_VM_DRAW)
 	return true
 end
 
@@ -231,7 +196,7 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone, ammo_type, force, trace
 	bullet.Damage	= damage
 	bullet.AmmoType = ammo_type || self.Primary.Ammo
 
-	self:SetNWBool("IsLowered", false)
+	IsLowered = false
 	self:SetHoldType( self.HoldType )
 
 	self:GetOwner():FireBullets( bullet )
@@ -264,18 +229,6 @@ end
 	Desc: A convenience function to remove ammo
 -----------------------------------------------------------]]
 function SWEP:TakeSecondaryAmmo( num )
-
-	-- Doesn't use clips
-	if ( self:Clip2() <= 0 ) then
-
-		if ( self:Ammo2() <= 0 ) then return end
-
-		self:GetOwner():RemoveAmmo( num, self:GetSecondaryAmmoType() )
-
-	return end
-
-	self:SetClip2( self:Clip2() - num )
-
 end
 
 --[[---------------------------------------------------------
@@ -284,9 +237,9 @@ end
 -----------------------------------------------------------]]
 function SWEP:CanPrimaryAttack()
 
-	if self:GetNWBool("IsDeploying") then
+	if self:GetOwner():KeyDown(IN_SPEED) then
 		return false
-	else if self:GetOwner():KeyDown(IN_SPEED) then
+	else if self:GetOwner():KeyDown(IN_USE) then
 		return false
 	end end
 
@@ -312,21 +265,6 @@ end
 	Desc: Helper function for checking for no ammo
 -----------------------------------------------------------]]
 function SWEP:CanSecondaryAttack()
-
-	if self:GetNWBool("IsDeploying") then
-		return false
-	end
-
-	if ( self:Clip2() <= 0 ) then
-
-		self:EmitSound( "Weapon_Pistol.Empty" )
-		self:SetNextSecondaryFire( CurTime() + 0.2 )
-		return false
-
-	end
-
-	return true
-
 end
 
 --[[---------------------------------------------------------

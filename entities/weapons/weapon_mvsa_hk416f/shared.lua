@@ -16,8 +16,3 @@ SWEP.Primary.DefaultClip	= 30		-- Default number of bullets in a clip
 SWEP.Primary.Ammo			= "ar2"
 SWEP.Primary.RPM			= 850
 SWEP.Primary.Sound			= Sound("Weapon_AR15.Single")
-
-SWEP.Secondary.ClipSize		= -1		-- Size of a clip
-SWEP.Secondary.DefaultClip	= -1		-- Default number of bullets in a clip
-SWEP.Secondary.Automatic	= false		-- Automatic/Semi Auto
-SWEP.Secondary.Ammo			= ""
