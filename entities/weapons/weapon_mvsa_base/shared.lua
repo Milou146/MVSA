@@ -47,7 +47,7 @@ function SWEP:Initialize()
 	if CLIENT and IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() then
 		self:SendWeaponAnim( ACT_VM_DEPLOY )
 		local vm = self:GetOwner():GetViewModel()
-			if IsValid(vm) then
+		if IsValid(vm) then
 			timer.Simple( vm:SequenceDuration() , function()
 				self:SetNWBool("IsDeploying", false)
 				self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
