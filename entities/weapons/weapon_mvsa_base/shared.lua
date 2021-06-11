@@ -27,7 +27,7 @@ SWEP.Secondary.Automatic	= false		-- Automatic/Semi Auto
 SWEP.Secondary.Ammo			= ""
 
 SWEP.MuzzleAttachment		= "1"
- 
+
 SWEP.IronSightsPos = Vector (2.4537, 1.0923, 0.2696)
 SWEP.IronSightsAng = Vector (0.0186, -0.0547, 0)
 
@@ -38,18 +38,17 @@ SWEP.IronSightsAng = Vector (0.0186, -0.0547, 0)
 local IsLowering = false
 local IsSelectingFireMode = false
 local IsReloading = false
-local IsDeploying = false
 local HaveToBeSwitchedAuto = false
 
 function SWEP:Initialize()
+	self:SetNWBool("IsDeploying", true)
 	self:SetNWBool("IsLowered", true)
 	self:SetHoldType( "passive" )
-	if IsValid(self.Owner) then
-		self.Weapon:SendWeaponAnim( ACT_VM_DEPLOY )
-		IsDeploying = true
-		timer.Simple( self.Owner:GetViewModel():SequenceDuration() , function()
-			IsDeploying = false
-			self.Weapon:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+	if CLIENT and IsValid(self:GetOwner()) then
+		self:SendWeaponAnim( ACT_VM_DEPLOY )
+		timer.Simple( self:GetOwner():GetViewModel():SequenceDuration() , function()
+			self:SetNWBool("IsDeploying", false)
+			self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
 		end )
 	end
 end
@@ -73,9 +72,6 @@ function SWEP:PrimaryAttack()
 	self:TakePrimaryAmmo( 1 )
 	self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 
-	-- Punch the player's view
-	if ( !self.Owner:IsNPC() ) then self.Owner:ViewPunch( Angle( -1, 0, 0 ) ) end
-
 end
 
 --[[---------------------------------------------------------
@@ -96,9 +92,6 @@ function SWEP:SecondaryAttack()
 	-- Remove 1 bullet from our clip
 	self:TakeSecondaryAmmo( 1 )
 
-	-- Punch the player's view
-	if ( !self.Owner:IsNPC() ) then self.Owner:ViewPunch( Angle( -10, 0, 0 ) ) end
-
 end
 
 --[[---------------------------------------------------------
@@ -106,11 +99,11 @@ end
 	Desc: Reload is being pressed
 -----------------------------------------------------------]]
 function SWEP:Reload()
-	if !IsReloading and !IsSelectingFireMode and !IsLowering and !(self.Owner:KeyDown(IN_SPEED)) and !(self.Owner:KeyDown(IN_USE)) then
+	if !IsReloading and !IsSelectingFireMode and !IsLowering and !(self:GetOwner():KeyDown(IN_SPEED)) and !(self:GetOwner():KeyDown(IN_USE)) then
 		if self:Clip1() <= 0 then
 			IsReloading = true
-			self.Weapon:DefaultReload( ACT_VM_RELOAD_EMPTY )
-			self.Owner:SetAnimation( PLAYER_RELOAD )
+			self:DefaultReload( ACT_VM_RELOAD_EMPTY )
+			self:GetOwner():SetAnimation( PLAYER_RELOAD )
 			self:SetNWBool("IsLowered", false)
 			self:SetHoldType( self.HoldType )
 			if HaveToBeSwitchedAuto then
@@ -118,8 +111,8 @@ function SWEP:Reload()
 			end
 		else if self:Clip1() < self.Primary.ClipSize then
 			IsReloading = true
-			self.Weapon:DefaultReload( ACT_VM_RELOAD )
-			self.Owner:SetAnimation( PLAYER_RELOAD )
+			self:DefaultReload( ACT_VM_RELOAD )
+			self:GetOwner():SetAnimation( PLAYER_RELOAD )
 			self:SetNWBool("IsLowered", false)
 			self:SetHoldType( self.HoldType )
 		end end
@@ -132,52 +125,52 @@ end
 -----------------------------------------------------------]]
 
 function SWEP:Think()
-	if !self.IsDeploying and IsValid(self) and IsValid(self.Owner) then
-		if !IsLowering and self.Owner:KeyDown(IN_SPEED) and self.Owner:KeyDown(IN_USE) and self.Owner:KeyDown(IN_RELOAD) then
+	if !self:GetNWBool("IsDeploying") and IsValid(self) and IsValid(self:GetOwner()) then
+		if !IsLowering and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
 			if !self:GetNWBool("IsLowered") then
-				self.Weapon:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+				self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
 				IsLowering = true
 				self:SetHoldType( "passive" )
 				self:SetNWBool("IsLowered", true)
 			else
 				IsLowering = true
-				self.Weapon:SendWeaponAnim( ACT_VM_IDLE )
+				self:SendWeaponAnim( ACT_VM_IDLE )
 				self:SetHoldType( self.HoldType )
 				self:SetNWBool("IsLowered", false)
 			end
 		end
-		if IsLowering and !self.Owner:KeyDown(IN_RELOAD) then
+		if IsLowering and !self:GetOwner():KeyDown(IN_RELOAD) then
 			IsLowering = false
 		end
-		if !IsSelectingFireMode and !self.Owner:KeyDown(IN_SPEED) and self.Owner:KeyDown(IN_USE) and self.Owner:KeyDown(IN_RELOAD) and self.BothFireMode then
+		if !IsSelectingFireMode and !self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode then
 			IsSelectingFireMode = true
 			if self.Primary.Automatic then
 				self.Primary.Automatic = false
 				if CLIENT then
-					self.Owner:PrintMessage(HUD_PRINTTALK, "Semi-automatic selected.")
+					self:GetOwner():PrintMessage(HUD_PRINTTALK, "Semi-automatic selected.")
 				end
-				self.Weapon:EmitSound("Weapon_AR2.Empty")
+				self:EmitSound("Weapon_AR2.Empty")
 			else
 				self.Primary.Automatic = true
 				if CLIENT then
-					self.Owner:PrintMessage(HUD_PRINTTALK, "Automatic selected.")
+					self:GetOwner():PrintMessage(HUD_PRINTTALK, "Automatic selected.")
 				end
-				self.Weapon:EmitSound("Weapon_AR2.Empty")
+				self:EmitSound("Weapon_AR2.Empty")
 			end
 		end
-		if IsSelectingFireMode and !self.Owner:KeyDown(IN_RELOAD) then
+		if IsSelectingFireMode and !self:GetOwner():KeyDown(IN_RELOAD) then
 			IsSelectingFireMode = false
 		end
-		if IsReloading and !self.Owner:KeyDown(IN_RELOAD) then
+		if IsReloading and !self:GetOwner():KeyDown(IN_RELOAD) then
 			IsReloading = false
 		end
-		if self.Owner:KeyDown(IN_SPEED) and !IsDeploying and !IsReloading then
-			self.Weapon:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
+		if self:GetOwner():KeyDown(IN_SPEED) and !self:GetNWBool("IsDeploying") and !IsReloading then
+			self:SendWeaponAnim( ACT_VM_IDLE_LOWERED )
 			self:SetHoldType( "passive" )
-			timer.Simple( 0.1 , 
+			timer.Simple( 0.1 ,
 			function()
-				if !self.Owner:KeyDown(IN_SPEED) and !self:GetNWBool("IsLowered") then
-					self.Weapon:SendWeaponAnim( ACT_VM_IDLE )
+				if !self:GetOwner():KeyDown(IN_SPEED) and !self:GetNWBool("IsLowered") then
+					self:SendWeaponAnim( ACT_VM_IDLE )
 					self:SetHoldType( self.HoldType )
 				end
 			end)
@@ -191,7 +184,7 @@ end
 	RetV: Return true to allow the weapon to holster
 -----------------------------------------------------------]]
 function SWEP:Holster( wep )
-	if self.IsDeploying then
+	if self:GetNWBool("IsDeploying") then
 		return false
 	end
 	return true
@@ -202,7 +195,7 @@ end
 	Desc: Whip it out
 -----------------------------------------------------------]]
 function SWEP:Deploy()
-	self.Weapon:SendWeaponAnim( ACT_VM_DRAW )
+	self:SendWeaponAnim( ACT_VM_DRAW )
 	return true
 end
 
@@ -213,9 +206,9 @@ end
 function SWEP:ShootEffects()
 	local L = { ACT_VM_RECOIL1 , ACT_VM_RECOIL2 , ACT_VM_RECOIL3 }
 
-	self.Weapon:SendWeaponAnim( L[math.random(1,3)] )		-- View model animation
-	self.Owner:MuzzleFlash()						-- Crappy muzzle light
-	self.Owner:SetAnimation( PLAYER_ATTACK1 )		-- 3rd Person Animation
+	self:SendWeaponAnim( L[math.random(1,3)] )		-- View model animation
+	self:GetOwner():MuzzleFlash()						-- Crappy muzzle light
+	self:GetOwner():SetAnimation( PLAYER_ATTACK1 )		-- 3rd Person Animation
 
 end
 
@@ -227,18 +220,18 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone, ammo_type, force, trace
 
 	local bullet = {}
 	bullet.Num		= num_bullets
-	bullet.Src		= self.Owner:GetShootPos()			-- Source
-	bullet.Dir		= self.Owner:GetAimVector()			-- Dir of bullet
+	bullet.Src		= self:GetOwner():GetShootPos()			-- Source
+	bullet.Dir		= self:GetOwner():GetAimVector()			-- Dir of bullet
 	bullet.Spread	= Vector( aimcone, aimcone, 0 )		-- Aim Cone
 	bullet.Tracer	= tracer || 5						-- Show a tracer on every x bullets
 	bullet.Force	= force || 1						-- Amount of force to give to phys objects
 	bullet.Damage	= damage
 	bullet.AmmoType = ammo_type || self.Primary.Ammo
-	
+
 	self:SetNWBool("IsLowered", false)
 	self:SetHoldType( self.HoldType )
 
-	self.Owner:FireBullets( bullet )
+	self:GetOwner():FireBullets( bullet )
 
 	self:ShootEffects()
 
@@ -255,7 +248,7 @@ function SWEP:TakePrimaryAmmo( num )
 
 		if ( self:Ammo1() <= 0 ) then return end
 
-		self.Owner:RemoveAmmo( num, self:GetPrimaryAmmoType() )
+		self:GetOwner():RemoveAmmo( num, self:GetPrimaryAmmoType() )
 
 	return end
 
@@ -274,7 +267,7 @@ function SWEP:TakeSecondaryAmmo( num )
 
 		if ( self:Ammo2() <= 0 ) then return end
 
-		self.Owner:RemoveAmmo( num, self:GetSecondaryAmmoType() )
+		self:GetOwner():RemoveAmmo( num, self:GetSecondaryAmmoType() )
 
 	return end
 
@@ -288,14 +281,16 @@ end
 -----------------------------------------------------------]]
 function SWEP:CanPrimaryAttack()
 
-	if self.IsDeploying or self.Owner:KeyDown(IN_SPEED) then
+	if self:GetNWBool("IsDeploying") then
 		return false
-	end
+	else if self:GetOwner():KeyDown(IN_SPEED) then
+		return false
+	end end
 
 	if ( self:Clip1() <= 0 ) then
 
 		self:EmitSound( "Weapon_Pistol.Empty" )
-		self.Weapon:SendWeaponAnim( ACT_VM_DRYFIRE )
+		self:SendWeaponAnim( ACT_VM_DRYFIRE )
 		if self.Primary.Automatic then
 			self.Primary.Automatic = false
 			HaveToBeSwitchedAuto = true
@@ -315,7 +310,7 @@ end
 -----------------------------------------------------------]]
 function SWEP:CanSecondaryAttack()
 
-	if self.IsDeploying then
+	if self:GetNWBool("IsDeploying") then
 		return false
 	end
 
@@ -350,7 +345,7 @@ end
 	Desc: Returns how much of ammo1 the player has
 -----------------------------------------------------------]]
 function SWEP:Ammo1()
-	return self.Owner:GetAmmoCount( self:GetPrimaryAmmoType() )
+	return self:GetOwner():GetAmmoCount( self:GetPrimaryAmmoType() )
 end
 
 --[[---------------------------------------------------------
@@ -358,7 +353,7 @@ end
 	Desc: Returns how much of ammo2 the player has
 -----------------------------------------------------------]]
 function SWEP:Ammo2()
-	return self.Owner:GetAmmoCount( self:GetSecondaryAmmoType() )
+	return self:GetOwner():GetAmmoCount( self:GetSecondaryAmmoType() )
 end
 
 --[[---------------------------------------------------------
