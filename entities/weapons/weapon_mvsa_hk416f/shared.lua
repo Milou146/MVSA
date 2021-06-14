@@ -10,3 +10,6 @@ SWEP.Primary.DefaultClip = 30 -- Default number of bullets in a clip
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.RPM = 850
 SWEP.Primary.Sound = Sound("Weapon_AR15.Single")
+
+SWEP.IronSightsPos = Vector(-2.82, -5, 1.01)
+SWEP.IronSightsAng = Vector(0, 0, 0)
