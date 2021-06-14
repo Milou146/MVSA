@@ -3,8 +3,6 @@ AddCSLuaFile( "shared.lua" )
 include("shared.lua")
 
 SWEP.Weight			= 5		-- Decides whether we should switch from/to this
-SWEP.AutoSwitchTo	= false	-- Auto switch to if we pick it up
-SWEP.AutoSwitchFrom	= false	-- Auto switch from if you pick up a better weapon
 
 sound.Add({
 	name = 			"Weapon_AR15.Single",
@@ -14,4 +12,23 @@ sound.Add({
 			"weapons/ar15/fire2.wav",
 			"weapons/ar15/fire3.wav",
 			"weapons/ar15/fire4.wav"}
+})
+
+sound.Add({
+	name = 			"Weapon_AR15.magout",
+	channel = 		CHAN_USER_BASE + 10,
+	volume = 		1.0,
+	sound = 			"weapons/ar15/magout.wav"
+})
+sound.Add({
+	name = 			"Weapon_AR15.magin",
+	channel = 		CHAN_USER_BASE + 10,
+	volume = 		1.0,
+	sound = 			"weapons/ar15/magin.wav"
+})
+sound.Add({
+	name = 			"Weapon_AR15.boltrelease",
+	channel = 		CHAN_USER_BASE + 10,
+	volume = 		1.0,
+	sound = 			"weapons/ar15/boltrelease.wav"
 })

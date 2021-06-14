@@ -56,8 +56,6 @@ function SWEP:SetWeaponHoldType( t )
 		self.ActivityTranslate[ ACT_MP_JUMP ] = ACT_HL2MP_JUMP_SLAM
 	end
 
-	self:SetupWeaponHoldTypeForAI( t )
-
 end
 
 -- Default hold pos is the pistol
@@ -70,13 +68,6 @@ SWEP:SetWeaponHoldType( "pistol" )
 			Depending on how you want the player to be holding the weapon
 -----------------------------------------------------------]]
 function SWEP:TranslateActivity( act )
-
-	if ( self.Owner:IsNPC() ) then
-		if ( self.ActivityTranslateAI[ act ] ) then
-			return self.ActivityTranslateAI[ act ]
-		end
-		return -1
-	end
 
 	if ( self.ActivityTranslate[ act ] != nil ) then
 		return self.ActivityTranslate[ act ]
