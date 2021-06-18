@@ -3,7 +3,7 @@ include("shared.lua")
 
 SWEP.Slot = 0 -- Slot in the weapon selection menu
 SWEP.SlotPos = 10 -- Position in the slot
-SWEP.DrawAmmo = true -- Should draw the default HL2 ammo counter
+SWEP.DrawAmmo = false -- Should draw the default HL2 ammo counter
 SWEP.DrawWeaponInfoBox = true -- Should draw the weapon info box
 SWEP.DrawCrosshair		= false -- Should draw the default crosshair
 SWEP.BounceWeaponIcon = true -- Should the weapon icon bounce?
@@ -14,12 +14,29 @@ SWEP.RenderGroup = RENDERGROUP_OPAQUE
 SWEP.WepSelectIcon = surface.GetTextureID("weapons/swep")
 -- This is the corner of the speech bubble
 SWEP.SpeechBubbleLid = surface.GetTextureID("gui/speech_lid")
+SWEP.FireModeIconPath = "gui/hk416/"
+SWEP.MagazineIcon = "gui/ar15/magazine.png"
 
 --[[---------------------------------------------------------
 	You can draw to the HUD here - it will only draw when
 	the client has the weapon deployed..
 -----------------------------------------------------------]]
 function SWEP:DrawHUD()
+    surface.SetDrawColor(255, 255, 255, 255)
+    MagazineMat = Material(self.MagazineIcon, "")
+    surface.SetMaterial(MagazineMat)
+    local MagazineMatW = MagazineMat:GetInt("$realwidth")
+    local MagazineMatH = MagazineMat:GetInt("$realheight")
+    surface.DrawTexturedRect(ScrW() - MagazineMatW, ScrH() - MagazineMatH, MagazineMatW, MagazineMatH)
+    -----------------------
+    local FireModeIcon = self.FireModeIconPath .. self:GetFireMode() .. ".png"
+    FireModeMat = Material(FireModeIcon, "")
+    surface.SetMaterial(FireModeMat)
+    local FireModeMatW = FireModeMat:GetInt("$realwidth")
+    local FireModeMatH = FireModeMat:GetInt("$realheight")
+    surface.DrawTexturedRect(ScrW() - FireModeMatW - MagazineMatW, ScrH() - FireModeMatH, FireModeMatW, FireModeMatH)
+    --------------------
+    draw.DrawText( math.floor(self:Ammo1() / self.Primary.ClipSize) + 1, "DermaDefault", ScrW() - MagazineMatW/2, ScrH() - MagazineMatH/2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT )
 end
 
 --[[---------------------------------------------------------

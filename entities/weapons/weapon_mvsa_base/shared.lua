@@ -24,6 +24,8 @@ SWEP.IronTime = 0.15
 -- Adjust these variables to move the viewmodel's position
 SWEP.IronSightsPos = Vector(-2.8, -8, 1)
 SWEP.IronSightsAng = Vector(0, 0, 0)
+SWEP.Kick = 0.5
+SWEP.HorizontalKick = 0.125
 
 --[[---------------------------------------------------------
 	Name: GetViewModelPosition
@@ -121,8 +123,9 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 4, "HaveToBeSwitchedAuto")
     self:NetworkVar("Bool", 5, "Deployed")
     self:NetworkVar("Bool", 6, "IronSights")
-    self:NetworkVar("Bool", 7, "FireMode")
+    self:NetworkVar("Bool", 7, "SelectingFireMode")
     self:NetworkVar("Float", 0, "IronsightsTime")
+    self:NetworkVar("String", 0, "FireMode")
 end
 
 --[[---------------------------------------------------------
@@ -133,6 +136,7 @@ function SWEP:Initialize()
     self:SetHoldType(self.HoldType)
     self.DrawCrosshair = false
     self:SetDeployed(false)
+    self:SetFireMode("semi")
 end
 
 --[[---------------------------------------------------------
@@ -146,6 +150,9 @@ function SWEP:PrimaryAttack()
     self:EmitSound(self.Primary.Sound)
     -- Shoot 9 bullets, 150 damage, 0.75 aimcone
     self:ShootBullet(150, 1, self.ConeSpread, self.Primary.Ammo)
+    local kickangle = Angle(-math.random(self.Kick,self.Kick + 1),math.random(-self.HorizontalKick,self.HorizontalKick),0)
+    self:GetOwner():ViewPunch(kickangle)
+    self:GetOwner():SetEyeAngles(self:GetOwner():EyeAngles() + kickangle)
     -- Remove 1 bullet from our clip
     self:TakePrimaryAmmo(1)
     self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
@@ -167,7 +174,7 @@ end
 	Desc: Reload is being pressed
 -----------------------------------------------------------]]
 function SWEP:Reload()
-    if not self:GetOwner():KeyDown(IN_SPEED) and not self:GetOwner():KeyDown(IN_USE) and not self:GetFireMode() then
+    if not self:GetOwner():KeyDown(IN_SPEED) and not self:GetOwner():KeyDown(IN_USE) and not self:GetSelectingFireMode() then
         if self.FirstTime == 0 then
             self.FirstTime = CurTime()
         end
@@ -222,23 +229,29 @@ function SWEP:Think()
                 self:SetReloading(false)
             end
 
-            if not self:GetOwner():KeyDown(IN_USE) and self:GetFireMode() then
-                self:SetFireMode(false)
+            if not self:GetOwner():KeyDown(IN_USE) and self:GetSelectingFireMode() then
+                self:SetSelectingFireMode(false)
             end
         end
 
         if self:GetLowered() then
             self:SendWeaponAnim(ACT_VM_IDLE_LOWERED)
             self:SetHoldType("passive")
+            self:SetFireMode("safe")
         else
             self:SendWeaponAnim(ACT_VM_IDLE)
             self:SetHoldType(self.HoldType)
+            if self.Primary.Automatic then
+                self:SetFireMode("auto")
+            else
+                self:SetFireMode("semi")
+            end
         end
 
         if not self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode and self.NextFireSelect < CurTime() then
             self.NextFireSelect = CurTime() + 1
             self:EmitSound("Weapon_AR2.Empty")
-            self:SetFireMode(true)
+            self:SetSelectingFireMode(true)
 
             if self:GetHaveToBeSwitchedAuto() then
                 self:SetHaveToBeSwitchedAuto(false)
@@ -246,16 +259,10 @@ function SWEP:Think()
 
             if self.Primary.Automatic then
                 self.Primary.Automatic = false
-
-                if CLIENT then
-                    self:GetOwner():PrintMessage(HUD_PRINTTALK, "Semi-automatic selected.")
-                end
+                self:SetFireMode("semi")
             else
                 self.Primary.Automatic = true
-
-                if CLIENT then
-                    self:GetOwner():PrintMessage(HUD_PRINTTALK, "Automatic selected.")
-                end
+                self:SetFireMode("auto")
             end
         end
 
@@ -368,7 +375,7 @@ end
 	Desc: Helper function for checking for no ammo
 -----------------------------------------------------------]]
 function SWEP:CanPrimaryAttack()
-    if self:GetOwner():KeyDown(IN_SPEED) or self:GetFireMode() or self:GetReloading() or not self:GetDeployed() or self:GetLowering() then return false end
+    if self:GetOwner():KeyDown(IN_SPEED) or self:GetSelectingFireMode() or self:GetReloading() or not self:GetDeployed() or self:GetLowering() or self:GetLowered() then return false end
 
     if (self:Clip1() <= 0) then
         self:EmitSound("Weapon_Pistol.Empty")

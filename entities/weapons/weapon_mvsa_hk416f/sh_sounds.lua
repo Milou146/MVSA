@@ -21,8 +21,26 @@ sound.Add({
 	sound = 			"weapons/ar15/magin.wav"
 })
 sound.Add({
+	name = 			"Weapon_AR15.boltback",
+	channel = 		CHAN_USER_BASE + 10,
+	volume = 		1.0,
+	sound = 			"weapons/ar15/boltrelease.wav"
+})
+sound.Add({
 	name = 			"Weapon_AR15.boltrelease",
 	channel = 		CHAN_USER_BASE + 10,
 	volume = 		1.0,
 	sound = 			"weapons/ar15/boltrelease.wav"
+})
+sound.Add({
+	name = 			"Weapon_AR15.fireselect",
+	channel = 		CHAN_USER_BASE + 10,
+	volume = 		1.0,
+	sound = 			"weapons/ar15/fireselect.wav"
+})
+sound.Add({
+	name = 			"Weapon_AR15.empty",
+	channel = 		CHAN_USER_BASE + 10,
+	volume = 		1.0,
+	sound = 			"weapons/ar15/empty.wav"
 })
