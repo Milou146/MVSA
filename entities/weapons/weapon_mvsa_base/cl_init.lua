@@ -36,7 +36,7 @@ function SWEP:DrawHUD()
     local FireModeMatH = FireModeMat:GetInt("$realheight")
     surface.DrawTexturedRect(ScrW() - FireModeMatW - MagazineMatW, ScrH() - FireModeMatH, FireModeMatW, FireModeMatH)
     --------------------
-    draw.DrawText( math.floor(self:Ammo1() / self.Primary.ClipSize) + 1, "DermaDefault", ScrW() - MagazineMatW/2, ScrH() - MagazineMatH/2, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT )
+    draw.DrawText( math.floor(self:Ammo1() / self.Primary.ClipSize) + 1, "DermaDefault", ScrW() - MagazineMatW/2, ScrH() - MagazineMatH/2, Color( 58, 56, 56), TEXT_ALIGN_LEFT )
 end
 
 --[[---------------------------------------------------------
