@@ -17,6 +17,7 @@ SWEP.Primary.Ammo = ""
 SWEP.Primary.RPM = 150
 SWEP.Primary.Sound = Sound("")
 SWEP.DryFireSound = Sound("Weapon_Pistol.Empty")
+SWEP.FireSelectSound = Sound("Weapon_AR15.fireselect")
 SWEP.Secondary.Ammo = ""
 SWEP.NextFireSelect = 0
 SWEP.FirstTime = 0
@@ -261,6 +262,7 @@ function SWEP:Think()
         if not self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode and self.NextFireSelect < CurTime() then
             self.NextFireSelect = CurTime() + 1
             self:SendWeaponAnim(ACT_VM_FIREMODE)
+            self:EmitSound(self.FireSelectSound)
             self:SetSelectingFireMode(true)
 
             if self:GetHaveToBeSwitchedAuto() then
