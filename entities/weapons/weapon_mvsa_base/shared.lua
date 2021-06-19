@@ -16,6 +16,7 @@ SWEP.Primary.Automatic = false -- Automatic/Semi Auto
 SWEP.Primary.Ammo = ""
 SWEP.Primary.RPM = 150
 SWEP.Primary.Sound = Sound("")
+SWEP.DryFireSound = Sound("Weapon_Pistol.Empty")
 SWEP.Secondary.Ammo = ""
 SWEP.NextFireSelect = 0
 SWEP.FirstTime = 0
@@ -56,10 +57,19 @@ end
 
 --- Dummy functions that will be replaced when SetupDataTables runs. These are
 --- here for when that does not happen (due to e.g. stacking base classes)
-function SWEP:GetIronsightsTime() return -1 end
-function SWEP:SetIronsightsTime() end
-function SWEP:GetIronsightsPredicted() return false end
-function SWEP:SetIronsightsPredicted() end
+function SWEP:GetIronsightsTime()
+    return -1
+end
+
+function SWEP:SetIronsightsTime()
+end
+
+function SWEP:GetIronsightsPredicted()
+    return false
+end
+
+function SWEP:SetIronsightsPredicted()
+end
 
 local host_timescale = GetConVar("host_timescale")
 local IRONSIGHT_TIME = 0.25
@@ -67,11 +77,8 @@ local IRONSIGHT_TIME = 0.25
 function SWEP:GetViewModelPosition(pos, ang)
     if (not self.IronSightsPos) then return pos, ang end
     if self:GetOwner():KeyDown(IN_SPEED) then return pos, ang end
-
     local mul = 1.0
-
     if (self.bIron == nil) then return pos, ang end
-
     local bIron = self.bIron
     local time = self.fCurrentTime + (SysTime() - self.fCurrentSysTime) * game.GetTimeScale() * host_timescale:GetFloat()
 
@@ -139,6 +146,12 @@ function SWEP:Initialize()
     self:SetFireMode("semi")
 end
 
+
+
+function SWEP:Precache()
+    util.PrecacheSound( "weapons/ar15/boltback.wav" )
+end
+
 --[[---------------------------------------------------------
 	Name: SWEP:PrimaryAttack()
 	Desc: +attack1 has been pressed
@@ -146,13 +159,10 @@ end
 function SWEP:PrimaryAttack()
     -- Make sure we can shoot first
     if (not self:CanPrimaryAttack()) then return end
-    -- Play shoot sound
-    self:EmitSound(self.Primary.Sound)
     -- Shoot 9 bullets, 150 damage, 0.75 aimcone
     self:ShootBullet(150, 1, self.ConeSpread, self.Primary.Ammo)
-    local kickangle = Angle(-math.random(self.Kick,self.Kick + 1),math.random(-self.HorizontalKick,self.HorizontalKick),0)
-    self:GetOwner():ViewPunch(kickangle)
-    self:GetOwner():SetEyeAngles(self:GetOwner():EyeAngles() + kickangle)
+    -- Play shoot sound
+    self:EmitSound(self.Primary.Sound)
     -- Remove 1 bullet from our clip
     self:TakePrimaryAmmo(1)
     self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
@@ -213,11 +223,16 @@ end
 -----------------------------------------------------------]]
 function SWEP:Think()
     self:CalcViewModel()
-
     if self:GetDeployed() then
         if not self:GetLowering() and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
             self:SetLowering(true)
             self:SetLowered(not self:GetLowered())
+
+            if self.Primary.Automatic then -- when you left safe mode
+                self:SetFireMode("auto")
+            else
+                self:SetFireMode("semi")
+            end
         end
 
         if not self:GetOwner():KeyDown(IN_RELOAD) then
@@ -241,16 +256,11 @@ function SWEP:Think()
         else
             self:SendWeaponAnim(ACT_VM_IDLE)
             self:SetHoldType(self.HoldType)
-            if self.Primary.Automatic then
-                self:SetFireMode("auto")
-            else
-                self:SetFireMode("semi")
-            end
         end
 
         if not self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode and self.NextFireSelect < CurTime() then
             self.NextFireSelect = CurTime() + 1
-            self:EmitSound("Weapon_AR2.Empty")
+            self:SendWeaponAnim(ACT_VM_FIREMODE)
             self:SetSelectingFireMode(true)
 
             if self:GetHaveToBeSwitchedAuto() then
@@ -266,7 +276,7 @@ function SWEP:Think()
             end
         end
 
-        if self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_FORWARD) then
+        if self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_FORWARD) or self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_BACK) or self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_MOVELEFT) or self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_MOVERIGHT) then
             self:SendWeaponAnim(ACT_VM_IDLE_LOWERED)
             self:SetHoldType("passive")
 
@@ -275,7 +285,7 @@ function SWEP:Think()
             end
 
             timer.Simple(0.1, function()
-                if not self:GetOwner():KeyDown(IN_SPEED) and not self:GetLowered() and self:GetOwner():Alive() and not self:GetReloading() then
+                if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and not self:GetOwner():KeyDown(IN_SPEED) and not self:GetLowered() and not self:GetReloading() then
                     self:SendWeaponAnim(ACT_VM_IDLE)
                     self:SetHoldType(self.HoldType)
                 end
@@ -316,6 +326,34 @@ function SWEP:Deploy()
 end
 
 --[[---------------------------------------------------------
+	Name: FireAnimationEvent
+	Desc: Allows you to override weapon animation events
+-----------------------------------------------------------]]
+function SWEP:FireAnimationEvent(pos, ang, event, options, source)
+    if CLIENT and (event == 5001 or event == 5011 or event == 5021 or event == 5031) then
+        local data = EffectData()
+        data:SetFlags(0)
+        data:SetEntity(self:GetOwner():GetViewModel())
+        data:SetAttachment(math.floor((event - 4991) / 10))
+        data:SetScale(1)
+
+        if (self.CSMuzzleX) then
+            util.Effect("CS_MuzzleFlash_X", data)
+        else
+            util.Effect("CS_MuzzleFlash", data)
+        end
+
+        return true
+    end
+
+    if event == 3015 then
+        self:EmitSound(options)
+
+        return true
+    end
+end
+
+--[[---------------------------------------------------------
 	Name: SWEP:ShootEffects()
 	Desc: A convenience function to create shoot effects
 -----------------------------------------------------------]]
@@ -345,6 +383,9 @@ function SWEP:ShootBullet(damage, num_bullets, aimcone, ammo_type, force, tracer
     self:SetHoldType(self.HoldType)
     self:GetOwner():FireBullets(bullet)
     self:ShootEffects()
+    local kickangle = Angle(-math.Rand(0, self.Kick), math.Rand(-self.HorizontalKick, self.HorizontalKick), 0)
+    self:GetOwner():ViewPunch(kickangle)
+    self:GetOwner():SetEyeAngles(self:GetOwner():EyeAngles() + kickangle)
 end
 
 --[[---------------------------------------------------------
@@ -378,8 +419,8 @@ function SWEP:CanPrimaryAttack()
     if self:GetOwner():KeyDown(IN_SPEED) or self:GetSelectingFireMode() or self:GetReloading() or not self:GetDeployed() or self:GetLowering() or self:GetLowered() then return false end
 
     if (self:Clip1() <= 0) then
-        self:EmitSound("Weapon_Pistol.Empty")
         self:SendWeaponAnim(ACT_VM_DRYFIRE)
+        self:EmitSound(self.DryFireSound)
 
         if self.Primary.Automatic then
             self.Primary.Automatic = false

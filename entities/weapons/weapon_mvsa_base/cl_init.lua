@@ -36,7 +36,7 @@ function SWEP:DrawHUD()
     local FireModeMatH = FireModeMat:GetInt("$realheight")
     surface.DrawTexturedRect(ScrW() - FireModeMatW - MagazineMatW, ScrH() - FireModeMatH, FireModeMatW, FireModeMatH)
     --------------------
-    draw.DrawText( math.floor(self:Ammo1() / self.Primary.ClipSize) + 1, "DermaDefault", ScrW() - MagazineMatW/2, ScrH() - MagazineMatH/2, Color( 58, 56, 56), TEXT_ALIGN_LEFT )
+    draw.DrawText( math.floor(self:Ammo1() / self.Primary.ClipSize) + 1, "DermaDefault", ScrW() - MagazineMatW / 2, ScrH() - MagazineMatH / 2, Color( 58, 56, 56), TEXT_ALIGN_LEFT )
 end
 
 --[[---------------------------------------------------------
@@ -175,29 +175,4 @@ function SWEP:GetTracerOrigin()
 	local pos = ply:EyePos() + ply:EyeAngles():Right() * -5
 	return pos
 --]]
-end
-
---[[---------------------------------------------------------
-	Name: FireAnimationEvent
-	Desc: Allows you to override weapon animation events
------------------------------------------------------------]]
-function SWEP:FireAnimationEvent(pos, ang, event, options)
-    if (not self.CSMuzzleFlashes) then return end
-
-    -- CS Muzzle flashes
-    if (event == 5001 or event == 5011 or event == 5021 or event == 5031) then
-        local data = EffectData()
-        data:SetFlags(0)
-        data:SetEntity(self:GetOwner():GetViewModel())
-        data:SetAttachment(math.floor((event - 4991) / 10))
-        data:SetScale(1)
-
-        if (self.CSMuzzleX) then
-            util.Effect("CS_MuzzleFlash_X", data)
-        else
-            util.Effect("CS_MuzzleFlash", data)
-        end
-
-        return true
-    end
 end

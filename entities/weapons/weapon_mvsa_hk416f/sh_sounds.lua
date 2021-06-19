@@ -1,6 +1,6 @@
 sound.Add({
 	name = 			"Weapon_AR15.Single",
-	channel = 		CHAN_USER_BASE + 10,
+	channel = 		CHAN_USER_BASE,
 	volume = 		1.0,
 	sound = {"weapons/ar15/fire1.wav",
 			"weapons/ar15/fire2.wav",
@@ -24,7 +24,7 @@ sound.Add({
 	name = 			"Weapon_AR15.boltback",
 	channel = 		CHAN_USER_BASE + 10,
 	volume = 		1.0,
-	sound = 			"weapons/ar15/boltrelease.wav"
+	sound = 			"weapons/ar15/boltback.wav"
 })
 sound.Add({
 	name = 			"Weapon_AR15.boltrelease",
