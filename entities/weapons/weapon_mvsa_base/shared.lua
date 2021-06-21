@@ -165,15 +165,6 @@ function SWEP:Think()
         end
     end
 
-    if self:GetLowered() then
-        self:SendWeaponAnim(ACT_VM_IDLE_LOWERED)
-        self:SetHoldType("passive")
-        self:SetFireMode("safe")
-    else
-        self:SendWeaponAnim(ACT_VM_IDLE)
-        self:SetHoldType(self.HoldType)
-    end
-
     if self:GetDeployed() then
         -- lower the weapon / entering safe mode
         if not self:GetLowering() and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
@@ -187,6 +178,15 @@ function SWEP:Think()
             else
                 self:SetFireMode("semi")
             end
+        end
+
+        if self:GetLowered() then
+            self:SendWeaponAnim(ACT_VM_IDLE_LOWERED)
+            self:SetHoldType("passive")
+            self:SetFireMode("safe")
+        else
+            self:SendWeaponAnim(ACT_VM_IDLE)
+            self:SetHoldType(self.HoldType)
         end
 
         -- select the fire mode
