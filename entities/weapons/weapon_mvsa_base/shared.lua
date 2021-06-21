@@ -9,110 +9,43 @@ SWEP.ViewModel = "models/weapons/v_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_357.mdl"
 SWEP.UseHands = true
 SWEP.HoldType = ""
-SWEP.BothFireMode = true -- Have the weapon both fire mode
+SWEP.BothFireMode = true -- Have the weapon both fire mode?
 SWEP.Primary.ClipSize = 8 -- Size of a clip
 SWEP.Primary.DefaultClip = 32 -- Default number of bullets in a clip
 SWEP.Primary.Automatic = false -- Automatic/Semi Auto
 SWEP.Primary.Ammo = ""
 SWEP.Primary.RPM = 150
 SWEP.Primary.Sound = Sound("")
+SWEP.Primary.Spread = .02 -- Spread while not aiming
+SWEP.Primary.IronAccuracy = .005 -- Spread while aiming
 SWEP.DryFireSound = Sound("Weapon_Pistol.Empty")
 SWEP.FireSelectSound = Sound("Weapon_AR15.fireselect")
-SWEP.Secondary.Ammo = ""
-SWEP.NextFireSelect = 0
-SWEP.FirstTime = 0
-SWEP.ConeSpread = 0.05
-SWEP.IronTime = 0.15
--- Adjust these variables to move the viewmodel's position
+SWEP.Secondary.Ammo = "" -- Useless but we have to let it here to avoid LUA error
+SWEP.NextFireSelect = 0 -- When can we change the firemode again?
+SWEP.FirstTime = 0 -- Used in the reloading function (you can ignored this)
+SWEP.IronTime = 0.15 -- Time to aim
 SWEP.IronSightsPos = Vector(-2.8, -8, 1)
 SWEP.IronSightsAng = Vector(0, 0, 0)
-SWEP.Kick = 0.5
+SWEP.VerticalKick = 0.5
 SWEP.HorizontalKick = 0.125
+SWEP.AimingTime = 0 -- Time elapsed since the last aiming occurence (used for GetViewModelPosition)
 
 --[[---------------------------------------------------------
 	Name: GetViewModelPosition
 	Desc: Allows you to re-position the view model
 -----------------------------------------------------------]]
-function SWEP:SetIronsights(b)
-    if (b ~= self:GetIronsights()) then
-        self:SetIronsightsPredicted(b)
-        self:SetIronsightsTime(CurTime())
-
-        if CLIENT then
-            self:CalcViewModel()
-        end
-    end
-end
-
-function SWEP:GetIronsights()
-    return self:GetIronsightsPredicted()
-end
-
-function SWEP:CalcViewModel()
-    if (not CLIENT) or (not IsFirstTimePredicted()) then return end
-    self.bIron = self:GetIronsights()
-    self.fIronTime = self:GetIronsightsTime()
-    self.fCurrentTime = CurTime()
-    self.fCurrentSysTime = SysTime()
-end
-
---- Dummy functions that will be replaced when SetupDataTables runs. These are
---- here for when that does not happen (due to e.g. stacking base classes)
-function SWEP:GetIronsightsTime()
-    return -1
-end
-
-function SWEP:SetIronsightsTime()
-end
-
-function SWEP:GetIronsightsPredicted()
-    return false
-end
-
-function SWEP:SetIronsightsPredicted()
-end
-
-local host_timescale = GetConVar("host_timescale")
-local IRONSIGHT_TIME = 0.25
-
 function SWEP:GetViewModelPosition(pos, ang)
-    if (not self.IronSightsPos) then return pos, ang end
-    if self:GetOwner():KeyDown(IN_SPEED) then return pos, ang end
-    local mul = 1.0
-    if (self.bIron == nil) then return pos, ang end
-    local bIron = self.bIron
-    local time = self.fCurrentTime + (SysTime() - self.fCurrentSysTime) * game.GetTimeScale() * host_timescale:GetFloat()
-
-    if bIron then
-        self.SwayScale = 0.3
-        self.BobScale = 0.1
-        self.ConeSpread = 0.01
-    else
-        self.SwayScale = 1.0
-        self.BobScale = 1.0
-        self.ConeSpread = 0.05
+    self.CurrentTime = CurTime()
+    local mul = math.Clamp((self.CurrentTime - self.AimingTime) / self.IronTime, 0, 1)
+    if not self:GetAiming() then
+        mul = 1 - mul
     end
 
-    local fIronTime = self.fIronTime
-    if not bIron and fIronTime < time - IRONSIGHT_TIME then return pos, ang end
-
-    if fIronTime > time - IRONSIGHT_TIME then
-        mul = math.Clamp((time - fIronTime) / IRONSIGHT_TIME, 0, 1)
-
-        if not bIron then
-            mul = 1 - mul
-        end
-    end
+    ang:RotateAroundAxis(ang:Right(), self.IronSightsAng.x * mul)
+    ang:RotateAroundAxis(ang:Up(), self.IronSightsAng.y * mul)
+    ang:RotateAroundAxis(ang:Forward(), self.IronSightsAng.z * mul)
 
     local Offset = self.IronSightsPos
-
-    if (self.IronSightsAng) then
-        ang = ang * 1
-        ang:RotateAroundAxis(ang:Right(), self.IronSightsAng.x * mul)
-        ang:RotateAroundAxis(ang:Up(), self.IronSightsAng.y * mul)
-        ang:RotateAroundAxis(ang:Forward(), self.IronSightsAng.z * mul)
-    end
-
     local Right = ang:Right()
     local Up = ang:Up()
     local Forward = ang:Forward()
@@ -124,16 +57,15 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 function SWEP:SetupDataTables()
-    self:NetworkVar("Bool", 0, "IronsightsPredicted")
-    self:NetworkVar("Bool", 1, "Lowering")
-    self:NetworkVar("Bool", 2, "Lowered")
-    self:NetworkVar("Bool", 3, "Reloading")
-    self:NetworkVar("Bool", 4, "HaveToBeSwitchedAuto")
-    self:NetworkVar("Bool", 5, "Deployed")
-    self:NetworkVar("Bool", 6, "IronSights")
-    self:NetworkVar("Bool", 7, "SelectingFireMode")
-    self:NetworkVar("Float", 0, "IronsightsTime")
+    self:NetworkVar("Bool", 0, "Lowering")
+    self:NetworkVar("Bool", 1, "Lowered")
+    self:NetworkVar("Bool", 2, "Reloading")
+    self:NetworkVar("Bool", 3, "HaveToBeSwitchedAuto")
+    self:NetworkVar("Bool", 4, "Deployed")
+    self:NetworkVar("Bool", 5, "SelectingFireMode")
+    self:NetworkVar("Bool", 6, "Aiming")
     self:NetworkVar("String", 0, "FireMode")
+    self:NetworkVar("Float", 0, "SightsTime")
 end
 
 --[[---------------------------------------------------------
@@ -142,15 +74,9 @@ end
 -----------------------------------------------------------]]
 function SWEP:Initialize()
     self:SetHoldType(self.HoldType)
-    self.DrawCrosshair = false
     self:SetDeployed(false)
     self:SetFireMode("semi")
-end
-
-
-
-function SWEP:Precache()
-    util.PrecacheSound( "weapons/ar15/boltback.wav" )
+    self:SetSightsTime(0)
 end
 
 --[[---------------------------------------------------------
@@ -159,14 +85,13 @@ end
 -----------------------------------------------------------]]
 function SWEP:PrimaryAttack()
     -- Make sure we can shoot first
-    if (not self:CanPrimaryAttack()) then return end
-    -- Shoot 9 bullets, 150 damage, 0.75 aimcone
-    self:ShootBullet(150, 1, self.ConeSpread, self.Primary.Ammo)
+    if not self:CanPrimaryAttack() then return end
     -- Play shoot sound
     self:EmitSound(self.Primary.Sound)
     -- Remove 1 bullet from our clip
     self:TakePrimaryAmmo(1)
     self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
+    self:ShootBullet(150, 1, self.ConeSpread, self.Primary.Ammo)
 end
 
 --[[---------------------------------------------------------
@@ -174,9 +99,9 @@ end
 	Desc: +attack2 has been pressed
 -----------------------------------------------------------]]
 function SWEP:SecondaryAttack()
-    if not self.IronSightsPos then return end
     if self:GetReloading() then return end
-    self:SetIronsights(not self:GetIronsights())
+    self.AimingTime = CurTime()
+    self:SetAiming(not self:GetAiming())
     self:SetNextSecondaryFire(CurTime() + 0.3)
 end
 
@@ -191,7 +116,7 @@ function SWEP:Reload()
         end
 
         timer.Simple(0.1, function()
-            if not self:GetOwner():KeyDown(IN_RELOAD) then
+            if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and not self:GetOwner():KeyDown(IN_RELOAD) then
                 if (CurTime() - self.FirstTime) < 0.3 then
                     self.FirstTime = 0
 
@@ -211,6 +136,8 @@ function SWEP:Reload()
                         end
                     end
                 else
+                    -- wait bro why don't you put this before the if-statement? Because in all cases you make it go to 0
+                    -- because it is used in the if-statement itself bro
                     self.FirstTime = 0
                 end
             end
@@ -223,42 +150,46 @@ end
 	Desc: Called every frame
 -----------------------------------------------------------]]
 function SWEP:Think()
-    self:CalcViewModel()
+    if self:GetAiming() then
+        self.ConeSpread = self.Primary.IronAccuracy
+    else
+        self.ConeSpread = self.Primary.Spread
+    end
+
+    if not self:GetOwner():KeyDown(IN_RELOAD) then
+        self:SetLowering(false)
+        self:SetReloading(false)
+
+        if not self:GetOwner():KeyDown(IN_USE) and self:GetSelectingFireMode() then
+            self:SetSelectingFireMode(false)
+        end
+    end
+
+    if self:GetLowered() then
+        self:SendWeaponAnim(ACT_VM_IDLE_LOWERED)
+        self:SetHoldType("passive")
+        self:SetFireMode("safe")
+    else
+        self:SendWeaponAnim(ACT_VM_IDLE)
+        self:SetHoldType(self.HoldType)
+    end
+
     if self:GetDeployed() then
+        -- lower the weapon / entering safe mode
         if not self:GetLowering() and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
             self:SetLowering(true)
             self:SetLowered(not self:GetLowered())
+            self:EmitSound(self.FireSelectSound)
 
-            if self.Primary.Automatic then -- when you left safe mode
+            -- when you left safe mode
+            if self.Primary.Automatic then
                 self:SetFireMode("auto")
             else
                 self:SetFireMode("semi")
             end
         end
 
-        if not self:GetOwner():KeyDown(IN_RELOAD) then
-            if self:GetLowering() then
-                self:SetLowering(false)
-            end
-
-            if self:GetReloading() then
-                self:SetReloading(false)
-            end
-
-            if not self:GetOwner():KeyDown(IN_USE) and self:GetSelectingFireMode() then
-                self:SetSelectingFireMode(false)
-            end
-        end
-
-        if self:GetLowered() then
-            self:SendWeaponAnim(ACT_VM_IDLE_LOWERED)
-            self:SetHoldType("passive")
-            self:SetFireMode("safe")
-        else
-            self:SendWeaponAnim(ACT_VM_IDLE)
-            self:SetHoldType(self.HoldType)
-        end
-
+        -- select the fire mode
         if not self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) and self.BothFireMode and self.NextFireSelect < CurTime() then
             self.NextFireSelect = CurTime() + 1
             self:SendWeaponAnim(ACT_VM_FIREMODE)
@@ -278,13 +209,11 @@ function SWEP:Think()
             end
         end
 
+        -- lower the weapon while you run
         if self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_FORWARD) or self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_BACK) or self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_MOVELEFT) or self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_MOVERIGHT) then
             self:SendWeaponAnim(ACT_VM_IDLE_LOWERED)
             self:SetHoldType("passive")
-
-            if self:GetIronsights() then
-                self:SetIronsights(false)
-            end
+            self:SetAiming(false)
 
             timer.Simple(0.1, function()
                 if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and not self:GetOwner():KeyDown(IN_SPEED) and not self:GetLowered() and not self:GetReloading() then
@@ -310,13 +239,13 @@ end
 	Desc: Whip it out
 -----------------------------------------------------------]]
 function SWEP:Deploy()
-    self:SetIronSights(false)
+    self:SetAiming(false)
 
-    if not self:GetDeployed() and self:GetOwner():IsPlayer() then
+    if not self:GetDeployed() then
         self:SendWeaponAnim(ACT_VM_DEPLOY)
-
+        -- wait the animation is finishef before doing anything
         timer.Simple(self:GetOwner():GetViewModel():SequenceDuration(), function()
-            if IsValid(self:GetOwner()) and self:GetOwner():Alive() and self:GetOwner():IsPlayer() and self:GetOwner():GetActiveWeapon() == self then
+            if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and self:GetOwner():GetActiveWeapon() == self then
                 self:SetDeployed(true)
             end
         end)
@@ -332,22 +261,7 @@ end
 	Desc: Allows you to override weapon animation events
 -----------------------------------------------------------]]
 function SWEP:FireAnimationEvent(pos, ang, event, options, source)
-    if CLIENT and (event == 5001 or event == 5011 or event == 5021 or event == 5031) then
-        local data = EffectData()
-        data:SetFlags(0)
-        data:SetEntity(self:GetOwner():GetViewModel())
-        data:SetAttachment(math.floor((event - 4991) / 10))
-        data:SetScale(1)
-
-        if (self.CSMuzzleX) then
-            util.Effect("CS_MuzzleFlash_X", data)
-        else
-            util.Effect("CS_MuzzleFlash", data)
-        end
-
-        return true
-    end
-
+    -- this play the reloading sound serverside
     if event == 3015 then
         self:EmitSound(options)
 
@@ -385,7 +299,7 @@ function SWEP:ShootBullet(damage, num_bullets, aimcone, ammo_type, force, tracer
     self:SetHoldType(self.HoldType)
     self:GetOwner():FireBullets(bullet)
     self:ShootEffects()
-    local kickangle = Angle(-math.Rand(0, self.Kick), math.Rand(-self.HorizontalKick, self.HorizontalKick), 0)
+    local kickangle = Angle(-math.Rand(0, self.VerticalKick), math.Rand(-self.HorizontalKick, self.HorizontalKick), 0)
     self:GetOwner():ViewPunch(kickangle)
     self:GetOwner():SetEyeAngles(self:GetOwner():EyeAngles() + kickangle)
 end
@@ -396,8 +310,8 @@ end
 -----------------------------------------------------------]]
 function SWEP:TakePrimaryAmmo(num)
     -- Doesn't use clips
-    if (self:Clip1() <= 0) then
-        if (self:Ammo1() <= 0) then return end
+    if self:Clip1() <= 0 then
+        if self:Ammo1() <= 0 then return end
         self:GetOwner():RemoveAmmo(num, self:GetPrimaryAmmoType())
 
         return
@@ -418,7 +332,7 @@ end
 	Desc: Helper function for checking for no ammo
 -----------------------------------------------------------]]
 function SWEP:CanPrimaryAttack()
-    if self:GetOwner():KeyDown(IN_SPEED) or self:GetSelectingFireMode() or self:GetReloading() or not self:GetDeployed() or self:GetLowering() or self:GetLowered() then return false end
+    if self:GetOwner():KeyDown(IN_SPEED) or self:GetSelectingFireMode() or self:GetReloading() or not self:GetDeployed() or self:GetLowering() or self:GetLowered() or self:GetOwner():WaterLevel() == 3 then return false end -- results with self:GetOwner():WaterLevel() are better than those with self:WaterLevel() 
 
     if (self:Clip1() <= 0) then
         self:SendWeaponAnim(ACT_VM_DRYFIRE)

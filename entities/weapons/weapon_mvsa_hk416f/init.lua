@@ -4,4 +4,4 @@ AddCSLuaFile( "sh_sounds.lua" )
 include("shared.lua")
 include("sh_sounds.lua")
 
-SWEP.Weight			= 50		-- Decides whether we should switch from/to this
+SWEP.Weight			= 5		-- Decides whether we should switch from/to this
