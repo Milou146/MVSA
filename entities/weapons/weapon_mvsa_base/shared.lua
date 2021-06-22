@@ -294,7 +294,7 @@ function SWEP:Deploy()
 
     if not self:GetDeployed() then
         self:SendWeaponAnim(ACT_VM_DEPLOY)
-        -- wait the animation is finishef before doing anything
+        -- wait the animation is finished before doing anything
         timer.Simple(self:GetOwner():GetViewModel():SequenceDuration(), function()
             if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and self:GetOwner():GetActiveWeapon() == self then
                 self:SetDeployed(true)
@@ -328,7 +328,7 @@ function SWEP:ShootEffects()
     local L = {ACT_VM_RECOIL1, ACT_VM_RECOIL2, ACT_VM_RECOIL3}
 
     self:SendWeaponAnim(L[math.random(1, 3)]) -- View model animation
-    self:GetOwner():MuzzleFlash() -- Crappy muzzle light
+    self:GetOwner():MuzzleFlash()
     self:GetOwner():SetAnimation(PLAYER_ATTACK1) -- 3rd Person Animation
 end
 
