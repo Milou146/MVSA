@@ -17,27 +17,7 @@ SWEP.SpeechBubbleLid = surface.GetTextureID("gui/speech_lid")
 SWEP.FireModeIconPath = "gui/hk416/"
 SWEP.MagazineIcon = "gui/ar15/magazine.png"
 
---[[---------------------------------------------------------
-	You can draw to the HUD here - it will only draw when
-	the client has the weapon deployed..
------------------------------------------------------------]]
-function SWEP:DrawHUD()
-    surface.SetDrawColor(255, 255, 255, 255)
-    MagazineMat = Material(self.MagazineIcon, "")
-    surface.SetMaterial(MagazineMat)
-    local MagazineMatW = MagazineMat:GetInt("$realwidth")
-    local MagazineMatH = MagazineMat:GetInt("$realheight")
-    surface.DrawTexturedRect(ScrW() - MagazineMatW, ScrH() - MagazineMatH, MagazineMatW, MagazineMatH)
-    -----------------------
-    local FireModeIcon = self.FireModeIconPath .. self:GetFireMode() .. ".png"
-    FireModeMat = Material(FireModeIcon, "")
-    surface.SetMaterial(FireModeMat)
-    local FireModeMatW = FireModeMat:GetInt("$realwidth")
-    local FireModeMatH = FireModeMat:GetInt("$realheight")
-    surface.DrawTexturedRect(ScrW() - FireModeMatW - MagazineMatW, ScrH() - FireModeMatH, FireModeMatW, FireModeMatH)
-    --------------------
-    draw.DrawText( math.floor(self:Ammo1() / self.Primary.ClipSize) + 1, "DermaDefault", ScrW() - MagazineMatW / 2, ScrH() - MagazineMatH / 2, Color( 58, 56, 56), TEXT_ALIGN_LEFT )
-end
+
 
 --[[---------------------------------------------------------
 	Checks the objects before any action is taken

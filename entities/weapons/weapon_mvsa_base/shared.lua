@@ -29,13 +29,14 @@ SWEP.IronSightsAng = Vector(0, 0, 0)
 SWEP.VerticalKick = 0.5
 SWEP.HorizontalKick = 0.125
 SWEP.AimingTime = 0 -- Time elapsed since the last aiming occurence (used for GetViewModelPosition)
+SWEP.CurrentTime = 0
+SWEP.DrawTime = 0
 
 --[[---------------------------------------------------------
 	Name: GetViewModelPosition
 	Desc: Allows you to re-position the view model
 -----------------------------------------------------------]]
 function SWEP:GetViewModelPosition(pos, ang)
-    self.CurrentTime = CurTime()
     local mul = math.Clamp((self.CurrentTime - self.AimingTime) / self.IronTime, 0, 1)
     if not self:GetAiming() then
         mul = 1 - mul
@@ -64,6 +65,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 4, "Deployed")
     self:NetworkVar("Bool", 5, "SelectingFireMode")
     self:NetworkVar("Bool", 6, "Aiming")
+    self:NetworkVar("Bool", 7, "DrawMag")
+    self:NetworkVar("Bool", 8, "Input1")
     self:NetworkVar("String", 0, "FireMode")
     self:NetworkVar("Float", 0, "SightsTime")
 end
@@ -75,6 +78,7 @@ end
 function SWEP:Initialize()
     self:SetHoldType(self.HoldType)
     self:SetDeployed(false)
+    self:SetDrawMag(false)
     self:SetFireMode("semi")
     self:SetSightsTime(0)
 end
@@ -140,9 +144,46 @@ function SWEP:Reload()
                     -- because it is used in the if-statement itself bro
                     self.FirstTime = 0
                 end
+            elseif self:GetOwner():KeyDown(IN_RELOAD) and not self:GetInput1() then
+                self:SetDrawMag(true)
+                self.DrawTime = CurTime()
+                self:SetInput1(true)
+                timer.Simple(1,
+                function()
+                    if IsValid(self) then
+                        self:SetDrawMag(false)
+                        self.DrawTime = CurTime()
+                    end
+                end)
             end
         end)
     end
+end
+--[[---------------------------------------------------------
+	You can draw to the HUD here - it will only draw when
+	the client has the weapon deployed..
+-----------------------------------------------------------]]
+function SWEP:DrawHUD()
+    local mul1 = math.Clamp((self.CurrentTime - self.DrawTime) / 0.002, 0, 255)
+    if not self:GetDrawMag() then
+        mul1 = 255 - mul1
+    end
+    surface.SetDrawColor(255, 255, 255, mul1)
+    MagazineMat = Material(self.MagazineIcon, "")
+    surface.SetMaterial(MagazineMat)
+    local MagazineMatW = MagazineMat:GetInt("$realwidth")
+    local MagazineMatH = MagazineMat:GetInt("$realheight")
+    surface.DrawTexturedRect(ScrW() - MagazineMatW, ScrH() - MagazineMatH, MagazineMatW, MagazineMatH)
+    draw.DrawText( math.floor(self:Ammo1() / self.Primary.ClipSize) + 1, "DermaDefault", ScrW() - MagazineMatW / 2, ScrH() - MagazineMatH / 2, Color( 58, 56, 56, mul1), TEXT_ALIGN_LEFT )
+    -----------------------
+    surface.SetDrawColor(255, 255, 255, mul1)
+    local FireModeIcon = self.FireModeIconPath .. self:GetFireMode() .. ".png"
+    FireModeMat = Material(FireModeIcon, "")
+    surface.SetMaterial(FireModeMat)
+    local FireModeMatW = FireModeMat:GetInt("$realwidth")
+    local FireModeMatH = FireModeMat:GetInt("$realheight")
+    surface.DrawTexturedRect(ScrW() - FireModeMatW - MagazineMatW, ScrH() - FireModeMatH, FireModeMatW, FireModeMatH)
+    --------------------
 end
 
 --[[---------------------------------------------------------
@@ -150,15 +191,25 @@ end
 	Desc: Called every frame
 -----------------------------------------------------------]]
 function SWEP:Think()
+    self.CurrentTime = CurTime()
     if self:GetAiming() then
         self.ConeSpread = self.Primary.IronAccuracy
+        if CLIENT then
+            self.BobScale = .1
+            self.SwayScale = .1
+        end
     else
         self.ConeSpread = self.Primary.Spread
+        if CLIENT then
+            self.BobScale = 1
+            self.SwayScale = 1
+        end
     end
 
     if not self:GetOwner():KeyDown(IN_RELOAD) then
         self:SetLowering(false)
         self:SetReloading(false)
+        self:SetInput1(false)
 
         if not self:GetOwner():KeyDown(IN_USE) and self:GetSelectingFireMode() then
             self:SetSelectingFireMode(false)
