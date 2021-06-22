@@ -144,17 +144,6 @@ function SWEP:Reload()
                     -- because it is used in the if-statement itself bro
                     self.FirstTime = 0
                 end
-            elseif self:GetOwner():KeyDown(IN_RELOAD) and not self:GetInput1() then
-                self:SetDrawMag(true)
-                self.DrawTime = CurTime()
-                self:SetInput1(true)
-                timer.Simple(1,
-                function()
-                    if IsValid(self) then
-                        self:SetDrawMag(false)
-                        self.DrawTime = CurTime()
-                    end
-                end)
             end
         end)
     end
@@ -217,6 +206,26 @@ function SWEP:Think()
     end
 
     if self:GetDeployed() then
+        if self:GetOwner():KeyDown(IN_RELOAD) and not self:GetInput1() then
+            self:SetInput1(true)
+            if not self:GetOwner():KeyDown(IN_RELOAD) then return end
+            timer.Simple(.3,
+            function()
+                if self:GetOwner():KeyDown(IN_RELOAD) then
+                    self:SetDrawMag(true)
+                    self.DrawTime = CurTime()
+                    timer.Simple(1,
+                    function()
+                        if IsValid(self) then
+                            self:SetDrawMag(false)
+                            self.DrawTime = CurTime()
+                        end
+                    end)
+                else
+                    self:SetInput1(false)
+                end
+            end)
+        end
         -- lower the weapon / entering safe mode
         if not self:GetLowering() and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():KeyDown(IN_USE) and self:GetOwner():KeyDown(IN_RELOAD) then
             self:SetLowering(true)
