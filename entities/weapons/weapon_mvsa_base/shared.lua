@@ -66,7 +66,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 5, "SelectingFireMode")
     self:NetworkVar("Bool", 6, "Aiming")
     self:NetworkVar("Bool", 7, "DrawMag")
-    self:NetworkVar("Bool", 8, "Input1")
+    self:NetworkVar("Bool", 8, "Input01")
+    self:NetworkVar("Bool", 9, "Input02")
     self:NetworkVar("String", 0, "FireMode")
     self:NetworkVar("Float", 0, "SightsTime")
 end
@@ -114,35 +115,24 @@ end
 	Desc: Reload is being pressed
 -----------------------------------------------------------]]
 function SWEP:Reload()
-    if not self:GetOwner():KeyDown(IN_SPEED) and not self:GetOwner():KeyDown(IN_USE) and not self:GetSelectingFireMode() then
-        if self.FirstTime == 0 then
-            self.FirstTime = CurTime()
-        end
-
+    if not self:GetOwner():KeyDown(IN_SPEED) and not self:GetOwner():KeyDown(IN_USE) and not self:GetSelectingFireMode() and not self:GetInput01() then
+        self:SetInput01(true)
         timer.Simple(0.1, function()
-            if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and not self:GetOwner():KeyDown(IN_RELOAD) then
-                if (CurTime() - self.FirstTime) < 0.3 then
-                    self.FirstTime = 0
+            if IsValid(self) and IsValid(self:GetOwner()) and self:GetOwner():Alive() and not self:GetOwner():KeyDown(IN_RELOAD) then
+                if self:Clip1() <= 0 then
+                    self:SetReloading(true)
+                    self:DefaultReload(ACT_VM_RELOAD_EMPTY)
+                    self:GetOwner():SetAnimation(PLAYER_RELOAD)
 
-                    if self:Clip1() <= 0 then
-                        self:SetReloading(true)
-                        self:DefaultReload(ACT_VM_RELOAD_EMPTY)
-                        self:GetOwner():SetAnimation(PLAYER_RELOAD)
-
-                        if self:GetHaveToBeSwitchedAuto() then
-                            self.Primary.Automatic = true
-                        end
-                    else
-                        if self:Clip1() < self.Primary.ClipSize then
-                            self:SetReloading(true)
-                            self:DefaultReload(ACT_VM_RELOAD)
-                            self:GetOwner():SetAnimation(PLAYER_RELOAD)
-                        end
+                    if self:GetHaveToBeSwitchedAuto() then
+                        self.Primary.Automatic = true
                     end
                 else
-                    -- wait bro why don't you put this before the if-statement? Because in all cases you make it go to 0
-                    -- because it is used in the if-statement itself bro
-                    self.FirstTime = 0
+                    if self:Clip1() < self.Primary.ClipSize then
+                        self:SetReloading(true)
+                        self:DefaultReload(ACT_VM_RELOAD)
+                        self:GetOwner():SetAnimation(PLAYER_RELOAD)
+                    end
                 end
             end
         end)
@@ -198,7 +188,12 @@ function SWEP:Think()
     if not self:GetOwner():KeyDown(IN_RELOAD) then
         self:SetLowering(false)
         self:SetReloading(false)
-        self:SetInput1(false)
+        self:SetInput01(false)
+        if not self:GetInput02() then
+            self:SetInput02(true)
+            self:SetDrawMag(false)
+            self.DrawTime = CurTime()
+        end
 
         if not self:GetOwner():KeyDown(IN_USE) and self:GetSelectingFireMode() then
             self:SetSelectingFireMode(false)
@@ -206,23 +201,13 @@ function SWEP:Think()
     end
 
     if self:GetDeployed() then
-        if self:GetOwner():KeyDown(IN_RELOAD) and not self:GetInput1() then
-            self:SetInput1(true)
-            if not self:GetOwner():KeyDown(IN_RELOAD) then return end
-            timer.Simple(.3,
+        if self:GetOwner():KeyDown(IN_RELOAD) and not self:GetInput01() then
+            timer.Simple(.25,
             function()
-                if self:GetOwner():KeyDown(IN_RELOAD) then
+                if IsValid(self) and IsValid(self:GetOwner()) and self:GetOwner():Alive() and self:GetOwner():KeyDown(IN_RELOAD) then
+                    self:SetInput02(false)
                     self:SetDrawMag(true)
                     self.DrawTime = CurTime()
-                    timer.Simple(1,
-                    function()
-                        if IsValid(self) then
-                            self:SetDrawMag(false)
-                            self.DrawTime = CurTime()
-                        end
-                    end)
-                else
-                    self:SetInput1(false)
                 end
             end)
         end
@@ -276,7 +261,7 @@ function SWEP:Think()
             self:SetAiming(false)
 
             timer.Simple(0.1, function()
-                if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and not self:GetOwner():KeyDown(IN_SPEED) and not self:GetLowered() and not self:GetReloading() then
+                if IsValid(self) and IsValid(self:GetOwner()) and self:GetOwner():Alive() and not self:GetOwner():KeyDown(IN_SPEED) and not self:GetLowered() and not self:GetReloading() then
                     self:SendWeaponAnim(ACT_VM_IDLE)
                     self:SetHoldType(self.HoldType)
                 end
@@ -305,7 +290,7 @@ function SWEP:Deploy()
         self:SendWeaponAnim(ACT_VM_DEPLOY)
         -- wait the animation is finished before doing anything
         timer.Simple(self:GetOwner():GetViewModel():SequenceDuration(), function()
-            if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and self:GetOwner():GetActiveWeapon() == self then
+            if IsValid(self) and IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and self:GetOwner():Alive() and self:GetOwner():GetActiveWeapon() == self then
                 self:SetDeployed(true)
             end
         end)
