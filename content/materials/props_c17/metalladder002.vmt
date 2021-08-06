@@ -1,0 +1,5 @@
+"LightMappedGeneric"
+{
+	"$basetexture" "Models/props_c17/metalladder002"
+	"$surfaceprop" "metal"
+}

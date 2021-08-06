@@ -1,0 +1,5 @@
+"LightMappedGeneric"
+{
+	"$baseTexture" "Models/props_lab/servers_sheet"
+//	"$selfillum" "1"
+}

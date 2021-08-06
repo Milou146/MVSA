@@ -1,0 +1,6 @@
+"LightMappedGeneric"
+{
+	// Original shader: VertexLitTexture
+	"$basetexture" "Models/props_c17/clock01"
+	"$surfaceprop" "wood"
+}
