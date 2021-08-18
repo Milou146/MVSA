@@ -1,4 +1,9 @@
+include( "cl_commands.lua" )
+include( "cl_inventory.lua" )
+include( "cl_gasmask.lua" )
+include( "cl_hud.lua" )
 include( "shared.lua" )
+include( "sh_gasmask.lua" )
 include( "panel/mvsa_panel.lua" )
 include( "config.lua" )
 
@@ -151,7 +156,7 @@ local function character_creation( ply )
         Model.Entity:SetModelScale(Size / 180)
 
         local function LoadModel()
-            if ScrollPanel != nil then ScrollPanel:Remove() end
+            if ScrollPanel ~= nil then ScrollPanel:Remove() end
 
             ScrollPanel = vgui.Create( "DScrollPanel", SpecPanel )
             ScrollPanel:Dock(TOP)
@@ -167,7 +172,7 @@ local function character_creation( ply )
 
         ModelSlider.OnValueChanged = function( self )
             local val = math.Round(self:GetValue(), 0)
-            if val - ModelIndex != 0 then
+            if val - ModelIndex ~= 0 then
                 ModelIndex = val
                 LoadModel()
             end
@@ -240,18 +245,19 @@ net.Receive( "mvsa_character_selection", function( len, ply )
     local namesCount = net.ReadUInt( 5 )
     for i = 1, namesCount do
         Character[i] = {}
-        Character[i]["Faction"] = net.ReadString()
-        if Character[i]["Faction"] == "1" then
+        Character[i]["Faction"] = net.ReadUInt( 1 )
+        if Character[i]["Faction"] == 1 then
             Character[i]["Faction"] = "Survivor"
         else
             Character[i]["Faction"] = "USMC"
         end
         Character[i]["RPName"] = net.ReadString()
-        Character[i]["ModelIndex"] = tonumber(net.ReadString())
-        Character[i]["Size"] = net.ReadString()
-        Character[i]["Skin"] = tonumber(net.ReadString())
+        Character[i]["ModelIndex"] = net.ReadUInt( 5 )
+        Character[i]["Size"] = tostring(net.ReadUInt( 8 ))
+        Character[i]["Skin"] = net.ReadUInt( 5 )
         Character[i]["BodyGroups"] = net.ReadString()
         Character[i]["BodyGroups"] = string.Split(Character[i]["BodyGroups"], ",")
+        Character[i]["GasMaskSet"] = net.ReadUInt( 1 )
     end
 
     local index = 1
@@ -264,7 +270,7 @@ net.Receive( "mvsa_character_selection", function( len, ply )
     local AdjustableModelPanel = vgui.Create( "DModelPanel", SelectionPanel )
     AdjustableModelPanel:SetSize( ScrW() / 2, 0.8 * ScrH() )
     AdjustableModelPanel:SetPos( ScrW() / 2 - AdjustableModelPanel:GetWide() / 2, ScrH() / 10 + 100 )
-    local function LoadCharacter()
+    function LoadCharacter()
         rpname:SetText( Character[index]["RPName"] )
         rpname:SetFont("Trebuchet24")
         rpname:SizeToContents()
@@ -275,6 +281,36 @@ net.Receive( "mvsa_character_selection", function( len, ply )
         end
         AdjustableModelPanel.Entity:SetModelScale(tonumber(Character[index]["Size"]) / 180)
         AdjustableModelPanel.Entity:SetSkin( Character[index]["Skin"] )
+        if LeftArrow ~= nil then LeftArrow:Remove() RightArrow:Remove() end
+        if namesCount > 1 then
+            LeftArrow = vgui.Create( "DImageButton", SelectionPanel )
+            LeftArrow:SetSize( 16, 32)
+            LeftArrow:SetImage( "icon32/mvsa_arrow_left.png" )
+            LeftArrow:SetPos( AdjustableModelPanel:GetX() - 16, AdjustableModelPanel:GetY() + AdjustableModelPanel:GetTall() / 2 )
+            LeftArrow.DoClick = function()
+                if index > 1 then
+                    index = index - 1
+                    LoadCharacter()
+                else
+                    index = namesCount
+                    LoadCharacter()
+                end
+            end
+
+            RightArrow = vgui.Create( "DImageButton", SelectionPanel )
+            RightArrow:SetSize( 16, 32)
+            RightArrow:SetImage( "icon32/mvsa_arrow_right.png" )
+            RightArrow:SetPos( AdjustableModelPanel:GetX() + AdjustableModelPanel:GetWide(), AdjustableModelPanel:GetY() + AdjustableModelPanel:GetTall() / 2 )
+            RightArrow.DoClick = function()
+                if index < namesCount then
+                    index = index + 1
+                    LoadCharacter()
+                else
+                    index = 1
+                    LoadCharacter()
+                end
+            end
+        end
     end
     LoadCharacter()
 
@@ -320,11 +356,8 @@ net.Receive( "mvsa_character_selection", function( len, ply )
             net.SendToServer()
             table.remove(Character, index)
             namesCount = namesCount - 1
-            index = index - 1
-            rpname:SetText( Character[index]["RPName"] )
-            rpname:SetFont("Trebuchet24")
-            rpname:SizeToContents()
-            rpname:SetPos( ScrW() / 2 - rpname:GetWide() / 2, ScrH() / 10 + 50 )
+            if index == 1 then index = namesCount else index = index - 1 end
+            LoadCharacter()
             ConfirmationPanel:Remove()
         end
 
@@ -354,36 +387,6 @@ net.Receive( "mvsa_character_selection", function( len, ply )
     function NewButton:DoClick()
         SelectionPanel:Remove()
         character_creation( ply )
-    end
-
-    if namesCount > 1 then
-        local LeftArrow = vgui.Create( "DImageButton", SelectionPanel )
-        LeftArrow:SetSize( 16, 32)
-        LeftArrow:SetImage( "icon32/mvsa_arrow_left.png" )
-        LeftArrow:SetPos( AdjustableModelPanel:GetX() - 16, AdjustableModelPanel:GetY() + AdjustableModelPanel:GetTall() / 2 )
-        LeftArrow.DoClick = function()
-            if index > 1 then
-                index = index - 1
-                LoadCharacter()
-            else
-                index = namesCount
-                LoadCharacter()
-            end
-        end
-
-        local RightArrow = vgui.Create( "DImageButton", SelectionPanel )
-        RightArrow:SetSize( 16, 32)
-        RightArrow:SetImage( "icon32/mvsa_arrow_right.png" )
-        RightArrow:SetPos( AdjustableModelPanel:GetX() + AdjustableModelPanel:GetWide(), AdjustableModelPanel:GetY() + AdjustableModelPanel:GetTall() / 2 )
-        RightArrow.DoClick = function()
-            if index < namesCount then
-                index = index + 1
-                LoadCharacter()
-            else
-                index = 1
-                LoadCharacter()
-            end
-        end
     end
 end)
 

@@ -1,0 +1,6 @@
+"vertexlitgeneric"
+{
+	// original shader: basetimeslightmap
+	"$basetexture" "dev/dev_lowermetaldoor02a"
+	"$surfaceprop" "metal"
+}

@@ -56,8 +56,8 @@ end
 --
 function PLAYER:Loadout()
 
-	self.Player:Give( 'weapon_pistol' )
-	self.Player:GiveAmmo( 255, 'Pistol', true )
+	self.Player:Give( 'm9k_m4a1' )
+	self.Player:GiveAmmo( 255, 'ar2', true )
 
 end
 
