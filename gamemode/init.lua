@@ -13,7 +13,7 @@ util.AddNetworkString("mvsa_character_selection")
 util.AddNetworkString("mvsa_character_selected")
 util.AddNetworkString("mvsa_character_information")
 util.PrecacheModel( "models/half-dead/metroll/p_mask_1.mdl" )
-sql.Query("CREATE TABLE IF NOT EXISTS mvsa_player_character( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), GasMaskSet BOOL, PrimaryWep TINYINT, SecondaryWep TINYINT, Launcher TINYINT, Inventory01 SMALLINT, Inventory02 SMALLINT, Inventory03 SMALLINT, Inventory04 SMALLINT, Inventory05 SMALLINT, Inventory06 SMALLINT, Inventory07 SMALLINT, Inventory08 SMALLINT, Inventory09 SMALLINT, Inventory10 SMALLINT )")
+sql.Query("CREATE TABLE IF NOT EXISTS mvsa_player_character( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), GasMaskSet BOOL, PrimaryWep TINYINT, SecondaryWep TINYINT, Launcher TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, RuckSack TINYINT, Cask TINYINT, NVG TINYINT, Inventory VARCHAR(60) )")
 include("sv_commands.lua")
 include("sv_gasmask.lua")
 include("shared.lua")
@@ -81,22 +81,24 @@ net.Receive("mvsa_character_information", function(len, ply)
     ply.Size = net.ReadUInt(8)
     ply.Skin = net.ReadUInt(5)
     ply.BodyGroups = net.ReadString()
-    ply.GasMaskSet = false
+    ply:SetNWBool( "GasMaskSet", false )
+    ply:SetNWInt( "PrimaryWep", 0 )
+    ply:SetNWInt( "SecondaryWep", 0 )
+    ply:SetNWInt( "Launcher", 0 )
+    ply:SetNWInt( "Pant", 1 )
+    ply:SetNWInt( "Jacket", 0 )
+    ply:SetNWInt( "Vest", 0 )
+    ply:SetNWInt( "Bag", 0 )
+    ply:SetNWInt( "Cask", 0 )
+    ply:SetNWInt( "NVG", 0 )
 
-    ply.Inventory = {
-        ["01"] = "0",
-        ["02"] = "0",
-        ["03"] = "0",
-        ["04"] = "0",
-        ["05"] = "0",
-        ["06"] = "0",
-        ["07"] = "0",
-        ["08"] = "0",
-        ["09"] = "0",
-        ["10"] = "0"
-    }
+    ply.Inventory = {}
+    for k = 1,20 do
+        ply:SetNWInt( "Inventory" .. tostring(k), 0 )
+        ply.Inventory[k] = 0
+    end
 
-    sql.Query("INSERT INTO mvsa_player_character VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply.ModelIndex) .. ", " .. tostring(ply.Size) .. ", " .. tostring(ply.Skin) .. ", '" .. ply.BodyGroups .. "', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+    sql.Query("INSERT INTO mvsa_player_character VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply.ModelIndex) .. ", " .. tostring(ply.Size) .. ", " .. tostring(ply.Skin) .. ", '" .. ply.BodyGroups .. "', 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
     ply.BodyGroups = string.Split(ply.BodyGroups, ",")
 
     if ply.Faction == 1 then
@@ -129,34 +131,25 @@ net.Receive("mvsa_character_selected", function(len, ply)
     ply.Skin = tonumber(Character.Skin)
     ply.BodyGroups = string.Split(Character.BodyGroups, ",")
     ply:SetNWBool( "GasMaskSet", Character.GasMaskSet == "1" )
+    ply:SetNWInt( "PrimaryWep", tonumber(Character.PrimaryWep) )
+    ply:SetNWInt( "SecondaryWep", tonumber(Character.SecondaryWep) )
+    ply:SetNWInt( "Launcher", tonumber(Character.Launcher) )
+    ply:SetNWInt( "Pant", tonumber(Character.Pant) )
+    ply:SetNWInt( "Jacket", tonumber(Character.Jacket) )
+    ply:SetNWInt( "Vest", tonumber(Character.Vest) )
+    ply:SetNWInt( "RuckSack", tonumber(Character.RuckSack) )
+    ply:SetNWInt( "Cask", tonumber(Character.Cask) )
+    ply:SetNWInt( "NVG", tonumber(Character.NVG) )
 
-    ply.Inventory = {
-        ["01"] = Character.Inventory01,
-        ["02"] = Character.Inventory02,
-        ["03"] = Character.Inventory03,
-        ["04"] = Character.Inventory04,
-        ["05"] = Character.Inventory05,
-        ["06"] = Character.Inventory06,
-        ["07"] = Character.Inventory07,
-        ["08"] = Character.Inventory08,
-        ["09"] = Character.Inventory09,
-        ["10"] = Character.Inventory10
-    }
+    Character.Inventory = string.Split(Character.Inventory, ",")
+    ply.Inventory = {}
+    for k = 1,20 do
+        ply:SetNWInt( "Inventory" .. tostring(k), tonumber(Character.Inventory[k]) )
+        ply.Inventory[k] = tonumber(Character.Inventory[k])
+    end
 
-    ply:SetNWInt( "Inventory01", tonumber(Character.Inventory01) )
-    ply:SetNWInt( "Inventory02", tonumber(Character.Inventory02) )
-    ply:SetNWInt( "Inventory03", tonumber(Character.Inventory03) )
-    ply:SetNWInt( "Inventory04", tonumber(Character.Inventory04) )
-    ply:SetNWInt( "Inventory05", tonumber(Character.Inventory05) )
-    ply:SetNWInt( "Inventory06", tonumber(Character.Inventory06) )
-    ply:SetNWInt( "Inventory07", tonumber(Character.Inventory07) )
-    ply:SetNWInt( "Inventory08", tonumber(Character.Inventory08) )
-    ply:SetNWInt( "Inventory09", tonumber(Character.Inventory09) )
-    ply:SetNWInt( "Inventory10", tonumber(Character.Inventory10) )
-
-    ply.GasMaskEquiped = false
     for k, v in pairs(ply.Inventory) do
-        if v == "1" then
+        if v == 1 then
             ply.GasMaskEquiped = true
             break
         end
@@ -189,3 +182,9 @@ hook.Add("GasMaskNeeded", "TestTeleportHook", function()
         ACTIVATOR:TakeDamageInfo( d )
     end
 end)
+
+function GM:AllowPlayerPickup( ply, ent )
+    if ent.Category == "Inventory" then
+        
+    end
+end

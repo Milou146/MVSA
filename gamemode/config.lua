@@ -25,6 +25,27 @@ MVSA.Survivor = {
     [19] = {"models/half-dead/metroll/m9b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}}
 }
 
+MVSA.EntList = {
+    [1] = {"ent_gasmask", "icon64/gasmask.png"},
+    [2] = {"ent_usmc_pant", "icon64/usmc_pant.png"},
+    [3] = {"ent_usmc_jacket", "icon64/usmc_jacket.png"},
+    [4] = {"ent_usmc_vest1", "icon64/usmc_vest1.png"},
+    [5] = {"ent_usmc_cask", "icon64/usmc_cask"},
+    [6] = {"ent_nvg", "icon64/nvg.png"}
+}
+
+MVSA.PrimaryWepList = {
+    [1] = "m9k_m4a1"
+}
+
+MVSA.SecondaryWepList = {
+    [1] = "m9k_m92beretta"
+}
+
+MVSA.LauncherList = {
+    [1] = "m9k_ matador"
+}
+
 -- character size
 MVSA.minSize = 165
 MVSA.maxSize = 210

@@ -357,7 +357,12 @@ net.Receive( "mvsa_character_selection", function( len, ply )
             table.remove(Character, index)
             namesCount = namesCount - 1
             if index == 1 then index = namesCount else index = index - 1 end
-            LoadCharacter()
+            if namesCount > 0 then
+                LoadCharacter()
+            else
+                SelectionPanel:Remove()
+                character_creation( LocalPlayer() )
+            end
             ConfirmationPanel:Remove()
         end
 

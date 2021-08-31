@@ -20,21 +20,41 @@ function CreateInventoryPanel()
 
     PlayerModel = vgui.Create( "DModelPanel", InventoryPanel )
     PlayerModel:SetModel(ply:GetModel())
-    PlayerModel:CenterHorizontal(0.15)
+    PlayerModel:SetX(0)
     PlayerModel:CenterVertical(0.05)
-    PlayerModel:SetSize( InventoryPanel:GetWide() * 2 / 3, ScrH() / 2 )
+    PlayerModel:SetSize( InventoryPanel:GetWide() * 0.5, ScrH() / 2 )
+    PlayerModel:SetMouseInputEnabled( false )
 
     local headpos = PlayerModel.Entity:GetBonePosition(PlayerModel.Entity:LookupBone("ValveBiped.Bip01_Head1"))
     PlayerModel.Entity:SetEyeTarget(headpos-Vector(-15, 0, 0))
     for k = 0,#ply:GetBodyGroups() - 1 do
         PlayerModel.Entity:SetBodygroup(k, ply:GetBodygroup(k))
     end
-    PlayerModel:SetCamPos(PlayerModel:GetCamPos() + Vector(-40, 0, 0))
+    PlayerModel:SetCamPos(Vector(40, 0, 45))
+    PlayerModel:SetLookAt(headpos + Vector(-90,20,-40))
     ply.InventoryOpen = true
 
+    local NVGSlot = vgui.Create( "DImage", InventoryPanel )
+    NVGSlot:CenterHorizontal(0.85)
+    NVGSlot:CenterVertical(0.025)
+    NVGSlot:SetImage( "icon64/mvsa_inventory_slot.png")
+    NVGSlot:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    local NVG = vgui.Create( "DImage", NVGSlot )
+    NVG:CenterHorizontal(0.5)
+    NVG:CenterVertical(0.15)
+    NVG:SetImage( "icon64/mvsa_gasmask.png")
+    NVG:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    if ply:GetNWInt( "NVG" ) ~= 0 then
+        NVG:SetVisible( false )
+    else
+        NVG:SetVisible( false )
+    end
+
     local CaskSlot = vgui.Create( "DImage", InventoryPanel )
-    CaskSlot:CenterHorizontal(0.8)
-    CaskSlot:CenterVertical(0.05)
+    CaskSlot:CenterHorizontal(0.65)
+    CaskSlot:CenterVertical(0.025)
     CaskSlot:SetImage( "icon64/mvsa_inventory_slot.png")
     CaskSlot:SetSize( ScrW() / 20, ScrW() / 20 )
 
@@ -43,28 +63,98 @@ function CreateInventoryPanel()
     Cask:CenterVertical(0.15)
     Cask:SetImage( "icon64/mvsa_gasmask.png")
     Cask:SetSize( ScrW() / 20, ScrW() / 20 )
-    Cask:SetVisible( false )
+
+    if ply:GetNWInt( "Cask" ) ~= 0 then
+        Cask:SetVisible( false )
+    else
+        Cask:SetVisible( false )
+    end
 
     local GasMaskSlot = vgui.Create( "DImage", InventoryPanel )
-    GasMaskSlot:CenterHorizontal(0.8)
-    GasMaskSlot:CenterVertical(0.15)
+    GasMaskSlot:CenterHorizontal(0.85)
+    GasMaskSlot:CenterVertical(0.125)
     GasMaskSlot:SetImage( "icon64/mvsa_inventory_slot.png")
     GasMaskSlot:SetSize( ScrW() / 20, ScrW() / 20 )
 
     GasMask = vgui.Create( "DImage", GasMaskSlot )
     GasMask:CenterHorizontal(0.5)
     GasMask:CenterVertical(0.15)
-    GasMask:SetImage( "icon64/mvsa_gasmask.png")
+    GasMask:SetImage( MVSA.EntList[ply:GetNWInt("GasMask")][2] )
     GasMask:SetSize( ScrW() / 20, ScrW() / 20 )
     GasMask:SetVisible( ply:GetNWBool( "GasMaskSet" ) )
+
+    local BagSlot = vgui.Create( "DImage", InventoryPanel )
+    BagSlot:CenterHorizontal(0.85)
+    BagSlot:CenterVertical(0.225)
+    BagSlot:SetImage( "icon64/mvsa_inventory_slot.png")
+    BagSlot:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    local Bag = vgui.Create( "DImage", BagSlot )
+    Bag:CenterHorizontal(0.5)
+    Bag:CenterVertical(0.15)
+    Bag:SetImage( MVSA.EntList[ply:GetNWInt("RuckSack")][2] )
+    Bag:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    if ply:GetNWInt( "Bag" ) == 0 then
+        Bag:SetVisible( false )
+    end
+
+    local VestSlot = vgui.Create( "DImage", InventoryPanel )
+    VestSlot:CenterHorizontal(0.65)
+    VestSlot:CenterVertical(0.225)
+    VestSlot:SetImage( "icon64/mvsa_inventory_slot.png")
+    VestSlot:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    local Vest = vgui.Create( "DImage", VestSlot )
+    Vest:CenterHorizontal(0.5)
+    Vest:CenterVertical(0.15)
+    Vest:SetImage( MVSA.EntList[ply:GetNWInt("Vest")][2] )
+    Vest:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    if ply:GetNWInt( "Vest" ) == 0 then
+        Vest:SetVisible( false )
+    end
+
+    local JacketSlot = vgui.Create( "DImage", InventoryPanel )
+    JacketSlot:CenterHorizontal(0.45)
+    JacketSlot:CenterVertical(0.225)
+    JacketSlot:SetImage( "icon64/mvsa_inventory_slot.png")
+    JacketSlot:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    local Jacket = vgui.Create( "DImage", JacketSlot )
+    Jacket:CenterHorizontal(0.5)
+    Jacket:CenterVertical(0.15)
+    Jacket:SetImage( MVSA.EntList[ply:GetNWInt("Jacket")][2] )
+    Jacket:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    if ply:GetNWInt( "Jacket" ) == 0 then
+        Jacket:SetVisible( false )
+    end
+
+    local PantSlot = vgui.Create( "DImage", InventoryPanel )
+    PantSlot:CenterHorizontal(0.85)
+    PantSlot:CenterVertical(0.325)
+    PantSlot:SetImage( "icon64/mvsa_inventory_slot.png")
+    PantSlot:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    local Pant = vgui.Create( "DImage", PantSlot )
+    Pant:CenterHorizontal(0.5)
+    Pant:CenterVertical(0.15)
+    Pant:SetImage( MVSA.EntList[ply:GetNWInt("Pant")][2] )
+    Pant:SetSize( ScrW() / 20, ScrW() / 20 )
+
+    if ply:GetNWInt( "Pant" ) == 0 then
+        Pant:SetVisible( false )
+    end
 end
+
 function GM:ScoreboardShow()
     ply = LocalPlayer()
     if player_manager.GetPlayerClass(ply) ~= "player_spectator" then
         if InventoryPanel == nil then
             CreateInventoryPanel()
         elseif not ply.InventoryOpen or ply.InventoryOpen == nil then
-            InventoryPanel:SetVisible(true)
+            CreateInventoryPanel()
             ply.InventoryOpen = true
         elseif ply.InventoryOpen then
             InventoryPanel:SetVisible(false)
