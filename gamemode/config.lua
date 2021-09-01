@@ -26,12 +26,14 @@ MVSA.Survivor = {
 }
 
 MVSA.EntList = {
+    [0] = {nil, "vgui/null.vmt"},
     [1] = {"ent_gasmask", "icon64/gasmask.png"},
     [2] = {"ent_usmc_pant", "icon64/usmc_pant.png"},
     [3] = {"ent_usmc_jacket", "icon64/usmc_jacket.png"},
     [4] = {"ent_usmc_vest1", "icon64/usmc_vest1.png"},
-    [5] = {"ent_usmc_cask", "icon64/usmc_cask"},
-    [6] = {"ent_nvg", "icon64/nvg.png"}
+    [5] = {"ent_usmc_helmet", "icon64/usmc_helmet.png"},
+    [6] = {"ent_nvg", "icon64/nvg.png"},
+    [7] = {"ent_rucksack", "icon64/usmc_rucksack.png"}
 }
 
 MVSA.PrimaryWepList = {

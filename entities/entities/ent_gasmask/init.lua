@@ -25,17 +25,18 @@ function ENT:Use(activator, caller, useType, value)
     if activator.GasMaskEquiped then
         activator:ChatPrint("Gas mask already equipped!")
     else
-        for k, v in pairs(activator.Inventory) do
-            if v == '0' then
-                activator.Inventory[k] = "1"
-                activator.GasMaskEquiped = true
-                sql.Query("UPDATE mvsa_player_character SET Inventory" .. k .. " = 1 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-                break
-            end
-        end
         activator:Give("weapon_gasmask")
         activator.GasMaskEquiped = true
         activator:ChatPrint("Gas mask equipped!")
+        for k,v in pairs(activator.Inventory) do
+            if v == 0 then
+                activator.Inventory[k] = 1
+                activator:SetNWInt( "Inventory" .. tostring(k), 1 )
+                local Inventory = table.concat(activator.Inventory, ",")
+                sql.Query("UPDATE mvsa_player_character SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+                break
+            end
+        end
         self:Remove()
     end
 end

@@ -13,7 +13,7 @@ util.AddNetworkString("mvsa_character_selection")
 util.AddNetworkString("mvsa_character_selected")
 util.AddNetworkString("mvsa_character_information")
 util.PrecacheModel( "models/half-dead/metroll/p_mask_1.mdl" )
-sql.Query("CREATE TABLE IF NOT EXISTS mvsa_player_character( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), GasMaskSet BOOL, PrimaryWep TINYINT, SecondaryWep TINYINT, Launcher TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, RuckSack TINYINT, Cask TINYINT, NVG TINYINT, Inventory VARCHAR(60) )")
+sql.Query("CREATE TABLE IF NOT EXISTS mvsa_player_character( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), GasMaskSet BOOL, PrimaryWep TINYINT, SecondaryWep TINYINT, Launcher TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60) )")
 include("sv_commands.lua")
 include("sv_gasmask.lua")
 include("shared.lua")
@@ -85,11 +85,11 @@ net.Receive("mvsa_character_information", function(len, ply)
     ply:SetNWInt( "PrimaryWep", 0 )
     ply:SetNWInt( "SecondaryWep", 0 )
     ply:SetNWInt( "Launcher", 0 )
-    ply:SetNWInt( "Pant", 1 )
+    ply:SetNWInt( "Pant", 2 )
     ply:SetNWInt( "Jacket", 0 )
     ply:SetNWInt( "Vest", 0 )
-    ply:SetNWInt( "Bag", 0 )
-    ply:SetNWInt( "Cask", 0 )
+    ply:SetNWInt( "Rucksack", 0 )
+    ply:SetNWInt( "Helmet", 0 )
     ply:SetNWInt( "NVG", 0 )
 
     ply.Inventory = {}
@@ -98,7 +98,7 @@ net.Receive("mvsa_character_information", function(len, ply)
         ply.Inventory[k] = 0
     end
 
-    sql.Query("INSERT INTO mvsa_player_character VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply.ModelIndex) .. ", " .. tostring(ply.Size) .. ", " .. tostring(ply.Skin) .. ", '" .. ply.BodyGroups .. "', 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
+    sql.Query("INSERT INTO mvsa_player_character VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply.ModelIndex) .. ", " .. tostring(ply.Size) .. ", " .. tostring(ply.Skin) .. ", '" .. ply.BodyGroups .. "', 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
     ply.BodyGroups = string.Split(ply.BodyGroups, ",")
 
     if ply.Faction == 1 then
@@ -137,8 +137,8 @@ net.Receive("mvsa_character_selected", function(len, ply)
     ply:SetNWInt( "Pant", tonumber(Character.Pant) )
     ply:SetNWInt( "Jacket", tonumber(Character.Jacket) )
     ply:SetNWInt( "Vest", tonumber(Character.Vest) )
-    ply:SetNWInt( "RuckSack", tonumber(Character.RuckSack) )
-    ply:SetNWInt( "Cask", tonumber(Character.Cask) )
+    ply:SetNWInt( "Rucksack", tonumber(Character.Rucksack) )
+    ply:SetNWInt( "Helmet", tonumber(Character.Helmet) )
     ply:SetNWInt( "NVG", tonumber(Character.NVG) )
 
     Character.Inventory = string.Split(Character.Inventory, ",")
@@ -184,7 +184,23 @@ hook.Add("GasMaskNeeded", "TestTeleportHook", function()
 end)
 
 function GM:AllowPlayerPickup( ply, ent )
+    print("hello")
     if ent.Category == "Inventory" then
-        
+        for k,v in pairs(ply.Inventory) do
+            if v == 0 then
+                ply.Inventory[k] = ent.ID
+                ply:SetNWInt( "Inventory" .. tostring(k), ent.ID )
+                local Inventory = table.concat(ply.Inventory, ",")
+                sql.Query("UPDATE mvsa_player_character SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+                print( "it worked!")
+                break
+            end
+        end
+    else
+        if ply:GetNWInt( ent.Category ) == 0 then
+            ply:SetNWInt( ent.Category, ent.ID )
+            sql.Query("UPDATE mvsa_player_character SET " .. ent.Category .. " = '" .. tostring(ent.ID) .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+            print( "it worked!")
+        end
     end
 end
