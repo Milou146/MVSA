@@ -26,26 +26,17 @@ MVSA.Survivor = {
 }
 
 MVSA.EntList = {
-    [0] = {nil, "vgui/null.vmt"},
+    [0] = {"null", "vgui/null.vmt", "null"},
     [1] = {"ent_gasmask", "icon64/gasmask.png"},
     [2] = {"ent_usmc_pant", "icon64/usmc_pant.png"},
     [3] = {"ent_usmc_jacket", "icon64/usmc_jacket.png"},
     [4] = {"ent_usmc_vest1", "icon64/usmc_vest1.png"},
     [5] = {"ent_usmc_helmet", "icon64/usmc_helmet.png"},
     [6] = {"ent_nvg", "icon64/nvg.png"},
-    [7] = {"ent_rucksack", "icon64/usmc_rucksack.png"}
-}
-
-MVSA.PrimaryWepList = {
-    [1] = "m9k_m4a1"
-}
-
-MVSA.SecondaryWepList = {
-    [1] = "m9k_m92beretta"
-}
-
-MVSA.LauncherList = {
-    [1] = "m9k_ matador"
+    [7] = {"ent_usmc_rucksack", "icon64/usmc_rucksack.png"},
+    [8] = {"ent_m4a1", "vgui/hud/m9k_m4a1.vmt", "m9k_m4a1"},
+    [9] = {"ent_m92beretta", "vgui/hud/m9k_m92beretta.vmt", "m9k_m92beretta"},
+    [10] = {"ent_matador", "vgui/hud/m9k_matador.vmt", "m9k_matador"}
 }
 
 -- character size

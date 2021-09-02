@@ -156,7 +156,7 @@ local function character_creation( ply )
         Model.Entity:SetModelScale(Size / 180)
 
         local function LoadModel()
-            if ScrollPanel ~= nil then ScrollPanel:Remove() end
+            if ScrollPanel and ScrollPanel:IsValid() then ScrollPanel:Remove() end
 
             ScrollPanel = vgui.Create( "DScrollPanel", SpecPanel )
             ScrollPanel:Dock(TOP)
@@ -281,7 +281,7 @@ net.Receive( "mvsa_character_selection", function( len, ply )
         end
         AdjustableModelPanel.Entity:SetModelScale(tonumber(Character[index]["Size"]) / 180)
         AdjustableModelPanel.Entity:SetSkin( Character[index]["Skin"] )
-        if LeftArrow ~= nil then LeftArrow:Remove() RightArrow:Remove() end
+        if LeftArrow then LeftArrow:Remove() RightArrow:Remove() end
         if namesCount > 1 then
             LeftArrow = vgui.Create( "DImageButton", SelectionPanel )
             LeftArrow:SetSize( 16, 32)

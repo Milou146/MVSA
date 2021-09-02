@@ -5,7 +5,6 @@ include("shared.lua")
 function ENT:Initialize()
     -- Sets what model to use
     self:SetModel("models/yukon/conscripts/rucksack.mdl")
-    self:SetName("USMC Rucksack")
     -- Sets what color to use
     self:SetColor(Color(200, 255, 200))
     -- Physics stuff
@@ -24,7 +23,7 @@ end
 function ENT:Use(activator, caller, useType, value)
     if activator:GetNWInt( "Rucksack" ) == 0 then
         activator:SetNWInt( "Rucksack", 7 )
-        activator:SetBodygroup(7, 0)
+        activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
         sql.Query("UPDATE mvsa_player_character SET Rucksack = 7 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         local BodyGroups = tostring(activator:GetBodygroup(0))
         for k = 1,activator:GetNumBodyGroups() - 1 do

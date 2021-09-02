@@ -4,38 +4,30 @@ include("shared.lua")
 
 function ENT:Initialize()
     -- Sets what model to use
-    self:SetModel("models/half-dead/metroll/p_mask_1.mdl")
-    self:SetName("USMC Pant")
+    self:SetModel("models/yukon/conscripts/hecu_pant.mdl")
     -- Sets what color to use
     self:SetColor(Color(200, 255, 200))
     -- Physics stuff
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
 
-    -- Init physics only on server, so it doesn't mess up physgun beam
-    if (SERVER) then
-        self:PhysicsInit(SOLID_VPHYSICS)
-    end
+    -- Init physics only on server, so it doesn't mess up physgun beam=
+    self:PhysicsInit(SOLID_VPHYSICS)
 
     -- Make prop to fall on spawn
     self:PhysWake()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator.GasMaskEquiped then
-        activator:ChatPrint("Gas mask already equipped!")
-    else
-        for k, v in pairs(activator.Inventory) do
-            if v == '0' then
-                activator.Inventory[k] = "1"
-                activator.GasMaskEquiped = true
-                sql.Query("UPDATE mvsa_player_character SET Inventory" .. k .. " = 1 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-                break
-            end
+    if activator:GetNWInt( "Pant" ) == 0 then
+        activator:SetNWInt( "Pant", 2 )
+        activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
+        sql.Query("UPDATE mvsa_player_character SET Pant = 2 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+        local BodyGroups = tostring(activator:GetBodygroup(0))
+        for k = 1,activator:GetNumBodyGroups() - 1 do
+            BodyGroups = BodyGroups .. "," .. tostring(activator:GetBodygroup(k))
         end
-        activator:Give("weapon_gasmask")
-        activator.GasMaskEquiped = true
-        activator:ChatPrint("Gas mask equipped!")
+        sql.Query("UPDATE mvsa_player_character SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         self:Remove()
     end
 end

@@ -54,12 +54,6 @@ end
 -- Arg1:
 -- Ret1:
 --
-function PLAYER:Loadout()
-
-	self.Player:Give( 'm9k_m4a1' )
-	self.Player:GiveAmmo( 255, 'ar2', true )
-
-end
 
 function PLAYER:SetModel()
 

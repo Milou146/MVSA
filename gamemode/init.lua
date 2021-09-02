@@ -12,8 +12,10 @@ util.AddNetworkString("mvsa_character_deletion")
 util.AddNetworkString("mvsa_character_selection")
 util.AddNetworkString("mvsa_character_selected")
 util.AddNetworkString("mvsa_character_information")
+util.AddNetworkString("DropRequest")
+util.AddNetworkString("UseRequest")
 util.PrecacheModel( "models/half-dead/metroll/p_mask_1.mdl" )
-sql.Query("CREATE TABLE IF NOT EXISTS mvsa_player_character( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), GasMaskSet BOOL, PrimaryWep TINYINT, SecondaryWep TINYINT, Launcher TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60) )")
+sql.Query("CREATE TABLE IF NOT EXISTS mvsa_player_character( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, SecondaryWep TINYINT, Launcher TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60) )")
 include("sv_commands.lua")
 include("sv_gasmask.lua")
 include("shared.lua")
@@ -45,9 +47,11 @@ local function CheckData(ply)
 end
 
 function RunClass(ply)
-    player_manager.SetPlayerClass(ply, "player_" .. string.lower(ply.Faction))
-    player_manager.RunClass(ply, "Loadout")
+    player_manager.SetPlayerClass(ply, "player_" .. string.lower(ply:GetNWString("Faction")))
     ply:Spawn()
+    ply:Give(MVSA.EntList[ply:GetNWInt("PrimaryWep")][3])
+    ply:Give(MVSA.EntList[ply:GetNWInt("SecondaryWep")][3])
+    ply:Give(MVSA.EntList[ply:GetNWInt("Launcher")][3])
 end
 
 function GM:PlayerInitialSpawn(ply, transition)
@@ -62,7 +66,7 @@ function GM:PlayerSpawn(ply, transition)
         ply:SetViewEntity(view_ent)
     else
         ply:SetViewEntity(ply)
-        ply:SetModel(MVSA[ply.Faction][ply.ModelIndex][1])
+        ply:SetModel(MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1])
         ply:SetModelScale(ply.Size / 180, 0)
         ply:SetSkin(ply.Skin)
 
@@ -77,7 +81,7 @@ end
 net.Receive("mvsa_character_information", function(len, ply)
     ply.Faction = net.ReadBit()
     ply.RPName = net.ReadString()
-    ply.ModelIndex = net.ReadUInt(5)
+    ply:SetNWInt("ModelIndex", net.ReadUInt(5))
     ply.Size = net.ReadUInt(8)
     ply.Skin = net.ReadUInt(5)
     ply.BodyGroups = net.ReadString()
@@ -98,13 +102,13 @@ net.Receive("mvsa_character_information", function(len, ply)
         ply.Inventory[k] = 0
     end
 
-    sql.Query("INSERT INTO mvsa_player_character VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply.ModelIndex) .. ", " .. tostring(ply.Size) .. ", " .. tostring(ply.Skin) .. ", '" .. ply.BodyGroups .. "', 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
+    sql.Query("INSERT INTO mvsa_player_character VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply:GetNWInt("ModelIndex")) .. ", " .. tostring(ply.Size) .. ", " .. tostring(ply.Skin) .. ", '" .. ply.BodyGroups .. "', 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
     ply.BodyGroups = string.Split(ply.BodyGroups, ",")
 
     if ply.Faction == 1 then
-        ply.Faction = "Survivor"
+        ply:SetNWString("Faction", "Survivor")
     else
-        ply.Faction = "USMC"
+        ply:SetNWString("Faction", "USMC")
     end
 
     RunClass(ply)
@@ -125,12 +129,12 @@ net.Receive("mvsa_character_selected", function(len, ply)
         Character.Faction = "USMC"
     end
 
-    ply.Faction = Character.Faction
-    ply.ModelIndex = tonumber(Character.ModelIndex)
+    ply:SetNWString("Faction", Character.Faction)
+    ply:SetNWInt("ModelIndex", tonumber(Character.ModelIndex))
     ply.Size = tonumber(Character.Size)
     ply.Skin = tonumber(Character.Skin)
     ply.BodyGroups = string.Split(Character.BodyGroups, ",")
-    ply:SetNWBool( "GasMaskSet", Character.GasMaskSet == "1" )
+    ply:SetNWBool( "GasMaskSet", false )
     ply:SetNWInt( "PrimaryWep", tonumber(Character.PrimaryWep) )
     ply:SetNWInt( "SecondaryWep", tonumber(Character.SecondaryWep) )
     ply:SetNWInt( "Launcher", tonumber(Character.Launcher) )
@@ -159,12 +163,12 @@ net.Receive("mvsa_character_selected", function(len, ply)
 end)
 
 function GM:PlayerSelectSpawn(ply, transition)
-    if ply.Faction == "USMC" then
+    if ply:GetNWString("Faction") == "USMC" then
         local spawns = ents.FindByClass("info_player_usmc")
         local random_entry = math.random(#spawns)
 
         return spawns[random_entry]
-    elseif ply.Faction == "Survivor" then
+    elseif ply:GetNWString("Faction") == "Survivor" then
         local spawns = ents.FindByClass("info_player_survivor")
         local random_entry = math.random(#spawns)
 
@@ -183,24 +187,21 @@ hook.Add("GasMaskNeeded", "TestTeleportHook", function()
     end
 end)
 
-function GM:AllowPlayerPickup( ply, ent )
-    print("hello")
-    if ent.Category == "Inventory" then
-        for k,v in pairs(ply.Inventory) do
-            if v == 0 then
-                ply.Inventory[k] = ent.ID
-                ply:SetNWInt( "Inventory" .. tostring(k), ent.ID )
-                local Inventory = table.concat(ply.Inventory, ",")
-                sql.Query("UPDATE mvsa_player_character SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-                print( "it worked!")
-                break
-            end
-        end
-    else
-        if ply:GetNWInt( ent.Category ) == 0 then
-            ply:SetNWInt( ent.Category, ent.ID )
-            sql.Query("UPDATE mvsa_player_character SET " .. ent.Category .. " = '" .. tostring(ent.ID) .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-            print( "it worked!")
-        end
+net.Receive("DropRequest", function(len, ply)
+    local ent = ents.Create(net.ReadString())
+    local category = net.ReadString()
+    ply:SetNWInt(category, 0)
+    sql.Query("UPDATE mvsa_player_character SET " .. category .. " = 0 WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+    if net.ReadBool() then
+        ply:StripWeapon(net.ReadString())
     end
-end
+    if net.ReadBool() then
+        ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4])
+    end
+    ent:Spawn()
+    ent:SetPos( ply:EyePos() - Vector(0,0,10) )
+end)
+
+net.Receive("UseRequest", function(len, ply)
+    ply:SelectWeapon( net.ReadString() )
+end)
