@@ -2,9 +2,11 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
+ENT.Delay = 0
+
 function ENT:Initialize()
     -- Sets what model to use
-    self:SetModel("models/half-dead/metroll/p_mask_1.mdl")
+    self:SetModel(self.Model)
     -- Sets what color to use
     self:SetColor(Color(200, 255, 200))
     -- Physics stuff
@@ -21,21 +23,24 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator.GasMaskEquiped then
-        activator:ChatPrint("Gas mask already equipped!")
-    else
-        activator:Give("weapon_gasmask")
-        activator.GasMaskEquiped = true
-        activator:ChatPrint("Gas mask equipped!")
-        for k,v in pairs(activator.Inventory) do
-            if v == 0 then
-                activator.Inventory[k] = 1
-                activator:SetNWInt( "Inventory" .. tostring(k), 1 )
-                local Inventory = table.concat(activator.Inventory, ",")
-                sql.Query("UPDATE mvsa_player_character SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-                break
-            end
+    for k = 1,20 do
+        if activator:GetNWInt("Inventory" .. tostring(k)) == 1 then
+            activator.GasMaskEquiped = true
+            activator:SetNWInt( "Inventory" .. tostring(k), 2 )
+            self.Taken = true
+            break
         end
+    end
+    if self.Taken then -- the gas mask is taken
+        local Inventory = {}
+        for k = 1,20 do
+            Inventory[k] = activator:GetNWInt("Inventory" .. tostring(k))
+        end
+        Inventory = table.concat(Inventory, ",")
+        sql.Query("UPDATE mvsa_player_character SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         self:Remove()
+    elseif CurTime() > self.Delay then
+        self.Delay = CurTime() + 2
+        activator:ChatPrint("You are full!")
     end
 end

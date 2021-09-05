@@ -1,3 +1,4 @@
+include( "sh_gasmask.lua" )
 util.AddNetworkString("GASMASK_RequestToggle")
 
 concommand.Add("gasmask_toggle", function(ply)
@@ -15,19 +16,19 @@ concommand.Add("gasmask_toggle", function(ply)
                 net.Start("GASMASK_RequestToggle")
                 net.WriteBool(false)
                 net.Send(ply)
-                ply:SetBodygroup(17, 0)
+                ply:SetBodygroup(MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][3])
                 ply:ConCommand("cl_mvsa_set_gasmask 0")
             else
                 ply:SetNWBool("GasMaskSet", true)
                 net.Start("GASMASK_RequestToggle")
                 net.WriteBool(true)
                 net.Send(ply)
-                ply:SetBodygroup(17, 2)
+                ply:SetBodygroup(MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][2])
                 ply:ConCommand("cl_mvsa_set_gasmask 1")
             end
 
             timer.Simple(1.8, function()
-                ply:SelectWeapon(ply.GASMASK_LastWeapon)
+                if ply.GASMASK_LastWeapon:IsValid() then ply:SelectWeapon(ply.GASMASK_LastWeapon) end -- eliminate the case where the player do not hold a weapon
                 ply:StripWeapon("weapon_gasmask")
                 ply:SetSuppressPickupNotices(false)
             end)

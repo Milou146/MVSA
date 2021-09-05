@@ -6,6 +6,6 @@ ENT.RenderGroup = 7
 
 ENT.BodyGroup = {}
 ENT.BodyGroup.USMC = {
-    [1] = {13,1,13,0},
-    [2] = {13,1,13,0}
+    [1] = {13,1,0},
+    [2] = {13,1,0}
 }

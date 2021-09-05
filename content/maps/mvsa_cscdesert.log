@@ -7896,3 +7896,160 @@ Level flags = 0
 Total triangle count: 54458
 Writing d:\steamlibrary\steamapps\common\garrysmod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.bsp
 1 minute, 19 seconds elapsed
+
+
+
+materialPath: D:\SteamLibrary\steamapps\common\GarrysMod\garrysmod\materials
+Loading D:\SteamLibrary\steamapps\common\GarrysMod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.vmf
+ConVarRef mat_reduceparticles doesn't point to an existing ConVar
+***need to set $abovewater for material dev/dev_water2_cheap
+***need to set $abovewater for material dev/dev_water2_cheap
+Error! Variable "$surfaceprop" is multiply defined in material "nature/blendrockgravel001a"!
+Error! Variable "$surfaceprop" is multiply defined in material "nature/blendrockgravel001a"!
+Patching WVT material: maps/mvsa_cscdesert/nature/blendrocksand008c_wvt_patch
+Patching WVT material: maps/mvsa_cscdesert/nature/blendsandrock004a_wvt_patch
+Patching WVT material: maps/mvsa_cscdesert/nature/blendrockgravel001a_wvt_patch
+Patching WVT material: maps/mvsa_cscdesert/nature/blendrockdirt002a_wvt_patch
+Patching WVT material: maps/mvsa_cscdesert/nature/blendgrassgravel002a_wvt_patch
+fixing up env_cubemap materials on brush sides...
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10Processing areas...done (0)
+Building Faces...done (0)
+Chop Details...done (0)
+Find Visible Detail Sides...
+Merged 634 detail faces...done (0)
+Merging details...done (0)
+FixTjuncs...
+PruneNodes...
+WriteBSP...
+done (2)
+writing D:\SteamLibrary\steamapps\common\GarrysMod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.prt...Building visibility clusters...
+done (0)
+WARNING: node without a volume
+WARNING: node without a volume
+WARNING: node without a volume
+Creating default LDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day02_02*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Creating default HDR cubemaps for env_cubemap using skybox materials:
+   skybox/sky_day02_02*.vmt
+ ! Run buildcubemaps in the engine to get the correct cube maps.
+Finding displacement neighbors...
+Finding lightmap sample positions...
+Displacement Alpha : 0...1...2...3...4...5...6...7...8...9...10
+Building Physics collision data...
+WARNING: Map using power 4 displacements, terrain physics cannot be compressed, map will need additional memory and CPU.
+done (3) (5517207 bytes)
+Placing detail props : 0...1...2...3...4...5...6...7...8...9...10
+Compacting texture/material tables...
+Reduced 6138 texinfos to 2699
+Reduced 691 texdatas to 561 (32791 bytes to 26661)
+Writing D:\SteamLibrary\steamapps\common\GarrysMod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.bsp
+16 seconds elapsed
+
+
+
+8 threads
+reading d:\steamlibrary\steamapps\common\garrysmod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.bsp
+reading d:\steamlibrary\steamapps\common\garrysmod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.prt
+4431 portalclusters
+12129 numportals
+0...1...2...3...4...5...6...7...8...9...10Optimized: 470843 visible clusters (5.89%)
+Total clusters visible: 7997392
+Average clusters visible: 1804
+Building PAS...
+Average clusters audible: 3005
+visdatasize:3431981  compressed from 4962720
+writing d:\steamlibrary\steamapps\common\garrysmod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.bsp
+4 seconds elapsed
+
+
+
+[Reading texlights from 'lights.rad']
+[45 texlights parsed from 'lights.rad']
+
+Loading d:\steamlibrary\steamapps\common\garrysmod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.bsp
+PREP OK
+20619 faces
+3 degenerate faces
+23719588 square feet [3415620608.00 square inches]
+258 Displacements
+3823537 Square Feet [550589440.00 Square Inches]
+20616 patches before subdivision
+181566 patches after subdivision
+381 direct lights
+0...1...2...3...4...5...6...7...8...9...100...1...2...3...4...5...6...7...8...9...10transfers 20678923, max 2377
+transfer lists: 157.8 megs
+0...1...2...3...4...5...6...7...8...9...10	Bounce #1 added RGB(314255, 282129, 197250)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #2 added RGB(30390, 25900, 17000)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #3 added RGB(6193, 5236, 3105)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #4 added RGB(1524, 1350, 742)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #5 added RGB(476, 431, 210)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #6 added RGB(167, 154, 65)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #7 added RGB(63, 59, 22)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #8 added RGB(25, 24, 8)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #9 added RGB(10, 10, 3)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #10 added RGB(4, 4, 1)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #11 added RGB(2, 2, 0)
+0...1...2...3...4...5...6...7...8...9...10	Bounce #12 added RGB(1, 1, 0)
+Build Patch/Sample Hash Table(s).....Done<0.1223 sec>
+0...1...2...3...4...5...6...7...8...9...10FinalLightFace Done
+Computing detail prop lighting : 0...1...2...3...4...5...6...7...8...9...10
+1 of 12 (8% of) surface lights went in leaf ambient cubes.
+0...1...2...3...4...5...6...7...8...9...10Writing leaf ambient...done
+Ready to Finish
+
+Object names       Objects/Maxobjs  Memory / Maxmem  Fullness 
+------------       ---------------  ---------------  -------- 
+models                 382/4096        18336/196608   ( 9.3%) 
+brushes               7347/16384       88164/196608   (44.8%) 
+brushsides           57754/163840     462032/1310720  (35.3%) 
+planes               33046/65536      660920/1310720  (50.4%) 
+vertexes             33982/65536      407784/786432   (51.9%) 
+nodes                14965/65536      478880/2097152  (22.8%) 
+texinfos              2699/12288      194328/884736   (22.0%) 
+texdata                561/2048        17952/65536    (27.4%) 
+dispinfos              258/0           45408/0        ( 0.0%) 
+disp_verts           15786/0          315720/0        ( 0.0%) 
+disp_tris            24480/0           48960/0        ( 0.0%) 
+disp_lmsamples      834568/0          834568/0        ( 0.0%) 
+faces                20619/65536     1154664/3670016  (31.5%) 
+hdr faces                0/65536           0/3670016  ( 0.0%) 
+origfaces            14899/65536      834344/3670016  (22.7%) 
+leaves               15348/65536      491136/2097152  (23.4%) 
+leaffaces            23493/65536       46986/131072   (35.8%) 
+leafbrushes          16246/65536       32492/131072   (24.8%) 
+areas                    5/1024           40/8192     ( 0.5%) 
+surfedges           154832/512000     619328/2048000  (30.2%) 
+edges                94485/256000     377940/1024000  (36.9%) 
+LDR worldlights        380/8192        33440/720896   ( 4.6%) 
+HDR worldlights          0/8192            0/720896   ( 0.0%) 
+leafwaterdata            2/32768          24/393216   ( 0.0%) 
+waterstrips           1344/32768       13440/327680   ( 4.1%) 
+waterverts               0/65536           0/786432   ( 0.0%) 
+waterindices         26298/65536       52596/131072   (40.1%) 
+cubemapsamples         277/1024         4432/16384    (27.1%) 
+overlays                 0/1024            0/360448   ( 0.0%) 
+LDR lightdata         [variable]    11175320/0        ( 0.0%) 
+HDR lightdata         [variable]           0/0        ( 0.0%) 
+visdata               [variable]     3431981/16777216 (20.5%) 
+entdata               [variable]      735216/393216   (187.0%) VERY FULL!
+LDR ambient table    15348/65536       61392/262144   (23.4%) 
+HDR ambient table    15348/65536       61392/262144   (23.4%) 
+LDR leaf ambient     39309/65536     1100652/1835008  (60.0%) 
+HDR leaf ambient     15348/65536      429744/1835008  (23.4%) 
+occluders                0/0               0/0        ( 0.0%) 
+occluder polygons        0/0               0/0        ( 0.0%) 
+occluder vert ind        0/0               0/0        ( 0.0%) 
+detail props          [variable]           1/56944    ( 0.0%) 
+dtl prp lght          [variable]           1/4        (25.0%) 
+HDR dtl prp lght      [variable]           1/4        (25.0%) 
+static props          [variable]           1/69090    ( 0.0%) 
+pakfile               [variable]    29554120/0        ( 0.0%) 
+physics               [variable]     5517207/4194304  (131.5%) VERY FULL!
+physics terrain       [variable]           0/1048576  ( 0.0%) 
+
+Level flags = 0
+
+Total triangle count: 54172
+Writing d:\steamlibrary\steamapps\common\garrysmod\garrysmod\gamemodes\mvsa\content\maps\mvsa_cscdesert.bsp
+1 minute, 10 seconds elapsed

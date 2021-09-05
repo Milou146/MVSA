@@ -19,15 +19,27 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "Pant" ) == 0 then
-        activator:SetNWInt( "Pant", 2 )
+    if activator:GetNWInt( "Pant" ) < 2 then
+        activator:SetNWInt( "Pant", 3 )
         activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
-        sql.Query("UPDATE mvsa_player_character SET Pant = 2 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+        sql.Query("UPDATE mvsa_player_character SET Pant = 3 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         local BodyGroups = tostring(activator:GetBodygroup(0))
         for k = 1,activator:GetNumBodyGroups() - 1 do
             BodyGroups = BodyGroups .. "," .. tostring(activator:GetBodygroup(k))
         end
         sql.Query("UPDATE mvsa_player_character SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+        local Inventory = {
+            [1] = 1,
+            [2] = 1
+        }
+        for k = 1,2 do
+            activator:SetNWInt("Inventory" .. tostring(k), 1)
+        end
+        for k = 3,20 do
+            Inventory[k] = activator:GetNWInt("Inventory" .. tostring(k))
+        end
+        Inventory = table.concat(Inventory, ",")
+        sql.Query("UPDATE mvsa_player_character SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         self:Remove()
     end
 end

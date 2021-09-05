@@ -21,15 +21,25 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "Rucksack" ) == 0 then
-        activator:SetNWInt( "Rucksack", 7 )
+    if activator:GetNWInt( "Rucksack" ) < 2 then
+        activator:SetNWInt( "Rucksack", 8 )
         activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
-        sql.Query("UPDATE mvsa_player_character SET Rucksack = 7 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+        sql.Query("UPDATE mvsa_player_character SET Rucksack = 8 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         local BodyGroups = tostring(activator:GetBodygroup(0))
         for k = 1,activator:GetNumBodyGroups() - 1 do
             BodyGroups = BodyGroups .. "," .. tostring(activator:GetBodygroup(k))
         end
         sql.Query("UPDATE mvsa_player_character SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+        local Inventory = {}
+        for k = 1,10 do
+            Inventory[k] = activator:GetNWInt("Inventory" .. tostring(k))
+        end
+        for k = 11,20 do
+            Inventory[k] = 1
+            activator:SetNWInt("Inventory" .. tostring(k), 1)
+        end
+        Inventory = table.concat(Inventory, ",")
+        sql.Query("UPDATE mvsa_player_character SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         self:Remove()
     end
 end

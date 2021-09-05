@@ -1,19 +1,5 @@
 AddCSLuaFile()
 
-if SERVER then
-    util.AddNetworkString("GASMASK_RequestWeaponSelect")
-end
-
-if CLIENT then
-    net.Receive("GASMASK_RequestWeaponSelect", function()
-        local wep = net.ReadEntity()
-
-        if IsValid(wep) then
-            input.SelectWeapon(wep)
-        end
-    end)
-end
-
 SWEP.HoldType = "camera"
 SWEP.DrawCrosshair = true
 SWEP.DrawAmmo = false

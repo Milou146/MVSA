@@ -3,7 +3,7 @@ AddCSLuaFile()
 
 local PLAYER = {}
 
-PLAYER.DisplayName			= 'Alien'
+PLAYER.DisplayName			= "Alien"
 
 PLAYER.WalkSpeed			= 400		-- How fast to move when not running
 PLAYER.RunSpeed				= 600		-- How fast to move when running

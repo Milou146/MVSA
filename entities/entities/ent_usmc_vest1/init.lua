@@ -21,10 +21,10 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "Vest" ) == 0 then
-        activator:SetNWInt( "Vest", 4 )
+    if activator:GetNWInt( "Vest" ) < 2 then
+        activator:SetNWInt( "Vest", 5 )
         activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
-        sql.Query("UPDATE mvsa_player_character SET Vest = 4 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+        sql.Query("UPDATE mvsa_player_character SET Vest = 5 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         local BodyGroups = tostring(activator:GetBodygroup(0))
         for k = 1,activator:GetNumBodyGroups() - 1 do
             BodyGroups = BodyGroups .. "," .. tostring(activator:GetBodygroup(k))

@@ -6,8 +6,8 @@ ENT.RenderGroup = 7
 
 ENT.BodyGroup = {}
 ENT.BodyGroup.USMC = {
-    [1] = {7,0,7,1},
-    [2] = {7,0,7,1}
+    [1] = {7,0,1},
+    [2] = {7,0,1}
 }
 
 ENT.Capacity = 10

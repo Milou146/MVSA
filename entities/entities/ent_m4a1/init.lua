@@ -21,10 +21,13 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "PrimaryWep" ) == 0 then
-        activator:Give( "m9k_m4a1", true )
-        activator:SetNWInt( "PrimaryWep", 8 )
-        sql.Query("UPDATE mvsa_player_character SET PrimaryWep = 8 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+    if activator:GetNWInt( "PrimaryWep" ) < 2 then
+        local ent = ents.Create( "m9k_m4a1" )
+        ent.Primary.DefaultClip = ent.Primary.ClipSize
+        activator:PickupWeapon(ent)
+        ent:SetClip1( self.PreviousMag or ent.Primary.ClipSize )
+        activator:SetNWInt( "PrimaryWep", 9 )
+        sql.Query("UPDATE mvsa_player_character SET PrimaryWep = 9 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         self:Remove()
     end
 end

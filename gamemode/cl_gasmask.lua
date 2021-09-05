@@ -1,3 +1,4 @@
+include( "sh_gasmask.lua" )
 CreateClientConVar("g4p_gasmask_sndtype", "1", true, false)
 local meta = FindMetaTable("Player")
 
