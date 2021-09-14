@@ -2,7 +2,7 @@ include( "sh_gasmask.lua" )
 util.AddNetworkString("GASMASK_RequestToggle")
 
 concommand.Add("gasmask_toggle", function(ply)
-    if ply.GasMaskEquiped then
+    if ply:GetNWInt("GasMask") > 1 then
         if not ply.GASMASK_SpamDelay or ply.GASMASK_SpamDelay < CurTime() then
             ply.GASMASK_SpamDelay = CurTime() + 4
             ply.GASMASK_LastWeapon = ply:GetActiveWeapon()
@@ -16,15 +16,15 @@ concommand.Add("gasmask_toggle", function(ply)
                 net.Start("GASMASK_RequestToggle")
                 net.WriteBool(false)
                 net.Send(ply)
-                ply:SetBodygroup(MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][3])
-                ply:ConCommand("cl_mvsa_set_gasmask 0")
+                ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][3])
+                ply:ConCommand("cl_set_gasmask 0")
             else
                 ply:SetNWBool("GasMaskSet", true)
                 net.Start("GASMASK_RequestToggle")
                 net.WriteBool(true)
                 net.Send(ply)
-                ply:SetBodygroup(MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], MVSA[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][2])
-                ply:ConCommand("cl_mvsa_set_gasmask 1")
+                ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][2])
+                ply:ConCommand("cl_set_gasmask 1")
             end
 
             timer.Simple(1.8, function()

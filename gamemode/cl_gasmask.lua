@@ -207,3 +207,13 @@ hook.Add("PostDrawTranslucentRenderables", "GASMASK_ThirdPersonMaskThink", funct
         end
     end
 end)
+
+concommand.Add( "cl_set_gasmask", function( ply, cmd, args )
+    if InventoryPanel ~= nil then
+        if args[1] == "1" then
+            UpdateClientMask(255)
+        elseif args[1] == "0" then
+            UpdateClientMask(100)
+        end
+    end
+end)

@@ -3,7 +3,7 @@ AddCSLuaFile()
 
 local PLAYER = {}
 
-PLAYER.DisplayName			= 'USMC'
+PLAYER.DisplayName			= "USMC"
 
 PLAYER.WalkSpeed			= 400		-- How fast to move when not running
 PLAYER.RunSpeed				= 600		-- How fast to move when running
@@ -54,10 +54,13 @@ end
 -- Arg1:
 -- Ret1:
 --
+function PLAYER:Loadout()
+	ContainerPickup( self.Player, ents.Create("ent_usmc_pant") )
+end
 
 function PLAYER:SetModel()
 
-	local cl_playermodel = self.Player:GetInfo( 'cl_playermodel' )
+	local cl_playermodel = self.Player:GetInfo( "cl_playermodel" )
 	local modelname = player_manager.TranslatePlayerModel( cl_playermodel )
 	util.PrecacheModel( modelname )
 	self.Player:SetModel( modelname )
@@ -68,7 +71,7 @@ function PLAYER:Death( inflictor, attacker )
 end
 
 -- Clientside only
-function PLAYER:CalcView( view ) end		-- Setup the player's view
+function PLAYER:CalcView( view ) end		-- Setup the player"s view
 function PLAYER:CreateMove( cmd ) end		-- Creates the user command on the client
 function PLAYER:ShouldDrawLocal() end		-- Return true if we should draw the local player
 
@@ -123,4 +126,4 @@ function PLAYER:GetHandsModel()
 
 end
 
-player_manager.RegisterClass( 'player_usmc', PLAYER, nil )
+player_manager.RegisterClass( "player_usmc", PLAYER, nil )

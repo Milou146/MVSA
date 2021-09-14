@@ -1,9 +1,6 @@
 ENT.Type = "anim"
 ENT.Base = "base_entity"
-ENT.PrintName = "Gas mask"
-ENT.Author = "Milou"
-ENT.RenderGroup = 7
 
 ENT.Model = "models/items/ammo_556x45mm.mdl"
 ENT.AmmoCount = 30
-ENT.AmmoID = 1
+ENT.AmmoName = "5.56×45mm NATO"

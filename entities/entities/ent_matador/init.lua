@@ -3,20 +3,10 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-    -- Sets what model to use
-    self:SetModel("models/weapons/w_GDCW_MATADOR_RL.mdl")
-    -- Sets what color to use
-    self:SetColor(Color(200, 255, 200))
-    -- Physics stuff
+    self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
-
-    -- Init physics only on server, so it doesn't mess up physgun beam
-    if (SERVER) then
-        self:PhysicsInit(SOLID_VPHYSICS)
-    end
-
-    -- Make prop to fall on spawn
+    self:PhysicsInit(SOLID_VPHYSICS)
     self:PhysWake()
 end
 
@@ -27,7 +17,7 @@ function ENT:Use(activator, caller, useType, value)
         activator:PickupWeapon(ent)
         ent:SetClip1( self.PreviousMag or ent.Primary.ClipSize )
         activator:SetNWInt( "Launcher", 11 )
-        sql.Query("UPDATE mvsa_player_character SET Launcher = 11 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+        sql.Query("UPDATE mvsa_characters SET Launcher = 11 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         self:Remove()
     end
 end

@@ -1,4 +1,3 @@
-include( "cl_commands.lua" )
 include( "cl_inventory.lua" )
 include( "cl_gasmask.lua" )
 include( "cl_hud.lua" )
@@ -6,6 +5,7 @@ include( "shared.lua" )
 include( "sh_config.lua" )
 include( "sh_gasmask.lua" )
 include( "panel/mvsa_panel.lua" )
+surface.CreateFont( "YouAreDead", { font = "It Lives In The Swamp BRK", extended = true, size = 70 } )
 
 local function character_creation( ply )
     ply = ply or LocalPlayer()
@@ -46,8 +46,8 @@ local function character_creation( ply )
 
     local function DrawCharacPerso()
 
-        RPName = MVSA.FirstName[math.random(#MVSA.FirstName)] .. " " .. MVSA.LastName[math.random(#MVSA.LastName)]
-        Size = math.random(MVSA.minSize, MVSA.maxSize)
+        RPName = FirstName[math.random(#FirstName)] .. " " .. LastName[math.random(#LastName)]
+        Size = math.random(minSize, maxSize)
 
         local RPNameEntry = vgui.Create("DTextEntry", CharacPanel)
         RPNameEntry:SetSize( 200, 35 )
@@ -62,15 +62,15 @@ local function character_creation( ply )
         GenerateButton:SetSize( 100, 30)
         GenerateButton:SetPos( ScrW() / 2 - 100 + RPNameEntry:GetWide() + 20, ScrH() / 10 + 20 )
         GenerateButton.DoClick = function()
-            RPName = MVSA.FirstName[math.random(#MVSA.FirstName)] .. " " .. MVSA.LastName[math.random(#MVSA.LastName)]
+            RPName = FirstName[math.random(#FirstName)] .. " " .. LastName[math.random(#LastName)]
             RPNameEntry:SetPlaceholderText( RPName )
         end
 
         local Model = vgui.Create( "DModelPanel" , CharacPanel )
         Model:SetSize(ScrW() * 0.5, ScrH() * 0.8)
         Model:SetPos( 0.1 * ScrW(), 1.6 * ScrH() / 10 )
-        ModelIndex = math.random( #MVSA[Faction] )
-        Model:SetModel( MVSA[Faction][ModelIndex][1] )
+        ModelIndex = math.random( #PlayerModels[Faction] )
+        Model:SetModel( PlayerModels[Faction][ModelIndex].model )
         Model.Entity:SetModelScale(Size / 180)
 
         function Model:LayoutEntity( Entity ) return end	-- Disable cam rotation
@@ -88,10 +88,10 @@ local function character_creation( ply )
             SizeSlider:DockMargin(0, 0, 0, 0)
             SizeSlider:SetSize( 300, 30 )			-- Set the size
             SizeSlider:SetText( "Size(cm)" )	-- Set the text above the slider
-            SizeSlider:SetMin( MVSA.minSize )				 	-- Set the minimum number you can slide to
-            SizeSlider:SetMax( MVSA.maxSize )
+            SizeSlider:SetMin( minSize )				 	-- Set the minimum number you can slide to
+            SizeSlider:SetMax( maxSize )
             SizeSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
-            SizeSlider:SetValue(math.random(MVSA.minSize, MVSA.maxSize))
+            SizeSlider:SetValue(math.random(minSize, maxSize))
             Size = SizeSlider:GetValue()
             Model.Entity:SetModelScale(Size / 180)
             SizeSlider.OnValueChanged = function( self )
@@ -99,7 +99,7 @@ local function character_creation( ply )
                 Size = math.Round(self:GetValue(), 0)
                 Model.Entity:SetModelScale(Size / 180)
             end
-            local skinCount = #MVSA[Faction][ModelIndex][2]
+            local skinCount = #PlayerModels[Faction][ModelIndex].skins
             SkinSlider = vgui.Create( "DNumSlider", ScrollPanel )
             SkinSlider:Dock( TOP )				-- Set the position
             SkinSlider:DockMargin(0, 0, 0, 0)
@@ -109,18 +109,18 @@ local function character_creation( ply )
             SkinSlider:SetMax(skinCount)
             SkinSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
             SkinSlider:SetValue(math.random(1, skinCount))
-            Skin = MVSA[Faction][ModelIndex][2][SkinSlider:GetValue()]
+            Skin = PlayerModels[Faction][ModelIndex].skins[SkinSlider:GetValue()]
             Model.Entity:SetSkin(Skin)
             SkinSlider.OnValueChanged = function( self )
                 -- Called when the slider value changes
                 local val = math.Round(self:GetValue(), 0)
-                Skin = MVSA[Faction][ModelIndex][2][val]
+                Skin = PlayerModels[Faction][ModelIndex].skins[val]
                 Model.Entity:SetSkin(Skin)
             end
 
             for i = 1, Model.Entity:GetNumBodyGroups() do
-                if istable(MVSA[Faction][ModelIndex][3][i]) then
-                    local lentgh = #MVSA[Faction][ModelIndex][3][i]
+                if istable(PlayerModels[Faction][ModelIndex].bodygroups[i]) then
+                    local lentgh = #PlayerModels[Faction][ModelIndex].bodygroups[i]
                     BodygroupSlider = vgui.Create( "DNumSlider", ScrollPanel )
                     BodygroupSlider:Dock( TOP )				-- Set the position
                     BodygroupSlider:DockMargin(0, 0, 0, 0)
@@ -130,20 +130,20 @@ local function character_creation( ply )
                     BodygroupSlider:SetMax(lentgh)
                     BodygroupSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
                     BodygroupSlider:SetValue(math.random(1, lentgh))
-                    Model.Entity:SetBodygroup(i - 1, MVSA[Faction][ModelIndex][3][i][BodygroupSlider:GetValue()])
+                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][BodygroupSlider:GetValue()])
                     BodygroupSlider.OnValueChanged = function( self )
                         -- Called when the slider value changes
                         local val = math.Round(self:GetValue(), 0)
-                        Model.Entity:SetBodygroup(i - 1, MVSA[Faction][ModelIndex][3][i][val])
+                        Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][val])
                     end
                 else
-                    Model.Entity:SetBodygroup(i - 1, MVSA[Faction][ModelIndex][3][i])
+                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i])
                 end
             end
 
         end
 
-        local modelCount = #MVSA[Faction]
+        local modelCount = #PlayerModels[Faction]
         ModelSlider = vgui.Create( "DNumSlider", SpecPanel )
         ModelSlider:Dock( TOP )
         ModelSlider:DockMargin(0, 0, 0, 0)
@@ -162,7 +162,7 @@ local function character_creation( ply )
             ScrollPanel:Dock(TOP)
             ScrollPanel:SetSize( Model:GetWide(), Model:GetTall() - 30 )
 
-            Model:SetModel( MVSA[Faction][ModelIndex][1] )
+            Model:SetModel( PlayerModels[Faction][ModelIndex].model )
             Model.Entity:SetModelScale(Size / 180)
             Model.Entity:SetEyeTarget(headpos-Vector(-15, 0, 0))
 
@@ -183,7 +183,7 @@ local function character_creation( ply )
         DoneButton:SetSize( 100, 30)
         DoneButton:SetPos( ScrW() / 2 - 50, 9 * ScrH() / 10 )
         DoneButton.DoClick = function()
-            net.Start( "mvsa_character_information" )
+            net.Start( "CharacterInformation" )
             net.WriteBit( Faction == "Survivor" )
             net.WriteString( RPName )
             net.WriteUInt( ModelIndex, 5 )
@@ -217,11 +217,12 @@ local function character_creation( ply )
     end
 end
 
-net.Receive( "mvsa_character_creation", function()
+net.Receive( "CharacterCreation", function()
     character_creation()
 end)
 
-net.Receive( "mvsa_character_selection", function( len, ply )
+function character_selection(ply)
+
     local SelectionPanel = vgui.Create( "MVSAPanel" )
 
     local SelectionPanelLabel = vgui.Create( "DLabel", SelectionPanel )
@@ -275,7 +276,7 @@ net.Receive( "mvsa_character_selection", function( len, ply )
         rpname:SetFont("Trebuchet24")
         rpname:SizeToContents()
         rpname:SetPos( ScrW() / 2 - rpname:GetWide() / 2, ScrH() / 10 + 50 )
-        AdjustableModelPanel:SetModel( MVSA[Character[index]["Faction"]][Character[index]["ModelIndex"]][1] )
+        AdjustableModelPanel:SetModel( PlayerModels[Character[index]["Faction"]][Character[index]["ModelIndex"]].model )
         for k,v in pairs(Character[index]["BodyGroups"]) do
             AdjustableModelPanel.Entity:SetBodygroup( k - 1, v )
         end
@@ -322,7 +323,7 @@ net.Receive( "mvsa_character_selection", function( len, ply )
     SelectButton:DockMargin( 200, ScrH() - ScrH() / 10, 0, 0)
     SelectButton:SetMouseInputEnabled( true )
     function SelectButton:DoClick()
-        net.Start("mvsa_character_selected")
+        net.Start("CharacterSelected")
         net.WriteString(Character[index]["RPName"])
         net.SendToServer()
         SelectionPanel:Remove()
@@ -351,7 +352,7 @@ net.Receive( "mvsa_character_selection", function( len, ply )
         YesButton:SetSize(60,30)
         YesButton:SetPos(375 - 60,150)
         YesButton.DoClick = function()
-            net.Start("mvsa_character_deletion")
+            net.Start("DeleteCharacter")
             net.WriteString(Character[index]["RPName"])
             net.SendToServer()
             table.remove(Character, index)
@@ -393,6 +394,10 @@ net.Receive( "mvsa_character_selection", function( len, ply )
         SelectionPanel:Remove()
         character_creation( ply )
     end
+end
+
+net.Receive( "CharacterSelection", function( len, ply )
+    character_selection(ply)
 end)
 
 function GM:PostDrawViewModel(vm, ply, weapon)
@@ -404,3 +409,38 @@ function GM:PostDrawViewModel(vm, ply, weapon)
         end
     end
 end
+
+net.Receive("Death",
+function(len, ply)
+    local DeathPanel = vgui.Create( "EditablePanel" )
+    DeathPanel:SetSize( ScrW(), ScrH() )
+    DeathPanel:SetPos( 0, 0 )
+    DeathPanel.Paint = function( self, w, h )
+        draw.RoundedBox( 2, 0, 0, w, h, Color( 0, 0, 0, 200 ) )
+    end
+    DeathPanel:MakePopup( true )
+    DeathPanel:SetKeyboardInputEnabled( false )
+
+    DeathPanel.Label = vgui.Create( "Label", DeathPanel )
+    DeathPanel.Label:SetText("You are dead")
+    DeathPanel.Label:SizeToContents()
+    DeathPanel.Label:Center()
+
+    DeathPanel.KeepButton = vgui.Create( "DButton", DeathPanel )
+    DeathPanel.KeepButton:SetText("Keep my character")
+    DeathPanel.KeepButton:SizeToContents()
+    DeathPanel.KeepButton:SetPos( ScrW() / 2 - DeathPanel.KeepButton:GetWide() - ScrW() / 10, ScrH() * 2 / 3 )
+    DeathPanel.KeepButton.DoClick = function()
+        DeathPanel:Remove()
+    end
+
+    DeathPanel.DeleteButton = vgui.Create( "DButton", DeathPanel )
+    DeathPanel.DeleteButton:SetText("Delete my character")
+    DeathPanel.DeleteButton:SizeToContents()
+    DeathPanel.DeleteButton:SetPos( ScrW() / 2 + ScrW() / 10, ScrH() * 2 / 3 )
+    DeathPanel.DeleteButton.DoClick = function()
+        net.Start("DeleteCharacterAfterDeath")
+        net.SendToServer()
+        DeathPanel:Remove()
+    end
+end)

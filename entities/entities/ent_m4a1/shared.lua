@@ -1,5 +1,4 @@
 ENT.Type = "anim"
 ENT.Base = "base_entity"
-ENT.PrintName = "Gas mask"
-ENT.Author = "Milou"
-ENT.RenderGroup = 7
+
+ENT.Model = "models/weapons/w_m4a1_iron.mdl"

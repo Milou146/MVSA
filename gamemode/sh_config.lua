@@ -1,69 +1,201 @@
-MVSA = {}
-MVSA.USMC = {
+PlayerModels = {}
+PlayerModels.USMC = {
     [1] = {
-        "models/yukon/conscripts/conscript_a_w_pm_v2.mdl",
-        {0,1,2,3,4,5,6,7,8,9,10,11,12,13}, -- authorized skins
-        {0,3,0,1,{0,2},0,0,1,1,2,17,0,{0,1,2},0,0,0,0,0,1}, -- authorized bodygroups
-        {17,2,1}, -- gasmak bodygroup ID, bodygroup value when gasmask set, bodygroup value when gasmask unset
-        {16,9,10} -- same for the NVG
+        model = "models/yukon/conscripts/conscript_a_w_pm_v2.mdl",
+        skins = {0,1,2,3,4,5,6,7,8,9,10,11,12,13}, -- authorized skins
+        bodygroups = {0,3,0,1,{0,2},0,0,1,1,2,17,0,{0,1,2},0,0,0,0,0,1}, -- authorized bodygroups
+        gasmask_bodygroup = {17,2,1}, -- gasmak bodygroup ID, bodygroup value when gasmask set, bodygroup value when gasmask unset
+        nvg_bodygroup = {16,9,10} -- same for the NVG
     },
-    [2] = {"models/yukon/conscripts/conscript_a_b_pm_v2.mdl",
-        {0,1,2,3,4,5},
-        {0,3,0,1,{0,2},0,0,1,1,2,17,0,{0,1,2},0,0,0,0,0,1},
-        {17,2,1},
-        {16,9,10}
+    [2] = {
+        model = "models/yukon/conscripts/conscript_a_b_pm_v2.mdl",
+        skins = {0,1,2,3,4,5},
+        bodygroups = {0,3,0,1,{0,2},0,0,1,1,2,17,0,{0,1,2},0,0,0,0,0,1},
+        gasmask_bodygroup = {17,2,1},
+        nvg_bodygroup = {16,9,10}
     },
 }
-MVSA.Survivor = {
-    [1] = {"models/half-dead/metroll/a1b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [2] = {"models/half-dead/metroll/a2b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [3] = {"models/half-dead/metroll/a3b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [4] = {"models/half-dead/metroll/a4b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [5] = {"models/half-dead/metroll/a5b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [6] = {"models/half-dead/metroll/a6b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [7] = {"models/half-dead/metroll/f1b1.mdl", {0,1,3}, {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
-    [8] = {"models/half-dead/metroll/f2b1.mdl", {0,1,3}, {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
-    [9] = {"models/half-dead/metroll/f4b1.mdl", {0,1,3}, {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
-    [10] = {"models/half-dead/metroll/f6b1.mdl", {0,1,3}, {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
-    [11] = {"models/half-dead/metroll/m1b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [12] = {"models/half-dead/metroll/m2b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [13] = {"models/half-dead/metroll/m3b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [14] = {"models/half-dead/metroll/m4b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [15] = {"models/half-dead/metroll/m5b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [16] = {"models/half-dead/metroll/m6b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [17] = {"models/half-dead/metroll/m7b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [18] = {"models/half-dead/metroll/m8b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}},
-    [19] = {"models/half-dead/metroll/m9b1.mdl", {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}}
+PlayerModels.Survivor = {
+    [1] = {
+        model = "models/half-dead/metroll/a1b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [2] = {
+        model = "models/half-dead/metroll/a2b1.mdl",
+        skins = {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [3] = {
+        model = "models/half-dead/metroll/a3b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [4] = {
+        model = "models/half-dead/metroll/a4b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [5] = {
+        model = "models/half-dead/metroll/a5b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [6] = {
+        model = "models/half-dead/metroll/a6b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [7] = {
+        model = "models/half-dead/metroll/f1b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
+    [8] = {
+        model = "models/half-dead/metroll/f2b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [9] = {
+        model = "models/half-dead/metroll/f4b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [10] = {
+        model = "models/half-dead/metroll/f6b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
+    [11] = {
+        model = "models/half-dead/metroll/m1b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [12] = {
+        model = "models/half-dead/metroll/m2b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [13] = {
+        model = "models/half-dead/metroll/m3b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [14] = {
+        model = "models/half-dead/metroll/m4b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [15] = {
+        model = "models/half-dead/metroll/m5b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [16] = {
+        model = "models/half-dead/metroll/m6b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [17] = {
+        model = "models/half-dead/metroll/m7b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [18] = {
+        model = "models/half-dead/metroll/m8b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    },
+    [19] = {
+        model = "models/half-dead/metroll/m9b1.mdl",
+        skins = {0,1,3},
+        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+    }
 }
 
-MVSA.EntList = {
-    [0] = {nil, "vgui/null.vmt", "null"}, -- no item slot
-    [1] = {nil, "vgui/null.vmt", "null"}, -- empty item slot
-    [2] = {"ent_gasmask", "icon64/gasmask.png"},
-    [3] = {"ent_usmc_pant", "icon64/usmc_pant.png"},
-    [4] = {"ent_usmc_jacket", "icon64/usmc_jacket.png"},
-    [5] = {"ent_usmc_vest1", "icon64/usmc_vest1.png"},
-    [6] = {"ent_usmc_helmet", "icon64/usmc_helmet.png"},
-    [7] = {"ent_nvg", "icon64/nvg.png"},
-    [8] = {"ent_usmc_rucksack", "icon64/usmc_rucksack.png"},
-    [9] = {"ent_m4a1", "vgui/hud/m9k_m4a1.vmt", "m9k_m4a1"},
-    [10] = {"ent_m92beretta", "vgui/hud/m9k_m92beretta.vmt", "m9k_m92beretta"},
-    [11] = {"ent_matador", "vgui/hud/m9k_matador.vmt", "m9k_matador"},
-    [12] = {"ent_556_ammobox", "vgui/hud/m9k_matador.vmt"},
-    [13] = {"ent_buckshot_ammobox", "vgui/hud/m9k_matador.vmt"},
-    [14] = {"ent_9mm_ammobox", "vgui/hud/m9k_matador.vmt"}
+EntList = {
+    [0] = {
+        className = nil,
+        icon = "vgui/null.vmt",
+    }, -- no item slot
+    [1] = {
+        className = nil,
+        icon = "vgui/null.vmt"
+    }, -- empty item slot
+    [2] = {
+        className = "ent_gasmask",
+        icon = "icon64/gasmask.png"
+    },
+    [3] = {
+        className = "ent_usmc_pant",
+        icon = "icon64/usmc_pant.png"
+    },
+    [4] = {
+        className = "ent_usmc_jacket",
+        icon = "icon64/usmc_jacket.png"
+    },
+    [5] = {
+        className = "ent_usmc_vest1",
+        icon = "icon64/usmc_vest1.png"
+    },
+    [6] = {
+        className = "ent_usmc_helmet",
+        icon = "icon64/usmc_helmet.png"
+    },
+    [7] = {
+        className = "ent_nvg",
+        icon = "icon64/nvg.png"
+    },
+    [8] = {
+        className = "ent_usmc_rucksack",
+        icon = "icon64/usmc_rucksack.png"
+    },
+    [9] = {
+        className = "ent_m4a1",
+        icon = "vgui/hud/m9k_m4a1.vmt",
+        wep = "m9k_m4a1",
+        ammo = "5.56×45mm NATO"
+    },
+    [10] = {
+        className = "ent_m92beretta",
+        icon = "vgui/hud/m9k_m92beretta.vmt",
+        wep = "m9k_m92beretta",
+        ammo = "9×19mm Parabellum"
+    },
+    [11] = {
+        className = "ent_matador",
+        icon = "vgui/hud/m9k_matador.vmt",
+        wep = "m9k_matador",
+        ammo = "90mm HESH"
+    },
+    [12] = {
+        className = "ent_556_ammobox",
+        ammoName = "5.56×45mm NATO",
+        capacity = 30
+    },
+    [13] = {
+        className = "ent_9mm_ammobox",
+        ammoName = "9×19mm Parabellum",
+        capacity = 60
+    }
 }
 
-MVSA.AmmoList = {
-    [1] = {12, 30},
-    [7] = {13, 16},
-    [3] = {14, 60}
+AmmoList = {
+    [1] = {
+        ammoName = "5.56×45mm NATO",
+        entID = 12-- not the ammoID, the entity in this example is ent_556_ammobox
+    },
+    [2] = {
+        ammoName = "9×19mm Parabellum",
+        entID = 14
+    },
+    [3] = {
+        ammoName = "7.62×39mm",
+        entID = 15
+    }
 }
 -- character size
-MVSA.minSize = 165
-MVSA.maxSize = 210
+minSize = 165
+maxSize = 210
 
-MVSA.FirstName = {
+FirstName = {
     [1] = "Noah",
     [2] = "Liam",
     [3] = "Jacob",
@@ -106,7 +238,7 @@ MVSA.FirstName = {
     [40] = "Jack"
 }
 
-MVSA.LastName = {
+LastName = {
     [1] = "Smith",
     [2] = "Johnson",
     [3] = "Williams",
