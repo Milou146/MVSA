@@ -9,6 +9,8 @@ AddCSLuaFile("panel/mvsa_panel.lua")
 
 include("sv_commands.lua")
 include("sv_gasmask.lua")
+include("sv_npc_spawn_system.lua")
+include("sv_loot_system.lua")
 include("shared.lua")
 
 util.AddNetworkString("CharacterCreation")
@@ -32,7 +34,15 @@ function SaveInventoryData(ply)
     sql.Query("UPDATE mvsa_characters SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
 end
 
-function AmmoBoxPickup(ply, ent)
+function SaveBodyGroupsData(ply)
+    local BodyGroups = tostring(ply:GetBodygroup(0))
+    for k = 1,ply:GetNumBodyGroups() - 1 do
+        BodyGroups = BodyGroups .. "," .. tostring(ply:GetBodygroup(k))
+    end
+    sql.Query("UPDATE mvsa_characters SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+end
+
+function PickupAmmoBox(ply, ent)
     local taken = false
     for k = 1,20 do
         if ply:GetNWInt("Inventory" .. tostring(k)) == ent.ID and ply:GetNWInt("AmmoBox" .. tostring(k)) < EntList[ent.ID].capacity and ent.AmmoCount > 0 then
@@ -57,38 +67,44 @@ function AmmoBoxPickup(ply, ent)
     if taken then
         SaveInventoryData(ply)
         ent:Remove()
+        LootCount = LootCount - 1
     elseif CurTime() > ent.Delay then
         ent.Delay = CurTime() + 2
         ply:ChatPrint("You are full!")
     end
 end
 
-function ContainerPickup( ply, ent )
-    if ply:GetNWInt( ent.Category ) < 2 then
-        ply:SetNWInt( ent.Category, ent.ID )
-        ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][2])
-        sql.Query("UPDATE mvsa_characters SET Pant = 3 WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
-        local BodyGroups = tostring(ply:GetBodygroup(0))
-        for k = 1,ply:GetNumBodyGroups() - 1 do
-            BodyGroups = BodyGroups .. "," .. tostring(ply:GetBodygroup(k))
-        end
-        sql.Query("UPDATE mvsa_characters SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
-        local Inventory = {}
-        for k = 1,20 do
-            Inventory[k] = ply:GetNWInt("Inventory" .. tostring(k))
-        end
-        for k = ent.StartingIndex ,ent.StartingIndex + ent.Capacity - 1 do
-            Inventory[k] = ent["Slot" .. tostring(k)]
-            ply:SetNWInt("Inventory" .. tostring(k), ent["Slot" .. tostring(k)])
-            if EntList[ent["Slot" .. tostring(k)]].ammoName then
-                ply:GiveAmmo( ent["Slot" .. tostring(k) .. "AmmoCount"], EntList[ent["Slot" .. tostring(k)]].ammoName )
-                ply:SetNWint("AmmoBox" .. tostring(k), ent["Slot" .. tostring(k) .. "AmmoCount"])
-            end
-        end
-        Inventory = table.concat(Inventory, ",")
-        sql.Query("UPDATE mvsa_characters SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
-        ent:Remove()
+function PickupContainer( ply, ent )
+    ply:SetNWInt( ent.Category, ent.ID )
+    sql.Query("UPDATE mvsa_characters SET " .. ent.Category .. " = " .. tostring(ent.ID) .. " WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+    ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][2])
+    SaveBodyGroupsData(ply)
+    local Inventory = {}
+    for k = 1,20 do
+        Inventory[k] = ply:GetNWInt("Inventory" .. tostring(k))
     end
+    for k = ent.StartingIndex ,ent.StartingIndex + ent.Capacity - 1 do
+        Inventory[k] = ent["Slot" .. tostring(k)]
+        ply:SetNWInt("Inventory" .. tostring(k), ent["Slot" .. tostring(k)])
+        if EntList[ent["Slot" .. tostring(k)]].ammoName then
+            ply:GiveAmmo( ent["Slot" .. tostring(k) .. "AmmoCount"], EntList[ent["Slot" .. tostring(k)]].ammoName )
+            ply:SetNWint("AmmoBox" .. tostring(k), ent["Slot" .. tostring(k) .. "AmmoCount"])
+        end
+    end
+    Inventory = table.concat(Inventory, ",")
+    sql.Query("UPDATE mvsa_characters SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+    ent:Remove()
+end
+
+function PickupWep(ply, ent)
+    local wep = ents.Create( ent.WepName )
+    wep.Primary.DefaultClip = wep.Primary.ClipSize
+    wep.Primary.Ammo = ent.Ammo
+    ply:PickupWeapon(wep)
+    wep:SetClip1( ent.PreviousMag or wep.Primary.ClipSize )
+    ply:SetNWInt( ent.Category, ent.ID )
+    sql.Query("UPDATE mvsa_characters SET " .. ent.Category .. " = " .. tostring(ent.ID) .. " WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+    ent:Remove()
 end
 
 local function CheckData(ply)
@@ -248,7 +264,7 @@ net.Receive("CharacterSelected", function(len, ply)
     ply.BodyGroups = string.Split(Character.BodyGroups, ",")
     ply:SetNWInt("GasMask", tonumber(Character.GasMask))
     if ply:GetNWInt("GasMask") > 1 then
-        ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1] + 1] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][3] -- this is meant to remove the gasmask bodygroup at spawn if the player was wearing a gasmask the last time he disconnected
+        ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1] + 1] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[3] -- this is meant to remove the gasmask bodygroup at spawn if the player was wearing a gasmask the last time he disconnected
     end
     ply:SetNWBool( "GasMaskSet", false )
     ply:SetNWInt( "PrimaryWep", tonumber(Character.PrimaryWep) )
@@ -332,11 +348,7 @@ net.Receive("DropRequest", function(len, ply)
     end
     if net.ReadBool() then
         ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
-        local BodyGroups = tostring(ply:GetBodygroup(0))
-        for k = 1,ply:GetNumBodyGroups() - 1 do
-            BodyGroups = BodyGroups .. "," .. tostring(ply:GetBodygroup(k))
-        end
-        sql.Query("UPDATE mvsa_characters SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+        SaveBodyGroupsData(ply)
     end
     if ent.AmmoCount then
         ent.AmmoCount = net.ReadUInt(9)
@@ -423,11 +435,7 @@ local function DropGear(ply, category)
     ply:SetNWInt(category, 1)
     sql.Query("UPDATE mvsa_characters SET " .. category .. " = 1 WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
     ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
-    local BodyGroups = tostring(ply:GetBodygroup(0))
-    for k = 1,ply:GetNumBodyGroups() - 1 do
-        BodyGroups = BodyGroups .. "," .. tostring(ply:GetBodygroup(k))
-    end
-    sql.Query("UPDATE mvsa_characters SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+    SaveBodyGroupsData(ply)
     ent:Spawn()
     ent:SetPos( ply:EyePos() - Vector(0,0,10) )
     return ent
@@ -454,4 +462,18 @@ function GM:PlayerDeath( ply, inflictor, attacker )
     end
     net.Start("Death")
     net.Send(ply)
+end
+
+function GM:Think()
+    NPCSpawnSystem()
+    LootSpawnSystem()
+end
+
+function GM:OnNPCKilled( npc, attacker, inflictor )
+    NPCCount = NPCCount - 1
+end
+
+function GM:PostCleanupMap()
+    NPCCount = 0
+    LootCount = 0
 end

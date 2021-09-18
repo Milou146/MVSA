@@ -6,6 +6,7 @@ ENT.Delay = 0
 ENT.ID = 13
 
 function ENT:Initialize()
+    LootCount = LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -14,5 +15,5 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    AmmoBoxPickup(activator, self)
+    PickupAmmoBox(activator, self)
 end

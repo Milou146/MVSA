@@ -13,8 +13,11 @@ ENT.Slot17 = 1
 ENT.Slot18 = 1
 ENT.Slot19 = 1
 ENT.Slot20 = 1
+ENT.Category = "Rucksack"
+ENT.ID = 8
 
 function ENT:Initialize()
+    LootCount = LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -23,29 +26,8 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "Rucksack" ) < 2 then
-        activator:SetNWInt( "Rucksack", 8 )
-        activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
-        sql.Query("UPDATE mvsa_characters SET Rucksack = 8 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-        local BodyGroups = tostring(activator:GetBodygroup(0))
-        for k = 1,activator:GetNumBodyGroups() - 1 do
-            BodyGroups = BodyGroups .. "," .. tostring(activator:GetBodygroup(k))
-        end
-        sql.Query("UPDATE mvsa_characters SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-        local Inventory = {}
-        for k = 1,10 do
-            Inventory[k] = activator:GetNWInt("Inventory" .. tostring(k))
-        end
-        for k = 11,20 do
-            Inventory[k] = self["Slot" .. tostring(k)]
-            activator:SetNWInt("Inventory" .. tostring(k), self["Slot" .. tostring(k)])
-            if EntList[self["Slot" .. tostring(k)]].ammoName then
-                activator:GiveAmmo( self["Slot" .. tostring(k) .. "AmmoCount"], EntList[self["Slot" .. tostring(k)]].ammoName )
-                activator:SetNWInt("AmmoBox" .. tostring(k), self["Slot" .. tostring(k) .. "AmmoCount"])
-            end
-        end
-        Inventory = table.concat(Inventory, ",")
-        sql.Query("UPDATE mvsa_characters SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-        self:Remove()
+    if activator:GetNWInt( self.Category ) < 2 then
+        LootCount = LootCount - 1
+        PickupContainer( activator, self )
     end
 end

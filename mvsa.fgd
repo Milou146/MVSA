@@ -9,3 +9,13 @@
 	"The spawn point of the survivors"
 [
 ]
+
+@PointClass base(PlayerClass, Angles) iconsprite("editor/zombiespawn.vmt") = info_zombie_spawn :
+	"The spawn point of NPCs"
+[
+]
+
+@PointClass base(PlayerClass, Angles) iconsprite("editor/lootspawn.vmt") = info_loot_spawn :
+	"The spawn point of NPCs"
+[
+]

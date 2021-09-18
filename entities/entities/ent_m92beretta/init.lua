@@ -3,6 +3,7 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
+    LootCount = LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -12,6 +13,7 @@ end
 
 function ENT:Use(activator, caller, useType, value)
     if activator:GetNWInt( "SecondaryWep" ) < 2 then
+        LootCount = LootCount - 1
         local ent = ents.Create( "m9k_m92beretta" )
         ent.Primary.DefaultClip = ent.Primary.ClipSize
         ent.Primary.Ammo = "9×19mm Parabellum"

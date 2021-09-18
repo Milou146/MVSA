@@ -2,23 +2,24 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
+ENT.Category = "PrimaryWep"
+ENT.WepName = "m9k_m4a1"
+ENT.Ammo = "5.56×45mm NATO"
+ENT.ID = 9
+
 function ENT:Initialize()
+    LootCount = LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
     self:PhysicsInit(SOLID_VPHYSICS)
+    self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
     self:PhysWake()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "PrimaryWep" ) < 2 then
-        local ent = ents.Create( "m9k_m4a1" )
-        ent.Primary.DefaultClip = ent.Primary.ClipSize
-        ent.Primary.Ammo = "5.56×45mm NATO"
-        activator:PickupWeapon(ent)
-        ent:SetClip1( self.PreviousMag or ent.Primary.ClipSize )
-        activator:SetNWInt( "PrimaryWep", 9 )
-        sql.Query("UPDATE mvsa_characters SET PrimaryWep = 9 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-        self:Remove()
+    if activator:GetNWInt( self.Category ) < 2 then
+        LootCount = LootCount - 1
+        PickupWep(activator, self)
     end
 end

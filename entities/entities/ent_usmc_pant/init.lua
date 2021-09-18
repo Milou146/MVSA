@@ -9,6 +9,7 @@ ENT.Category = "Pant"
 ENT.ID = 3
 
 function ENT:Initialize()
+    LootCount = LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -17,5 +18,8 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    ContainerPickup( activator, self )
+    if activator:GetNWInt( self.Category ) < 2 then
+        LootCount = LootCount - 1
+        PickupContainer( activator, self )
+    end
 end

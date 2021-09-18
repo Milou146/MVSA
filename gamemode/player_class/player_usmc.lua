@@ -55,7 +55,9 @@ end
 -- Ret1:
 --
 function PLAYER:Loadout()
-	ContainerPickup( self.Player, ents.Create("ent_usmc_pant") )
+	if self.Player:GetNWInt( "Pant" ) > 2 then
+		PickupContainer( self.Player, ents.Create("ent_usmc_pant") )
+	end
 end
 
 function PLAYER:SetModel()

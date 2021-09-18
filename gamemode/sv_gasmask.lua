@@ -16,14 +16,14 @@ concommand.Add("gasmask_toggle", function(ply)
                 net.Start("GASMASK_RequestToggle")
                 net.WriteBool(false)
                 net.Send(ply)
-                ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][3])
+                ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[3])
                 ply:ConCommand("cl_set_gasmask 0")
             else
                 ply:SetNWBool("GasMaskSet", true)
                 net.Start("GASMASK_RequestToggle")
                 net.WriteBool(true)
                 net.Send(ply)
-                ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][4][2])
+                ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[2])
                 ply:ConCommand("cl_set_gasmask 1")
             end
 

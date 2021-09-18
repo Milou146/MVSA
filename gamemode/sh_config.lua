@@ -174,6 +174,24 @@ EntList = {
         className = "ent_9mm_ammobox",
         ammoName = "9×19mm Parabellum",
         capacity = 60
+    },
+    [14] = {
+        className = "ent_acr",
+        icon = "vgui/hud/m9k_acr.vmt",
+        wep = "m9k_acr",
+        ammo = "5.56×45mm NATO"
+    },
+    [15] = {
+        className = "ent_ak47",
+        icon = "vgui/hud/m9k_ak47.vmt",
+        wep = "m9k_ak47",
+        ammo = "7.62×39mm M43"
+    },
+    [16] = {
+        className = "ent_ak74",
+        icon = "vgui/hud/m9k_ak74.vmt",
+        wep = "m9k_ak74",
+        ammo = "5.45x39mm M74"
     }
 }
 
@@ -184,12 +202,69 @@ AmmoList = {
     },
     [2] = {
         ammoName = "9×19mm Parabellum",
-        entID = 14
+        entID = 13
     },
     [3] = {
-        ammoName = "7.62×39mm",
-        entID = 15
+        ammoName = "7.62×39mm M43",
+        entID = 12
+    },
+    [4] = {
+        ammoName = "5.45x39mm M74",
+        entID = 12
     }
+}
+
+NPCList = {
+    "npc_vj_zss_zombie1",
+    "npc_vj_zss_zombie2",
+    "npc_vj_zss_zombie3",
+    "npc_vj_zss_zombie4",
+    "npc_vj_zss_zombie5",
+    "npc_vj_zss_zombie6",
+    "npc_vj_zss_zombie7",
+    "npc_vj_zss_zombie8",
+    "npc_vj_zss_zombie9",
+    "npc_vj_zss_zombie10",
+    "npc_vj_zss_zombie11",
+    "npc_vj_zss_zombie12",
+    "npc_vj_zss_zombfast1",
+    "npc_vj_zss_zombfast2",
+    "npc_vj_zss_zombfast3",
+    "npc_vj_zss_zombfast4",
+    "npc_vj_zss_zombfast5",
+    "npc_vj_zss_zombfast6",
+    "npc_vj_zss_cfastzombie",
+    "npc_vj_zss_burnzie",
+    "npc_vj_zss_cpzombie",
+    "npc_vj_zss_czombie",
+    "npc_vj_zss_czombietors",
+    "npc_vj_zss_draggy",
+    "npc_vj_zss_zhulk",
+    "npc_vj_zss_zboss",
+    "npc_vj_zss_zminiboss",
+    "npc_vj_zss_zombguard",
+    "npc_vj_zss_undeadstalker",
+    "npc_vj_zss_zp1",
+    "npc_vj_zss_zp2",
+    "npc_vj_zss_zp3",
+    "npc_vj_zss_zp4"
+}
+
+LootList = {
+    "ent_556_ammobox",
+    "ent_556_ammobox",
+    "ent_556_ammobox",
+    "ent_556_ammobox",
+    "ent_556_ammobox",
+    "ent_556_ammobox",
+    "ent_9mm_ammobox",
+    "ent_9mm_ammobox",
+    "ent_9mm_ammobox",
+    "ent_9mm_ammobox",
+    "ent_ak47",
+    "ent_m92beretta",
+    "ent_usmc_rucksack",
+    "ent_usmc_helmet",
 }
 -- character size
 minSize = 165

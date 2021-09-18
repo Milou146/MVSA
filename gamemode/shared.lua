@@ -51,8 +51,5 @@ function GM:Initialize()
 	} )
 end
 
-function GM:Think()
-end
-
 function GM:InitPostEntity()
 end
