@@ -151,12 +151,12 @@ EntList = {
         ammo = "90mm HESH"
     },
     [12] = {
-        className = "ent_556_ammobox",
+        className = "ent_ammobox_556mm",
         ammoName = "5.56×45mm NATO",
         capacity = 30
     },
     [13] = {
-        className = "ent_9mm_ammobox",
+        className = "ent_ammobox_9mm",
         ammoName = "9×19mm Parabellum",
         capacity = 60
     },
