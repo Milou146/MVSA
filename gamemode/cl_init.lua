@@ -119,28 +119,23 @@ local function character_creation( ply )
             end
 
             for i = 1, Model.Entity:GetNumBodyGroups() do
-                if istable(PlayerModels[Faction][ModelIndex].bodygroups[i]) then
-                    local lentgh = #PlayerModels[Faction][ModelIndex].bodygroups[i]
-                    BodygroupSlider = vgui.Create( "DNumSlider", ScrollPanel )
-                    BodygroupSlider:Dock( TOP )				-- Set the position
-                    BodygroupSlider:DockMargin(0, 0, 0, 0)
-                    BodygroupSlider:SetSize( 300, 30 )			-- Set the size
-                    BodygroupSlider:SetText( Model.Entity:GetBodygroupName(i - 1) )	-- Set the text above the slider
-                    BodygroupSlider:SetMin( 1 )				 	-- Set the minimum number you can slide to
-                    BodygroupSlider:SetMax(lentgh)
-                    BodygroupSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
-                    BodygroupSlider:SetValue(math.random(1, lentgh))
-                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][BodygroupSlider:GetValue()])
-                    BodygroupSlider.OnValueChanged = function( self )
-                        -- Called when the slider value changes
-                        local val = math.Round(self:GetValue(), 0)
-                        Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][val])
-                    end
-                else
-                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i])
+                local lentgh = #PlayerModels[Faction][ModelIndex].bodygroups[i]
+                BodygroupSlider = vgui.Create( "DNumSlider", ScrollPanel )
+                BodygroupSlider:Dock( TOP )				-- Set the position
+                BodygroupSlider:DockMargin(0, 0, 0, 0)
+                BodygroupSlider:SetSize( 300, 30 )			-- Set the size
+                BodygroupSlider:SetText( Model.Entity:GetBodygroupName(i - 1) )	-- Set the text above the slider
+                BodygroupSlider:SetMin( 1 )				 	-- Set the minimum number you can slide to
+                BodygroupSlider:SetMax(lentgh)
+                BodygroupSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
+                BodygroupSlider:SetValue(math.random(1, lentgh))
+                Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][BodygroupSlider:GetValue()])
+                BodygroupSlider.OnValueChanged = function( self )
+                    -- Called when the slider value changes
+                    local val = math.Round(self:GetValue(), 0)
+                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][val])
                 end
             end
-
         end
 
         local modelCount = #PlayerModels[Faction]
