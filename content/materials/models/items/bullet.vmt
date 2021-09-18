@@ -1,5 +1,4 @@
-"VertexlitGeneric"
+VertexlitGeneric
 {
-	"$basetexture" "models/items/bullet"
-	"$translucent" 1
+	$basetexture models/items/bullet
 }
