@@ -55,7 +55,7 @@ end
 -- Ret1:
 --
 function PLAYER:Loadout()
-	if self.Player:GetNWInt( "Pant" ) > 2 then
+	if self.Player:GetNWInt( "Pant" ) < 2 then
 		PickupContainer( self.Player, ents.Create("ent_usmc_pant") )
 	end
 end
