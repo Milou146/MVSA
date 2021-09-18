@@ -77,7 +77,6 @@ end
 function PickupContainer( ply, ent )
     ply:SetNWInt( ent.Category, ent.ID )
     sql.Query("UPDATE mvsa_characters SET " .. ent.Category .. " = " .. tostring(ent.ID) .. " WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
-    print(ply:GetNWString("Faction"))
     ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][2])
     SaveBodyGroupsData(ply)
     local Inventory = {}
