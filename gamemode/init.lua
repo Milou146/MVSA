@@ -88,7 +88,7 @@ function PickupContainer( ply, ent )
         ply:SetNWInt("Inventory" .. tostring(k), ent["Slot" .. tostring(k)])
         if EntList[ent["Slot" .. tostring(k)]].ammoName then
             ply:GiveAmmo( ent["Slot" .. tostring(k) .. "AmmoCount"], EntList[ent["Slot" .. tostring(k)]].ammoName )
-            ply:SetNWint("AmmoBox" .. tostring(k), ent["Slot" .. tostring(k) .. "AmmoCount"])
+            ply:SetNWInt("AmmoBox" .. tostring(k), ent["Slot" .. tostring(k) .. "AmmoCount"])
         end
     end
     Inventory = table.concat(Inventory, ",")
@@ -429,6 +429,9 @@ local function DropGear(ply, category)
     if ent.Capacity then
         for k = ent.StartingIndex,ent.StartingIndex + ent.Capacity do
             ent["Slot" .. tostring(k)] = ply:GetNWInt("Inventory" .. tostring(k))
+            if EntList[ply:GetNWInt("Inventory" .. tostring(k))].ammoName then
+                ent["Slot" .. tostring(k) .. "AmmoCount"] = ply:GetNWInt("AmmoBox" .. tostring(k))
+            end
             ply:SetNWInt("Inventory" .. tostring(k), 1)
         end
     end
@@ -438,7 +441,6 @@ local function DropGear(ply, category)
     SaveBodyGroupsData(ply)
     ent:Spawn()
     ent:SetPos( ply:EyePos() - Vector(0,0,10) )
-    return ent
 end
 
 function GM:PlayerDeath( ply, inflictor, attacker )
