@@ -1,4 +1,4 @@
-"VertexlitGeneric"
+VertexlitGeneric
 {
-	"$basetexture" "models/items/ammobox"
+	$basetexture models/items/ammobox
 }
