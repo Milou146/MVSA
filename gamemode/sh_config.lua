@@ -17,96 +17,81 @@ PlayerModels.USMC = {
 }
 PlayerModels.Survivor = {
     [1] = {
-        model = "models/half-dead/metroll/a1b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/male_01.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [2] = {
-        model = "models/half-dead/metroll/a2b1.mdl",
-        skins = {0,1,3}, {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/male_03.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [3] = {
-        model = "models/half-dead/metroll/a3b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/male_04.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [4] = {
-        model = "models/half-dead/metroll/a4b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/male_05.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [5] = {
-        model = "models/half-dead/metroll/a5b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/male_06.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [6] = {
-        model = "models/half-dead/metroll/a6b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/male_07.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [7] = {
-        model = "models/half-dead/metroll/f1b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
+        model = "models/survivors/group02/male_08.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
+    },
     [8] = {
-        model = "models/half-dead/metroll/f2b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/male_09.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [9] = {
-        model = "models/half-dead/metroll/f4b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/female_01.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     },
     [10] = {
-        model = "models/half-dead/metroll/f6b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{0,1,2},{0,1,4,5,6,7},{0,1,2}}},
+        model = "models/survivors/group02/female_02.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
+    },
     [11] = {
-        model = "models/half-dead/metroll/m1b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [12] = {
-        model = "models/half-dead/metroll/m2b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [13] = {
-        model = "models/half-dead/metroll/m3b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [14] = {
-        model = "models/half-dead/metroll/m4b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [15] = {
-        model = "models/half-dead/metroll/m5b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [16] = {
-        model = "models/half-dead/metroll/m6b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [17] = {
-        model = "models/half-dead/metroll/m7b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [18] = {
-        model = "models/half-dead/metroll/m8b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
-    },
-    [19] = {
-        model = "models/half-dead/metroll/m9b1.mdl",
-        skins = {0,1,3},
-        bodygroups = {0,{1,2,3,4,5},{0,1,2,3,4,5},{0,1,4,5,6,7},{0,1,2}}
+        model = "models/survivors/group02/female_07.mdl",
+        skins = {0},
+        bodygroups = {0,0,0,0,0,0,0},
+        gasmask_bodygroup = {6,2,1},
+        nvg_bodygroup = {5,9,10}
     }
 }
 

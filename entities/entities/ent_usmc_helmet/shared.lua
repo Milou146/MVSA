@@ -7,3 +7,7 @@ ENT.BodyGroup.USMC = {
     [1] = {13,1,0},
     [2] = {13,1,0}
 }
+ENT.BodyGroup.Survivors = {
+    [1] = {3,1,0},
+    [2] = {3,1,0}
+}
