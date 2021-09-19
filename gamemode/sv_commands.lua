@@ -25,3 +25,15 @@ concommand.Add("removedecals", function( ply, cmd, args )
         ply:ChatPrint("You have to be admin")
     end
 end)
+
+concommand.Add("removeragdolls", function( ply, cmd, args )
+    if ply:GetUserGroup() ==  "admin" or "superadmin" then
+        for k, ent in ipairs( ents.GetAll() ) do
+            if ent:IsRagdoll() then
+                ent:Remove()
+            end
+        end
+    else
+        ply:ChatPrint("You have to be admin")
+    end
+end)

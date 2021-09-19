@@ -11,6 +11,7 @@ include("sv_commands.lua")
 include("sv_gasmask.lua")
 include("sv_npc_spawn_system.lua")
 include("sv_loot_system.lua")
+include("sv_autocleanup.lua")
 include("shared.lua")
 
 util.AddNetworkString("CharacterCreation")
@@ -417,6 +418,7 @@ end
 function GM:Think()
     NPCSpawnSystem()
     LootSpawnSystem()
+    AutoCleanup()
 end
 
 function GM:OnNPCKilled( npc, attacker, inflictor )
