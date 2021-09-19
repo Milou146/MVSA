@@ -24,6 +24,10 @@ net.Receive("GASMASK_RequestToggle", function()
     local state = net.ReadBool()
 
     if state then
+        if InventoryPanel and InventoryPanel:IsValid() then
+            GasMask:SetAlpha(255)
+            PlayerModel.Entity:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[2])
+        end
         ply:GASMASK_PlayAnim("draw")
         ply:EmitSound("GASMASK_DrawHolster")
 
@@ -44,6 +48,10 @@ net.Receive("GASMASK_RequestToggle", function()
             ply:GASMASK_PlayAnim("idle_on")
         end)
     else
+        if InventoryPanel and InventoryPanel:IsValid() then
+            GasMask:SetAlpha(150)
+            PlayerModel.Entity:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[3])
+        end
         ply:GASMASK_PlayAnim("take_off")
         ply:EmitSound("GASMASK_OnOff")
 
@@ -204,16 +212,6 @@ hook.Add("PostDrawTranslucentRenderables", "GASMASK_ThirdPersonMaskThink", funct
 
         if ply:Alive() then
             mask:DrawModel()
-        end
-    end
-end)
-
-concommand.Add( "cl_set_gasmask", function( ply, cmd, args )
-    if InventoryPanel ~= nil then
-        if args[1] == "1" then
-            UpdateClientMask(255)
-        elseif args[1] == "0" then
-            UpdateClientMask(100)
         end
     end
 end)

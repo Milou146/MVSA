@@ -2,6 +2,7 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("cl_inventory.lua")
 AddCSLuaFile("cl_gasmask.lua")
 AddCSLuaFile("cl_hud.lua")
+AddCSLuaFile("cl_nvg.lua")
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("sh_config.lua")
 AddCSLuaFile("sh_gasmask.lua")
@@ -21,6 +22,8 @@ util.AddNetworkString("CharacterSelected")
 util.AddNetworkString("CharacterInformation")
 util.AddNetworkString("DropRequest")
 util.AddNetworkString("UseRequest")
+util.AddNetworkString("NVGPutOn")
+util.AddNetworkString("NVGPutOff")
 
 sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60), Ammo VARCHAR(120) )")
 
@@ -248,10 +251,6 @@ net.Receive("CharacterSelected", function(len, ply)
     ply.Size = tonumber(Character.Size)
     ply.Skin = tonumber(Character.Skin)
     ply.BodyGroups = string.Split(Character.BodyGroups, ",")
-    ply:SetNWInt("GasMask", tonumber(Character.GasMask))
-    if ply:GetNWInt("GasMask") > 1 then
-        ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1] + 1] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[3] -- this is meant to remove the gasmask bodygroup at spawn if the player was wearing a gasmask the last time he disconnected
-    end
     ply:SetNWBool( "GasMaskSet", false )
     ply:SetNWInt( "PrimaryWep", tonumber(Character.PrimaryWep) )
     ply.PrimaryWepAmmo = tonumber(Character.PrimaryWepAmmo)
@@ -264,8 +263,14 @@ net.Receive("CharacterSelected", function(len, ply)
     ply:SetNWInt( "Vest", tonumber(Character.Vest) )
     ply:SetNWInt( "Rucksack", tonumber(Character.Rucksack) )
     ply:SetNWInt( "GasMask", tonumber(Character.GasMask) )
+    if ply:GetNWInt("GasMask") > 1 then
+        ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1] + 1] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[3] -- this is meant to remove the gasmask bodygroup at spawn if the player was wearing a gasmask the last time he disconnected
+    end
     ply:SetNWInt( "Helmet", tonumber(Character.Helmet) )
     ply:SetNWInt( "NVG", tonumber(Character.NVG) )
+    if ply:GetNWInt("NVG") > 1 then
+        ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1]] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[2]
+    end
     ply.Ammo = string.Split(Character.Ammo, ",")
 
     Character.Inventory = string.Split(Character.Inventory, ",")
@@ -310,7 +315,6 @@ net.Receive("DropRequest", function(len, ply)
     local ent = ents.Create(net.ReadString())
     if ent.Capacity then
         for k = ent.StartingIndex,ent.StartingIndex + ent.Capacity - 1 do
-            print(ply:GetNWInt("Inventory" .. tostring(k)))
             ent["Slot" .. tostring(k)] = ply:GetNWInt("Inventory" .. tostring(k))
             if EntList[ply:GetNWInt("Inventory" .. tostring(k))].ammoName then
                 ent["Slot" .. tostring(k) .. "AmmoCount"] = ply:GetNWInt("AmmoBox" .. tostring(k))
@@ -338,7 +342,6 @@ net.Receive("DropRequest", function(len, ply)
     end
     if ent.AmmoCount then
         ent.AmmoCount = net.ReadUInt(9)
-        print(tostring(ent.AmmoCount))
         ply:RemoveAmmo( ent.AmmoCount, net.ReadUInt(5) )
     end
     ent:Spawn()
@@ -432,3 +435,10 @@ end
 
 function GM:CreateEntityRagdoll( owner, ragdoll )
 end
+
+net.Receive("NVGPutOn", function(len, ply)
+    ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[3])
+end)
+net.Receive("NVGPutOff", function(len, ply)
+    ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[2])
+end)

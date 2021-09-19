@@ -1,5 +1,6 @@
 include( "cl_inventory.lua" )
 include( "cl_gasmask.lua" )
+include( "cl_nvg.lua" )
 include( "cl_hud.lua" )
 include( "shared.lua" )
 include( "sh_config.lua" )

@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "effects/nv_overlaytex"
+	"$translucent" 1
+}

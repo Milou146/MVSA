@@ -459,12 +459,3 @@ function GM:ScoreboardShow()
         end
     end
 end
-
-function UpdateClientMask( alpha )
-    if InventoryPanel:IsValid() then
-        GasMask:SetAlpha(alpha)
-        for k = 0,#ply:GetBodyGroups() - 1 do
-            PlayerModel.Entity:SetBodygroup(k, ply:GetBodygroup(k))
-        end
-    end
-end
