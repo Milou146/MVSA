@@ -50,6 +50,3 @@ function GM:Initialize()
 		maxsplash = 50
 	} )
 end
-
-function GM:InitPostEntity()
-end

@@ -99,41 +99,50 @@ local function character_creation( ply )
                 Size = math.Round(self:GetValue(), 0)
                 Model.Entity:SetModelScale(Size / 180)
             end
-            local skinCount = #PlayerModels[Faction][ModelIndex].skins
-            SkinSlider = vgui.Create( "DNumSlider", ScrollPanel )
-            SkinSlider:Dock( TOP )				-- Set the position
-            SkinSlider:DockMargin(0, 0, 0, 0)
-            SkinSlider:SetSize( 300, 30 )			-- Set the size
-            SkinSlider:SetText( "Skin" )	-- Set the text above the slider
-            SkinSlider:SetMin( 1 )				 	-- Set the minimum number you can slide to
-            SkinSlider:SetMax(skinCount)
-            SkinSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
-            SkinSlider:SetValue(math.random(1, skinCount))
-            Skin = PlayerModels[Faction][ModelIndex].skins[SkinSlider:GetValue()]
-            Model.Entity:SetSkin(Skin)
-            SkinSlider.OnValueChanged = function( self )
-                -- Called when the slider value changes
-                local val = math.Round(self:GetValue(), 0)
-                Skin = PlayerModels[Faction][ModelIndex].skins[val]
+            if istable(PlayerModels[Faction][ModelIndex].skins) then
+                local skinCount = #PlayerModels[Faction][ModelIndex].skins
+                SkinSlider = vgui.Create( "DNumSlider", ScrollPanel )
+                SkinSlider:Dock( TOP )				-- Set the position
+                SkinSlider:DockMargin(0, 0, 0, 0)
+                SkinSlider:SetSize( 300, 30 )			-- Set the size
+                SkinSlider:SetText( "Skin" )	-- Set the text above the slider
+                SkinSlider:SetMin( 1 )				 	-- Set the minimum number you can slide to
+                SkinSlider:SetMax(skinCount)
+                SkinSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
+                SkinSlider:SetValue(math.random(1, skinCount))
+                Skin = PlayerModels[Faction][ModelIndex].skins[SkinSlider:GetValue()]
                 Model.Entity:SetSkin(Skin)
+                SkinSlider.OnValueChanged = function( self )
+                    -- Called when the slider value changes
+                    local val = math.Round(self:GetValue(), 0)
+                    Skin = PlayerModels[Faction][ModelIndex].skins[val]
+                    Model.Entity:SetSkin(Skin)
+                end
+            else
+                Skin = PlayerModels[Faction][ModelIndex].skins
+                Model.Entity:SetSkin(PlayerModels[Faction][ModelIndex].skins)
             end
 
             for i = 1, Model.Entity:GetNumBodyGroups() do
-                local lentgh = #PlayerModels[Faction][ModelIndex].bodygroups[i]
-                BodygroupSlider = vgui.Create( "DNumSlider", ScrollPanel )
-                BodygroupSlider:Dock( TOP )				-- Set the position
-                BodygroupSlider:DockMargin(0, 0, 0, 0)
-                BodygroupSlider:SetSize( 300, 30 )			-- Set the size
-                BodygroupSlider:SetText( Model.Entity:GetBodygroupName(i - 1) )	-- Set the text above the slider
-                BodygroupSlider:SetMin( 1 )				 	-- Set the minimum number you can slide to
-                BodygroupSlider:SetMax(lentgh)
-                BodygroupSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
-                BodygroupSlider:SetValue(math.random(1, lentgh))
-                Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][BodygroupSlider:GetValue()])
-                BodygroupSlider.OnValueChanged = function( self )
-                    -- Called when the slider value changes
-                    local val = math.Round(self:GetValue(), 0)
-                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][val])
+                if istable(PlayerModels[Faction][ModelIndex].bodygroups[i]) then
+                    local lentgh = #PlayerModels[Faction][ModelIndex].bodygroups[i]
+                    BodygroupSlider = vgui.Create( "DNumSlider", ScrollPanel )
+                    BodygroupSlider:Dock( TOP )				-- Set the position
+                    BodygroupSlider:DockMargin(0, 0, 0, 0)
+                    BodygroupSlider:SetSize( 300, 30 )			-- Set the size
+                    BodygroupSlider:SetText( Model.Entity:GetBodygroupName(i - 1) )	-- Set the text above the slider
+                    BodygroupSlider:SetMin( 1 )				 	-- Set the minimum number you can slide to
+                    BodygroupSlider:SetMax(lentgh)
+                    BodygroupSlider:SetDecimals( 0 )				-- Decimal places - zero for whole number
+                    BodygroupSlider:SetValue(math.random(1, lentgh))
+                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][BodygroupSlider:GetValue()])
+                    BodygroupSlider.OnValueChanged = function( self )
+                        -- Called when the slider value changes
+                        local val = math.Round(self:GetValue(), 0)
+                        Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i][val])
+                    end
+                else
+                    Model.Entity:SetBodygroup(i - 1, PlayerModels[Faction][ModelIndex].bodygroups[i])
                 end
             end
         end
@@ -405,37 +414,6 @@ function GM:PostDrawViewModel(vm, ply, weapon)
     end
 end
 
-net.Receive("Death",
-function(len, ply)
-    local DeathPanel = vgui.Create( "EditablePanel" )
-    DeathPanel:SetSize( ScrW(), ScrH() )
-    DeathPanel:SetPos( 0, 0 )
-    DeathPanel.Paint = function( self, w, h )
-        draw.RoundedBox( 2, 0, 0, w, h, Color( 0, 0, 0, 200 ) )
-    end
-    DeathPanel:MakePopup( true )
-    DeathPanel:SetKeyboardInputEnabled( false )
-
-    DeathPanel.Label = vgui.Create( "Label", DeathPanel )
-    DeathPanel.Label:SetText("You are dead")
-    DeathPanel.Label:SizeToContents()
-    DeathPanel.Label:Center()
-
-    DeathPanel.KeepButton = vgui.Create( "DButton", DeathPanel )
-    DeathPanel.KeepButton:SetText("Keep my character")
-    DeathPanel.KeepButton:SizeToContents()
-    DeathPanel.KeepButton:SetPos( ScrW() / 2 - DeathPanel.KeepButton:GetWide() - ScrW() / 10, ScrH() * 2 / 3 )
-    DeathPanel.KeepButton.DoClick = function()
-        DeathPanel:Remove()
-    end
-
-    DeathPanel.DeleteButton = vgui.Create( "DButton", DeathPanel )
-    DeathPanel.DeleteButton:SetText("Delete my character")
-    DeathPanel.DeleteButton:SizeToContents()
-    DeathPanel.DeleteButton:SetPos( ScrW() / 2 + ScrW() / 10, ScrH() * 2 / 3 )
-    DeathPanel.DeleteButton.DoClick = function()
-        net.Start("DeleteCharacterAfterDeath")
-        net.SendToServer()
-        DeathPanel:Remove()
-    end
-end)
+function GM:CreateClientsideRagdoll( entity, ragdoll )
+    ragdoll:SetNoDraw(true)
+end

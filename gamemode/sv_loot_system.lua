@@ -1,5 +1,5 @@
 local SpawnDelay = 0
-local MinSpawnDistance = 2000
+local MinSpawnDistance = 3000
 local MaxSpawnDistance = 20000
 LootCount = 0
 local LootLimit = 30
@@ -7,7 +7,7 @@ local LootLimit = 30
 function LootSpawnSystem()
     if SpawnDelay < CurTime() and LootCount < LootLimit then
         SpawnDelay = CurTime() + 20
-        for k, v in pairs( team.GetPlayers( 0 ) ) do
+        for k, v in pairs( player.GetAll() ) do
             local PlayerPos = v:GetPos()
             for i, j in pairs( ents.FindByClass( "info_loot_spawn" ) ) do
                 if not j.ent or not j.ent:IsValid() then

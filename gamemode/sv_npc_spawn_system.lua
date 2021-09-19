@@ -1,5 +1,5 @@
 local SpawnDelay = 0
-local MinSpawnDistance = 2000
+local MinSpawnDistance = 3000
 local MaxSpawnDistance = 20000
 NPCCount = 0
 local NPCLimit = 30
@@ -7,7 +7,7 @@ local NPCLimit = 30
 function NPCSpawnSystem()
     if SpawnDelay < CurTime() and NPCCount < NPCLimit then
         SpawnDelay = CurTime() + 20
-        for k, v in pairs( team.GetPlayers( 0 ) ) do
+        for k, v in pairs( player.GetAll() ) do
             local PlayerPos = v:GetPos()
             for i, j in pairs( ents.FindByClass( "info_zombie_spawn" ) ) do
                 if not j.npc or not j.npc:IsValid() then

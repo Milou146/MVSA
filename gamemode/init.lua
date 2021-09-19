@@ -15,13 +15,11 @@ include("shared.lua")
 
 util.AddNetworkString("CharacterCreation")
 util.AddNetworkString("DeleteCharacter")
-util.AddNetworkString("DeleteCharacterAfterDeath")
 util.AddNetworkString("CharacterSelection")
 util.AddNetworkString("CharacterSelected")
 util.AddNetworkString("CharacterInformation")
 util.AddNetworkString("DropRequest")
 util.AddNetworkString("UseRequest")
-util.AddNetworkString("Death")
 
 sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60), Ammo VARCHAR(120) )")
 
@@ -132,52 +130,43 @@ end
 
 function RunEquipment(ply)
 
-    player_manager.RunClass( ply, "Loadout" )
     if ply:GetNWInt("PrimaryWep") > 1 then
         local ent = ents.Create(EntList[ply:GetNWInt("PrimaryWep")].wep)
         ent.Primary.DefaultClip = 0
-        ent.Primary.Ammo = EntList[ply:GetNWInt("PrimaryWep")].ammoName
+        ent.Primary.Ammo = EntList[ply:GetNWInt("PrimaryWep")].ammo
         ply:PickupWeapon(ent)
         ent:SetClip1( ply.PrimaryWepAmmo )
     end
     if ply:GetNWInt("SecondaryWep") > 1 then
         local ent = ents.Create(EntList[ply:GetNWInt("SecondaryWep")].wep)
         ent.Primary.DefaultClip = 0
-        ent.Primary.Ammo = EntList[ply:GetNWInt("SecondaryWep")].ammoName
+        ent.Primary.Ammo = EntList[ply:GetNWInt("SecondaryWep")].ammo
         ply:PickupWeapon(ent)
         ent:SetClip1( ply.SecondaryWepAmmo )
     end
     if ply:GetNWInt("Launcher") > 1 then
         local ent = ents.Create(EntList[ply:GetNWInt("Launcher")].wep)
         ent.Primary.DefaultClip = 0
-        ent.Primary.Ammo = EntList[ply:GetNWInt("Launcher")].ammoName
+        ent.Primary.Ammo = EntList[ply:GetNWInt("Launcher")].ammo
         ply:PickupWeapon(ent)
         ent:SetClip1( ply.LauncherAmmo )
     end
     for k = 1, #AmmoList do
         ply:GiveAmmo(ply.Ammo[k], AmmoList[k].ammoName, true)
-        for i = 1,20 do
-            if ply:GetNWInt("Inventory" .. tostring(i)) == AmmoList[k].entID then
-                ply:SetNWInt("AmmoBox" .. tostring(i), ply.Ammo[k])
-                if ply:GetNWInt("AmmoBox" .. tostring(i)) > EntList[AmmoList[k].entID].capacity then
-                    ply.Ammo[k] = ply.Ammo[k] - EntList[AmmoList[k].entID].capacity
-                    ply:SetNWInt("AmmoBox" .. tostring(i), EntList[AmmoList[k].entID].capacity)
-                end
-            end
-        end
     end
 end
 
 function GM:PlayerInitialSpawn(ply, transition)
     player_manager.SetPlayerClass(ply, "player_spectator")
-    CheckData(ply)
     ply:AllowFlashlight(true)
 end
 
 function GM:PlayerSpawn(ply, transition)
+    ply:SetShouldServerRagdoll( true )
     if player_manager.GetPlayerClass(ply) == "player_spectator" then
         local view_ent = ents.FindByName("spectator_view")[1]
         ply:SetViewEntity(view_ent)
+        CheckData(ply)
     else
         ply:SetViewEntity(ply)
         ply:SetModel(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].model)
@@ -189,6 +178,7 @@ function GM:PlayerSpawn(ply, transition)
         end
 
         ply:SetupHands() -- Create the hands and call GM:PlayerSetHandsModel
+        player_manager.RunClass( ply, "Loadout" )
     end
 end
 
@@ -238,11 +228,6 @@ end)
 net.Receive("DeleteCharacter", function(len, ply)
     local rpname = net.ReadString()
     sql.Query("DELETE FROM mvsa_characters WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. rpname .. "'")
-end)
-
-net.Receive("DeleteCharacterAfterDeath", function(len, ply)
-    sql.Query("DELETE FROM mvsa_characters WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
-    CheckData(ply)
 end)
 
 net.Receive("CharacterSelected", function(len, ply)
@@ -424,46 +409,9 @@ function GM:PlayerNoClip( ply, desiredState )
     end
 end
 
-local function DropGear(ply, category)
-    ent = ents.Create( EntList[ply:GetNWInt(category)].className )
-    if ent.Capacity then
-        for k = ent.StartingIndex,ent.StartingIndex + ent.Capacity do
-            ent["Slot" .. tostring(k)] = ply:GetNWInt("Inventory" .. tostring(k))
-            if EntList[ply:GetNWInt("Inventory" .. tostring(k))].ammoName then
-                ent["Slot" .. tostring(k) .. "AmmoCount"] = ply:GetNWInt("AmmoBox" .. tostring(k))
-            end
-            ply:SetNWInt("Inventory" .. tostring(k), 1)
-        end
-    end
-    ply:SetNWInt(category, 1)
-    sql.Query("UPDATE mvsa_characters SET " .. category .. " = 1 WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
-    ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
-    SaveBodyGroupsData(ply)
-    ent:Spawn()
-    ent:SetPos( ply:EyePos() - Vector(0,0,10) )
-end
-
 function GM:PlayerDeath( ply, inflictor, attacker )
-    if ply:GetNWInt("Pant") > 1 then
-        DropGear(ply, "Pant")
-    end
-    if ply:GetNWInt("Jacket") > 1 then
-        DropGear(ply, "Jacket")
-    end
-    if ply:GetNWInt("Vest") > 1 then
-        DropGear(ply, "Vest")
-    end
-    if ply:GetNWInt("Rucksack") > 1 then
-        DropGear(ply, "Rucksack")
-    end
-    if ply:GetNWInt("Helmet") > 1 then
-        DropGear(ply, "Helmet")
-    end
-    if ply:GetNWInt("NVG") > 1 then
-        DropGear(ply, "NVG")
-    end
-    net.Start("Death")
-    net.Send(ply)
+    sql.Query("DELETE FROM mvsa_characters WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+    player_manager.SetPlayerClass(ply, "player_spectator")
 end
 
 function GM:Think()
@@ -478,4 +426,7 @@ end
 function GM:PostCleanupMap()
     NPCCount = 0
     LootCount = 0
+end
+
+function GM:CreateEntityRagdoll( owner, ragdoll )
 end

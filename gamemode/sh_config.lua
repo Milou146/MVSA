@@ -3,14 +3,14 @@ PlayerModels.USMC = {
     [1] = {
         model = "models/yukon/conscripts/conscript_a_w_pm_v2.mdl",
         skins = {0,1,2,3,4,5,6,7,8,9,10,11,12,13}, -- authorized skins
-        bodygroups = {{0},{3},{0},{1},{0,2},{0},{0},{1},{1},{2},{17},{0},{0,1,2},{0},{0},{0},{0},{0},{1}}, -- authorized bodygroups
+        bodygroups = {0,3,0,1,{0,2},0,0,1,1,2,{17},0,{0,1,2},0,0,0,0,0,1}, -- authorized bodygroups
         gasmask_bodygroup = {17,2,1}, -- gasmak bodygroup ID, bodygroup value when gasmask set, bodygroup value when gasmask unset
         nvg_bodygroup = {16,9,10} -- same for the NVG
     },
     [2] = {
         model = "models/yukon/conscripts/conscript_a_b_pm_v2.mdl",
         skins = {0,1,2,3,4,5},
-        bodygroups = {{0},{3},{0},{1},{0,2},{0},{0},{1},{1},{2},{17},{0},{0,1,2},{0},{0},{0},{0},{0},{1}},
+        bodygroups = {0,3,0,1,{0,2},0,0,1,1,2,{17},0,{0,1,2},0,0,0,0,0,1},
         gasmask_bodygroup = {17,2,1},
         nvg_bodygroup = {16,9,10}
     },
@@ -18,78 +18,78 @@ PlayerModels.USMC = {
 PlayerModels.Survivor = {
     [1] = {
         model = "models/survivors/group02/male_01.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [2] = {
         model = "models/survivors/group02/male_03.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [3] = {
         model = "models/survivors/group02/male_04.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [4] = {
         model = "models/survivors/group02/male_05.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [5] = {
         model = "models/survivors/group02/male_06.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [6] = {
         model = "models/survivors/group02/male_07.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [7] = {
         model = "models/survivors/group02/male_08.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [8] = {
         model = "models/survivors/group02/male_09.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [9] = {
         model = "models/survivors/group02/female_01.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [10] = {
         model = "models/survivors/group02/female_02.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     },
     [11] = {
         model = "models/survivors/group02/female_07.mdl",
-        skins = {0},
-        bodygroups = {{0},{0},{0},{0},{0},{0},{0},{0}},
+        skins = 0,
+        bodygroups = {0,0,0,0,0,0,0,0},
         gasmask_bodygroup = {7,2,1},
         nvg_bodygroup = {6,9,10}
     }
