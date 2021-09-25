@@ -3,8 +3,8 @@ util.AddNetworkString("GASMASK_RequestToggle")
 
 concommand.Add("gasmask_toggle", function(ply)
     if ply:GetNWInt("GasMask") > 1 then
-        if not ply.GASMASK_SpamDelay or ply.GASMASK_SpamDelay < CurTime() then
-            ply.GASMASK_SpamDelay = CurTime() + 4
+        if not ply:GetNWInt("GASMASK_SpamDelay") or ply:GetNWInt("GASMASK_SpamDelay") < CurTime() then
+            ply:SetNWInt("GASMASK_SpamDelay", math.Round(CurTime()) + 4)
             ply.GASMASK_LastWeapon = ply:GetActiveWeapon()
             ply:SetSuppressPickupNotices(true)
             ply:StripWeapon("weapon_gasmask")

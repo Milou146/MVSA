@@ -416,5 +416,7 @@ function GM:PostDrawViewModel(vm, ply, weapon)
 end
 
 function GM:CreateClientsideRagdoll( entity, ragdoll )
-    ragdoll:SetNoDraw(true)
+    if entity:IsPlayer() then
+        ragdoll:SetNoDraw(true)
+    end
 end

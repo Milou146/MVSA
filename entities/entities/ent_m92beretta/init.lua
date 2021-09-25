@@ -2,6 +2,11 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
+ENT.Category = "SecondaryWep"
+ENT.ID = 10
+ENT.WepName = EntList[ENT.ID].wep
+ENT.Ammo = EntList[ENT.ID].ammo
+
 function ENT:Initialize()
     LootCount = LootCount + 1
     self:SetModel(self.Model)
@@ -12,16 +17,23 @@ function ENT:Initialize()
     self:PhysWake()
 end
 
+local delay = 0
+
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "SecondaryWep" ) < 2 then
-        LootCount = LootCount - 1
-        local ent = ents.Create( "m9k_m92beretta" )
-        ent.Primary.DefaultClip = ent.Primary.ClipSize
-        ent.Primary.Ammo = "9×19mm Parabellum"
-        activator:PickupWeapon(ent)
-        ent:SetClip1( self.PreviousMag or ent.Primary.ClipSize )
-        activator:SetNWInt( "SecondaryWep", 10 )
-        sql.Query("UPDATE mvsa_characters SET SecondaryWep = 10 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
-        self:Remove()
+    if CurTime() > delay then
+        delay = CurTime() + 5
+        if activator:GetNWInt( self.Category ) < 2 then
+            LootCount = LootCount - 1
+            PickupWep(activator, self)
+        else
+            local ent = ents.Create(EntList[activator:GetNWInt( self.Category )].className)
+            local wep_class = EntList[activator:GetNWInt( self.Category )].wep
+            local wep = activator:GetWeapon(wep_class)
+            ent.PreviousMag = wep:Clip1()
+            activator:StripWeapon(wep_class)
+            ent:Spawn()
+            ent:SetPos( activator:GetEyeTraceNoCursor()["HitPos"] )
+            PickupWep(activator, self)
+        end
     end
 end

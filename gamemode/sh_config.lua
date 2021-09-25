@@ -177,6 +177,214 @@ EntList = {
         icon = "vgui/hud/m9k_ak74.vmt",
         wep = "m9k_ak74",
         ammo = "5.45x39mm M74"
+    },
+    [17] = {
+        className = "ent_amd65",
+        icon = "vgui/hud/m9k_amd65.vmt",
+        wep = "m9k_amd65",
+        ammo = "7.62x39mm M43"
+    },
+    [18] = {
+        className = "ent_an94",
+        icon = "vgui/hud/m9k_an94.vmt",
+        wep = "m9k_an94",
+        ammo = "5.45x39mm M74"
+    },
+    [19] = {
+        className = "ent_auga3",
+        icon = "vgui/hud/m9k_aufa3.vmt",
+        wep = "m9k_auga3",
+        ammo = "5.56x45mm NATO"
+    },
+    [20] = {
+        className = "ent_f2000",
+        icon = "vgui/hud/m9k_f2000.vmt",
+        wep = "m9k_f2000",
+        ammo = "5.56x45mm NATO"
+    },
+    [21] = {
+        className = "ent_fal",
+        icon = "vgui/hud/m9k_fal.vmt",
+        wep = "m9k_fal",
+        ammo = "7.62x51mm NATO"
+    },
+    [22] = {
+        className = "ent_famas",
+        icon = "vgui/hud/m9k_famas.vmt",
+        wep = "m9k_famas",
+        ammo = "5.56x45mm NATO"
+    },
+    [23] = {
+        className = "ent_g3a3",
+        icon = "vgui/hud/m9k_g3a3.vmt",
+        wep = "m9k_g3a3",
+        ammo = "7.62x51mm NATO"
+    },
+    [24] = {
+        className = "ent_g36",
+        icon = "vgui/hud/m9k_g36.vmt",
+        wep = "m9k_g36",
+        ammo = "5.56x45mm NATO"
+    },
+    [25] = {
+        className = "ent_m14sp",
+        icon = "vgui/hud/m9k_m14sp.vmt",
+        wep = "m9k_m14sp",
+        ammo = "7.62x51mm NATO"
+    },
+    [26] = {
+        className = "ent_m16a4_acog",
+        icon = "vgui/hud/m9k_m16a4_acog.vmt",
+        wep = "m9k_m16a4_acog",
+        ammo = "5.56x45mm NATO"
+    },
+    [27] = {
+        className = "ent_m416",
+        icon = "vgui/hud/m9k_m416.vmt",
+        wep = "m9k_m416",
+        ammo = "5.56x45mm NATO"
+    },
+    [28] = {
+        className = "ent_scar",
+        icon = "vgui/hud/m9k_scar.vmt",
+        wep = "m9k_scar",
+        ammo = "7.62x51mm NATO"
+    },
+    [29] = {
+        className = "ent_ares_shrike",
+        icon = "vgui/hud/m9k_ares_shrike.vmt",
+        wep = "m9k_ares_shrike",
+        ammo = "5.56x45mm NATO"
+    },
+    [30] = {
+        className = "ent_aw50",
+        icon = "vgui/hud/m9k_aw50.vmt",
+        wep = "m9k_aw50",
+        ammo = ".50 BMG"
+    },
+    [31] = {
+        className = "ent_barret_m82",
+        icon = "vgui/hud/m9k_barret_m82.vmt",
+        wep = "m9k_barret_m82",
+        ammo = ".50 BMG"
+    },
+    [32] = {
+        className = "ent_dbarrel",
+        icon = "vgui/hud/m9k_dbarrel.vmt",
+        wep = "m9k_dbarrel",
+        ammo = "12 Gauge"
+    },
+    [33] = {
+        className = "ent_1887winchester",
+        icon = "vgui/hud/m9k_1887winchester.vmt",
+        wep = "m9k_1887winchester",
+        ammo = "12 Gauge"
+    },
+    [34] = {
+        className = "ent_1897winchester",
+        icon = "vgui/hud/m9k_1897winchester.vmt",
+        wep = "m9k_1897winchester",
+        ammo = "12 Gauge"
+    },
+    [35] = {
+        className = "ent_browningauto5",
+        icon = "vgui/hud/m9k_browningauto5.vmt",
+        wep = "m9k_browningauto5",
+        ammo = "12 Gauge"
+    },
+    [36] = {
+        className = "ent_dragunov",
+        icon = "vgui/hud/m9k_dragunov.vmt",
+        wep = "m9k_dragunov",
+        ammo = "7.62x54mm R"
+    },
+    [37] = {
+        className = "ent_ithacam37",
+        icon = "vgui/hud/m9k_ithacam37.vmt",
+        wep = "m9k_ithacam37",
+        ammo = "12 Gauge"
+    },
+    [38] = {
+        className = "ent_m3",
+        icon = "vgui/hud/m9k_m3.vmt",
+        wep = "m9k_m3",
+        ammo = "12 Gauge"
+    },
+    [39] = {
+        className = "ent_m24",
+        icon = "vgui/hud/m9k_m24.vmt",
+        wep = "m9k_m24",
+        ammo = "7.62x51mm NATO"
+    },
+    [40] = {
+        className = "ent_m60",
+        icon = "vgui/hud/m9k_m60.vmt",
+        wep = "m9k_m60",
+        ammo = "7.62x51mm NATO"
+    },
+    [41] = {
+        className = "ent_m249lmg",
+        icon = "vgui/hud/m9k_m249lmg.vmt",
+        wep = "m9k_m249lmg",
+        ammo = "5.56x45mm NATO"
+    },
+    [42] = {
+        className = "ent_mossberg590",
+        icon = "vgui/hud/m9k_mossberg590.vmt",
+        wep = "m9k_mossberg590",
+        ammo = "12 Gauge"
+    },
+    [43] = {
+        className = "ent_pkm",
+        icon = "vgui/hud/m9k_pkm.vmt",
+        wep = "m9k_pkm",
+        ammo = "7.62×54mm R"
+    },
+    [44] = {
+        className = "ent_pkm",
+        icon = "vgui/hud/m9k_pkm.vmt",
+        wep = "m9k_pkm",
+        ammo = "7.62×54mm R"
+    },
+    [45] = {
+        className = "ent_ammobox_545mm",
+        ammoName = "5.45x39mm M74",
+        capacity = 30
+    },
+    [46] = {
+        className = "ent_ammobox_762_m43",
+        ammoName = "7.62×39mm M43",
+        capacity = 20
+    },
+    [47] = {
+        className = "ent_ammobox_762_nato",
+        ammoName = "7.62x51mm NATO",
+        capacity = 20
+    },
+    [48] = {
+        className = "ent_ammobox_50bmg",
+        ammoName = ".50 BMG",
+        capacity = 15
+    },
+    [49] = {
+        className = "ent_ammobox_762_r",
+        ammoName = "7.62×54mm R",
+        capacity = 20
+    },
+    [50] = {
+        className = "ent_ammobox_12gauge",
+        ammoName = "12 Gauge",
+        capacity = 20
+    },
+    [51] = {
+        className = "ent_ammobox_357magnum",
+        ammoName = ".357 Magnum",
+        capacity = 30
+    },
+    [52] = {
+        className = "ent_ammobox_45acp",
+        ammoName = ".45 ACP",
+        capacity = 40
     }
 }
 
@@ -191,11 +399,35 @@ AmmoList = {
     },
     [3] = {
         ammoName = "7.62×39mm M43",
-        entID = 12
+        entID = 46
     },
     [4] = {
         ammoName = "5.45x39mm M74",
-        entID = 12
+        entID = 45
+    },
+    [5] = {
+        ammoName = "7.62x51mm NATO",
+        entID = 47
+    },
+    [6] = {
+        ammoName = ".50 BMG",
+        entID = 48
+    },
+    [7] = {
+        ammoName = "7.62×54mm R",
+        entID = 49
+    },
+    [8] = {
+        ammoName = "12 Gauge",
+        entID = 50
+    },
+    [9] = {
+        ammoName = ".357 Magnum",
+        entID = 51
+    },
+    [10] = {
+        ammoName = ".45 ACP",
+        entID = 52
     }
 }
 
@@ -246,10 +478,86 @@ LootList = {
     "ent_ammobox_9mm",
     "ent_ammobox_9mm",
     "ent_ammobox_9mm",
-    "ent_ak47",
-    "ent_m92beretta",
+    "ent_ammobox_45acp",
+    "ent_ammobox_45acp",
+    "ent_ammobox_45acp",
+    "ent_ammobox_45acp",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_545mm",
+    "ent_ammobox_545mm",
+    "ent_ammobox_545mm",
+    "ent_ammobox_545mm",
+    "ent_ammobox_50bmg",
+    "ent_ammobox_50bmg",
+    "ent_ammobox_50bmg",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
     "ent_usmc_rucksack",
     "ent_usmc_helmet",
+    "ent_ak47",
+    "ent_ak74",
+    "ent_amd65",
+    "ent_an94",
+    "ent_ares_shrike",
+    "ent_auga3",
+    "ent_aw50",
+    "ent_barret_m82",
+    "ent_browningauto5",
+    "ent_dbarrel",
+    "ent_dragunov",
+    "ent_f2000",
+    "ent_fal",
+    "ent_famas",
+    "ent_g3a3",
+    "ent_g36",
+    "ent_ithacam37",
+    "ent_m3",
+    "ent_m4a1",
+    "ent_m14sp",
+    "ent_m16a4_acog",
+    "ent_m24",
+    "ent_m60",
+    "ent_m92beretta",
+    "ent_m249lmg",
+    "ent_m416",
+    "ent_matador",
+    "ent_mossberg590",
+    "ent_nvg",
+    "ent_pkm",
+    "ent_scar",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
 }
 -- character size
 minSize = 165

@@ -1,12 +1,17 @@
-local CleanupDelay = 0
+CleanupDelay = 0
+local StartingIndex = 0
 
 function AutoCleanup()
     if CurTime() > CleanupDelay then
         CleanupDelay = CurTime() + 500
-        for k, ent in ipairs( ents.GetAll() ) do
-            ent:RemoveAllDecals()
-            if ent:IsRagdoll() then
-                ent:Remove()
+        local TempTable = ents.GetAll()
+        if StartingIndex == 0 then
+            StartingIndex = #TempTable
+        end
+        for k = StartingIndex, #TempTable do
+            TempTable[k]:RemoveAllDecals()
+            if TempTable[k]:IsRagdoll() then
+                TempTable[k]:Remove()
             end
         end
     end
