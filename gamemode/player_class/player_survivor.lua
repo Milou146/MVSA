@@ -55,6 +55,7 @@ end
 -- Ret1:
 --
 function PLAYER:Loadout()
+	self.Player:Give("weapon_fists")
 end
 
 function PLAYER:SetModel()

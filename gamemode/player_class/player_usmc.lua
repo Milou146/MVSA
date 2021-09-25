@@ -55,6 +55,7 @@ end
 -- Ret1:
 --
 function PLAYER:Loadout()
+	self.Player:Give("weapon_fists")
 	if self.Player:GetNWInt( "Pant" ) < 2 then
 		PickupContainer( self.Player, ents.Create("ent_usmc_pant") )
 	end

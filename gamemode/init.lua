@@ -419,9 +419,9 @@ function GM:PlayerDeath( ply, inflictor, attacker )
 end
 
 function GM:Think()
+    AutoCleanup()
     NPCSpawnSystem()
     LootSpawnSystem()
-    AutoCleanup()
 end
 
 function GM:OnNPCKilled( npc, attacker, inflictor )

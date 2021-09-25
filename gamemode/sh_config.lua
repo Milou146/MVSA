@@ -345,6 +345,46 @@ EntList = {
         icon = "vgui/hud/m9k_pkm.vmt",
         wep = "m9k_pkm",
         ammo = "7.62×54mm R"
+    },
+    [45] = {
+        className = "ent_ammobox_545",
+        ammoName = "5.45x39mm M74",
+        capacity = 30
+    },
+    [46] = {
+        className = "ent_ammobox_762_m43",
+        ammoName = "7.62×39mm M43",
+        capacity = 20
+    },
+    [47] = {
+        className = "ent_ammobox_762_nato",
+        ammoName = "7.62x51mm NATO",
+        capacity = 20
+    },
+    [48] = {
+        className = "ent_ammobox_50bmg",
+        ammoName = ".50 BMG",
+        capacity = 15
+    },
+    [49] = {
+        className = "ent_ammobox_762_r",
+        ammoName = "7.62×54mm R",
+        capacity = 20
+    },
+    [50] = {
+        className = "ent_ammobox_12gauge",
+        ammoName = "12 Gauge",
+        capacity = 20
+    },
+    [51] = {
+        className = "ent_ammobox_357magnum",
+        ammoName = ".357 Magnum",
+        capacity = 30
+    },
+    [52] = {
+        className = "ent_ammobox_45acp",
+        ammoName = ".45 ACP",
+        capacity = 40
     }
 }
 
@@ -359,76 +399,40 @@ AmmoList = {
     },
     [3] = {
         ammoName = "7.62×39mm M43",
-        entID = 12
+        entID = 46
     },
     [4] = {
         ammoName = "5.45x39mm M74",
-        entID = 12
+        entID = 45
     },
     [5] = {
         ammoName = "7.62x51mm NATO",
-        entID = 12
+        entID = 47
     },
     [6] = {
         ammoName = ".50 BMG",
-        entID = 12
+        entID = 48
     },
     [7] = {
         ammoName = "7.62×54mm R",
-        entID = 12
+        entID = 49
     },
     [8] = {
         ammoName = "12 Gauge",
-        entID = 12
+        entID = 50
     },
     [9] = {
         ammoName = ".357 Magnum",
-        entID = 12
+        entID = 51
     },
     [10] = {
         ammoName = ".45 ACP",
-        entID = 12
-    },
-    [11] = {
-        ammoName = ".50 BMG",
-        entID = 12
+        entID = 52
     }
 }
 
 NPCList = {
-    "npc_vj_zss_zombie1",
-    "npc_vj_zss_zombie2",
-    "npc_vj_zss_zombie3",
-    "npc_vj_zss_zombie4",
-    "npc_vj_zss_zombie5",
-    "npc_vj_zss_zombie6",
-    "npc_vj_zss_zombie7",
-    "npc_vj_zss_zombie8",
-    "npc_vj_zss_zombie9",
-    "npc_vj_zss_zombie10",
-    "npc_vj_zss_zombie11",
-    "npc_vj_zss_zombie12",
-    "npc_vj_zss_zombfast1",
-    "npc_vj_zss_zombfast2",
-    "npc_vj_zss_zombfast3",
-    "npc_vj_zss_zombfast4",
-    "npc_vj_zss_zombfast5",
-    "npc_vj_zss_zombfast6",
-    "npc_vj_zss_cfastzombie",
-    "npc_vj_zss_burnzie",
-    "npc_vj_zss_cpzombie",
-    "npc_vj_zss_czombie",
-    "npc_vj_zss_czombietors",
-    "npc_vj_zss_draggy",
-    "npc_vj_zss_zhulk",
-    "npc_vj_zss_zboss",
-    "npc_vj_zss_zminiboss",
-    "npc_vj_zss_zombguard",
-    "npc_vj_zss_undeadstalker",
-    "npc_vj_zss_zp1",
-    "npc_vj_zss_zp2",
-    "npc_vj_zss_zp3",
-    "npc_vj_zss_zp4"
+    "npc_zombie"
 }
 
 LootList = {
@@ -442,10 +446,86 @@ LootList = {
     "ent_ammobox_9mm",
     "ent_ammobox_9mm",
     "ent_ammobox_9mm",
-    "ent_ak47",
-    "ent_m92beretta",
+    "ent_ammobox_45acp",
+    "ent_ammobox_45acp",
+    "ent_ammobox_45acp",
+    "ent_ammobox_45acp",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_357magnum",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_nato",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_r",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_762_m43",
+    "ent_ammobox_545mm",
+    "ent_ammobox_545mm",
+    "ent_ammobox_545mm",
+    "ent_ammobox_545mm",
+    "ent_ammobox_50bmg",
+    "ent_ammobox_50bmg",
+    "ent_ammobox_50bmg",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
+    "ent_ammobox_12gauge",
     "ent_usmc_rucksack",
     "ent_usmc_helmet",
+    "ent_ak47",
+    "ent_ak74",
+    "ent_amd65",
+    "ent_an94",
+    "ent_ares_shrike",
+    "ent_auga3",
+    "ent_aw50",
+    "ent_barret_m82",
+    "ent_browningauto5",
+    "ent_dbarrel",
+    "ent_dragunov",
+    "ent_f2000",
+    "ent_fal",
+    "ent_famas",
+    "ent_g3a3",
+    "ent_g36",
+    "ent_ithacam37",
+    "ent_m3",
+    "ent_m4a1",
+    "ent_m14sp",
+    "ent_m16a4_acog",
+    "ent_m24",
+    "ent_m60",
+    "ent_m92beretta",
+    "ent_m249lmg",
+    "ent_m416",
+    "ent_matador",
+    "ent_mossberg590",
+    "ent_nvg",
+    "ent_pkm",
+    "ent_scar",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
+    "ent_gasmask",
 }
 -- character size
 minSize = 165
