@@ -11,7 +11,7 @@ include( "sh_config.lua" )
 
 function GM:Initialize()
 	game.AddAmmoType( {
-		name = "5.56×45mm NATO",
+		name = "5.56x45mm NATO",
 		dmgtype = DMG_BULLET,
 		tracer = TRACER_LINE_AND_WHIZ,
 		force = 2000,
@@ -27,7 +27,7 @@ function GM:Initialize()
 		maxsplash = 15
 	} )
 	game.AddAmmoType( {
-		name = "9×19mm Parabellum",
+		name = "9x19mm Parabellum",
 		dmgtype = DMG_BULLET,
 		tracer = TRACER_NONE,
 		force = 1000,
@@ -51,7 +51,7 @@ function GM:Initialize()
 		maxsplash = 7
 	} )
 	game.AddAmmoType( {
-		name = "7.62×51mm NATO",
+		name = "7.62x51mm NATO",
 		dmgtype = DMG_BULLET,
 		tracer = TRACER_LINE_AND_WHIZ,
 		force = 3000,
@@ -59,7 +59,7 @@ function GM:Initialize()
 		maxsplash = 15
 	} )
 	game.AddAmmoType( {
-		name = "7.62×39mm M43",
+		name = "7.62x39mm M43",
 		dmgtype = DMG_BULLET,
 		tracer = TRACER_LINE_AND_WHIZ,
 		force = 3000,
@@ -67,7 +67,7 @@ function GM:Initialize()
 		maxsplash = 15
 	} )
 	game.AddAmmoType( {
-		name = "7.62×54mm R",
+		name = "7.62x54mm R",
 		dmgtype = DMG_BULLET,
 		tracer = TRACER_LINE_AND_WHIZ,
 		force = 3000,

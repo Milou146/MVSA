@@ -4,7 +4,7 @@ include("shared.lua")
 
 ENT.Category = "PrimaryWep"
 ENT.WepName = "m9k_ak47"
-ENT.Ammo = "7.62×39mm M43"
+ENT.Ammo = "7.62x39mm M43"
 ENT.ID = 15
 
 function ENT:Initialize()

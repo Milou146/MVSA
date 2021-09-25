@@ -136,13 +136,13 @@ EntList = {
         className = "ent_m4a1",
         icon = "vgui/hud/m9k_m4a1.vmt",
         wep = "m9k_m4a1",
-        ammo = "5.56×45mm NATO"
+        ammo = "5.56x45mm NATO"
     },
     [10] = {
         className = "ent_m92beretta",
         icon = "vgui/hud/m9k_m92beretta.vmt",
         wep = "m9k_m92beretta",
-        ammo = "9×19mm Parabellum"
+        ammo = "9x19mm Parabellum"
     },
     [11] = {
         className = "ent_matador",
@@ -152,25 +152,25 @@ EntList = {
     },
     [12] = {
         className = "ent_ammobox_556mm",
-        ammoName = "5.56×45mm NATO",
+        ammoName = "5.56x45mm NATO",
         capacity = 30
     },
     [13] = {
         className = "ent_ammobox_9mm",
-        ammoName = "9×19mm Parabellum",
+        ammoName = "9x19mm Parabellum",
         capacity = 60
     },
     [14] = {
         className = "ent_acr",
         icon = "vgui/hud/m9k_acr.vmt",
         wep = "m9k_acr",
-        ammo = "5.56×45mm NATO"
+        ammo = "5.56x45mm NATO"
     },
     [15] = {
         className = "ent_ak47",
         icon = "vgui/hud/m9k_ak47.vmt",
         wep = "m9k_ak47",
-        ammo = "7.62×39mm M43"
+        ammo = "7.62x39mm M43"
     },
     [16] = {
         className = "ent_ak74",
@@ -338,13 +338,13 @@ EntList = {
         className = "ent_pkm",
         icon = "vgui/hud/m9k_pkm.vmt",
         wep = "m9k_pkm",
-        ammo = "7.62×54mm R"
+        ammo = "7.62x54mm R"
     },
     [44] = {
         className = "ent_pkm",
         icon = "vgui/hud/m9k_pkm.vmt",
         wep = "m9k_pkm",
-        ammo = "7.62×54mm R"
+        ammo = "7.62x54mm R"
     },
     [45] = {
         className = "ent_ammobox_545mm",
@@ -353,7 +353,7 @@ EntList = {
     },
     [46] = {
         className = "ent_ammobox_762_m43",
-        ammoName = "7.62×39mm M43",
+        ammoName = "7.62x39mm M43",
         capacity = 20
     },
     [47] = {
@@ -368,7 +368,7 @@ EntList = {
     },
     [49] = {
         className = "ent_ammobox_762_r",
-        ammoName = "7.62×54mm R",
+        ammoName = "7.62x54mm R",
         capacity = 20
     },
     [50] = {
@@ -390,15 +390,15 @@ EntList = {
 
 AmmoList = {
     [1] = {
-        ammoName = "5.56×45mm NATO",
+        ammoName = "5.56x45mm NATO",
         entID = 12-- not the ammoID, the entity in this example is ent_556_ammobox
     },
     [2] = {
-        ammoName = "9×19mm Parabellum",
+        ammoName = "9x19mm Parabellum",
         entID = 13
     },
     [3] = {
-        ammoName = "7.62×39mm M43",
+        ammoName = "7.62x39mm M43",
         entID = 46
     },
     [4] = {
@@ -414,7 +414,7 @@ AmmoList = {
         entID = 48
     },
     [7] = {
-        ammoName = "7.62×54mm R",
+        ammoName = "7.62x54mm R",
         entID = 49
     },
     [8] = {
