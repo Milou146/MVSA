@@ -49,7 +49,7 @@ net.Receive("GASMASK_RequestToggle", function()
         end)
     else
         if InventoryPanel and InventoryPanel:IsValid() then
-            GasMask:SetAlpha(150)
+            GasMask:SetAlpha(100)
             PlayerModel.Entity:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[3])
         end
         ply:GASMASK_PlayAnim("take_off")

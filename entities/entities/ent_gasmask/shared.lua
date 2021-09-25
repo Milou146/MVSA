@@ -1,6 +1,5 @@
 ENT.Type = "anim"
 ENT.Base = "base_entity"
-ENT.RenderGroup = 7
 
 ENT.Model = "models/gmod4phun/w_contagion_gasmask.mdl"
 

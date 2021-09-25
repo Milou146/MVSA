@@ -13,7 +13,7 @@ function ENT:Initialize()
 end
 
 function ENT:Use(activator, caller, useType, value)
-    if activator:GetNWInt( "NVG" ) < 2 then
+    if activator:GetNWInt( "NVG" ) < 2 and activator:GetNWInt("Helmet") > 1 then
         LootCount = LootCount - 1
         activator:SetNWInt( "NVG", 7 )
         activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
@@ -24,5 +24,25 @@ function ENT:Use(activator, caller, useType, value)
         end
         sql.Query("UPDATE mvsa_characters SET BodyGroups = '" .. BodyGroups .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         self:Remove()
+    else
+        for k = 1,20 do
+            if activator:GetNWInt("Inventory" .. tostring(k)) == 1 then
+                activator:SetNWInt( "Inventory" .. tostring(k), 7 )
+                self.Taken = true
+                break
+            end
+        end
+        if self.Taken then
+            local Inventory = {}
+            for k = 1,20 do
+                Inventory[k] = activator:GetNWInt("Inventory" .. tostring(k))
+            end
+            Inventory = table.concat(Inventory, ",")
+            sql.Query("UPDATE mvsa_characters SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+            self:Remove()
+        elseif CurTime() > self.Delay then
+            self.Delay = CurTime() + 2
+            activator:ChatPrint("You are full!")
+        end
     end
 end

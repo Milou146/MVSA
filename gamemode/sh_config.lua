@@ -347,7 +347,7 @@ EntList = {
         ammo = "7.62×54mm R"
     },
     [45] = {
-        className = "ent_ammobox_545",
+        className = "ent_ammobox_545mm",
         ammoName = "5.45x39mm M74",
         capacity = 30
     },

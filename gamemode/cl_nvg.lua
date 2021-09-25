@@ -1,4 +1,4 @@
-local NV_Status = false
+NV_Status = false
 local NV_Vector = 0
 local NV_TimeToVector = 0
 local ISIBIntensity = 1
@@ -267,6 +267,7 @@ local function NV_ToggleNightVision(ply)
 		net.Start("NVGPutOff")
         net.SendToServer()
         if InventoryPanel and InventoryPanel:IsValid() then
+			NVG:SetAlpha(100)
             PlayerModel.Entity:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[2])
         end
 		
@@ -277,6 +278,7 @@ local function NV_ToggleNightVision(ply)
 		NV_Status = true
 		net.Start("NVGPutOn")
         if InventoryPanel and InventoryPanel:IsValid() then
+			NVG:SetAlpha(255)
             PlayerModel.Entity:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[3])
         end
         net.SendToServer()

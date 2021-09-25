@@ -21,11 +21,13 @@ util.AddNetworkString("CharacterSelection")
 util.AddNetworkString("CharacterSelected")
 util.AddNetworkString("CharacterInformation")
 util.AddNetworkString("DropRequest")
+util.AddNetworkString("RagdollDropRequest")
 util.AddNetworkString("UseRequest")
 util.AddNetworkString("NVGPutOn")
 util.AddNetworkString("NVGPutOff")
+util.AddNetworkString("RagdollLooting")
 
-sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60), Ammo VARCHAR(120) )")
+sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60), AmmoBoxes VARCHAR(120) )")
 
 function SaveInventoryData(ply)
     local Inventory = {}
@@ -155,8 +157,10 @@ function RunEquipment(ply)
         ply:PickupWeapon(ent)
         ent:SetClip1( ply.LauncherAmmo )
     end
-    for k = 1, #AmmoList do
-        ply:GiveAmmo(ply.Ammo[k], AmmoList[k].ammoName, true)
+    for k = 1, 20 do
+        if EntList[ply:GetNWInt("Inventory" .. tostring(k))].ammoName then
+            ply:GiveAmmo(ply:GetNWInt("AmmoBox" .. tostring(k)), EntList[ply:GetNWInt("Inventory" .. tostring(k))].ammoName, true)
+        end
     end
 end
 
@@ -208,11 +212,7 @@ net.Receive("CharacterInformation", function(len, ply)
 
     for k = 1,20 do
         ply:SetNWInt( "Inventory" .. tostring(k), 0 )
-    end
-
-    ply.Ammo = {}
-    for k = 1, #AmmoList do
-        ply.Ammo[k] = 0
+        ply:SetNWInt( "AmmoBox" .. tostring(k), 0 )
     end
 
     sql.Query("INSERT INTO mvsa_characters VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply:GetNWInt("ModelIndex")) .. ", " .. tostring(ply:GetNWInt("Size")) .. ", " .. tostring(ply:GetNWInt("Skin")) .. ", '" .. ply.BodyGroups .. "', 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0', '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
@@ -271,14 +271,12 @@ net.Receive("CharacterSelected", function(len, ply)
     if ply:GetNWInt("NVG") > 1 then
         ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1]] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[2]
     end
-    ply.Ammo = string.Split(Character.Ammo, ",")
 
     Character.Inventory = string.Split(Character.Inventory, ",")
+    Character.AmmoBoxes = string.Split(Character.AmmoBoxes, ",")
     for k = 1,20 do
         ply:SetNWInt( "Inventory" .. tostring(k), tonumber(Character.Inventory[k]) )
-        if EntList[tonumber(Character.Inventory[k])].ammoName then
-            ply:SetNWInt( "AmmoBox" .. tostring(k), EntList[tonumber(Character.Inventory[k])].capacity )
-        end
+        ply:SetNWInt( "AmmoBox" .. tostring(k), tonumber(Character.AmmoBoxes[k]) )
     end
     player_manager.SetPlayerClass(ply, "player_" .. string.lower(ply:GetNWString("Faction")))
     ply:Spawn()
@@ -348,6 +346,38 @@ net.Receive("DropRequest", function(len, ply)
     ent:SetPos( ply:EyePos() - Vector(0,0,10) )
 end)
 
+net.Receive("RagdollDropRequest", function(len, ply)
+    local ragdoll = ents.GetByIndex(net.ReadUInt(32))
+    local ent = ents.Create(net.ReadString())
+    if ent.Capacity then
+        for k = ent.StartingIndex,ent.StartingIndex + ent.Capacity - 1 do
+            ent["Slot" .. tostring(k)] = ragdoll:GetNWInt("Inventory" .. tostring(k))
+            if EntList[ragdoll:GetNWInt("Inventory" .. tostring(k))].ammoName then
+                ent["Slot" .. tostring(k) .. "AmmoCount"] = ragdoll:GetNWInt("AmmoBox" .. tostring(k))
+            end
+            ragdoll:SetNWInt("Inventory" .. tostring(k), 1)
+        end
+        for k = ent.StartingIndex,ent.StartingIndex + ent.Capacity - 1 do -- Since the "RemoveAmmo" function call the "PlayerAmmoChanged" function which change the "AmmoBox" networked value we have to do a boucle again ...
+            if EntList[ragdoll:GetNWInt("Inventory" .. tostring(k))].ammoName then
+                ragdoll:RemoveAmmo( ragdoll:GetNWInt("AmmoBox" .. tostring(k)), EntList[ragdoll:GetNWInt("Inventory" .. tostring(k))].ammoName )
+            end
+        end
+    end
+    local category = net.ReadString()
+    ragdoll:SetNWInt(category, 1)
+    if net.ReadBool() then
+        ent.PreviousMag = ragdoll:GetNWInt(category .. "Ammo")
+    end
+    if net.ReadBool() then
+        ragdoll:SetBodygroup(ent.BodyGroup[ragdoll:GetNWString("Faction")][ragdoll:GetNWInt("ModelIndex")][1], ent.BodyGroup[ragdoll:GetNWString("Faction")][ragdoll:GetNWInt("ModelIndex")][3])
+    end
+    if ent.AmmoCount then
+        ent.AmmoCount = net.ReadUInt(9)
+    end
+    ent:Spawn()
+    ent:SetPos( ragdoll:GetPos() + Vector(0,0,10) )
+end)
+
 net.Receive("UseRequest", function(len, ply)
     ply:SelectWeapon( net.ReadString() )
 end)
@@ -363,11 +393,11 @@ function GM:PlayerDisconnected(ply)
         if ply:GetNWInt("Launcher") > 1 then
             sql.Query("UPDATE mvsa_characters SET LauncherAmmo = " .. tostring(ply:GetWeapon(EntList[ply:GetNWInt("Launcher")].wep):Clip1()) .. " WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
         end
-        local Ammo = tostring(ply:GetAmmoCount(AmmoList[1].ammoName))
-        for k = 2,#AmmoList do
-            Ammo = Ammo .. "," .. tostring(ply:GetAmmoCount(AmmoList[k].ammoName))
+        local AmmoBoxes = tostring(ply:GetNWInt("AmmoBox1"))
+        for k = 2,20 do
+            AmmoBoxes = AmmoBoxes .. "," .. tostring(ply:GetNWInt("AmmoBox" .. tostring(k)))
         end
-        sql.Query("UPDATE mvsa_characters SET Ammo = '" .. Ammo .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
+        sql.Query("UPDATE mvsa_characters SET AmmoBoxes = '" .. AmmoBoxes .. "' WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
     end
 end
 
@@ -434,6 +464,34 @@ function GM:PostCleanupMap()
 end
 
 function GM:CreateEntityRagdoll( owner, ragdoll )
+    for k = 1,20 do
+        ragdoll:SetNWInt("Inventory" .. tostring(k), owner:GetNWInt("Inventory" .. tostring(k)))
+        ragdoll:SetNWInt("AmmoBox" .. tostring(k), owner:GetNWInt("AmmoBox" .. tostring(k)))
+    end
+    ragdoll:SetNWInt("Helmet", owner:GetNWInt("Helmet"))
+    ragdoll:SetNWInt("NVG", owner:GetNWInt("NVG"))
+    ragdoll:SetNWInt("GasMask", owner:GetNWInt("GasMask"))
+    ragdoll:SetNWInt("Rucksack", owner:GetNWInt("Rucksack"))
+    ragdoll:SetNWInt("Vest", owner:GetNWInt("Vest"))
+    ragdoll:SetNWInt("Jacket", owner:GetNWInt("Jacket"))
+    ragdoll:SetNWInt("Pant", owner:GetNWInt("Pant"))
+    ragdoll:SetNWInt("PrimaryWep", owner:GetNWInt("PrimaryWep"))
+    ragdoll:SetNWInt("SecondaryWep", owner:GetNWInt("SecondaryWep"))
+    ragdoll:SetNWInt("Launcher", owner:GetNWInt("Launcher"))
+    ragdoll:SetNWInt("Faction", owner:GetNWInt("Faction"))
+    ragdoll:SetNWInt("ModelIndex", owner:GetNWInt("ModelIndex"))
+    ragdoll:SetNWInt("GasMaskSet", owner:GetNWInt("GasMaskSet"))
+    ragdoll:SetNWInt("PrimaryWepAmmo", owner:GetWeapon(EntList[ragdoll:GetNWInt("PrimaryWep")].className):Clip1())
+    ragdoll:SetNWInt("SecondaryWepAmmo", owner:GetWeapon(EntList[ragdoll:GetNWInt("SecondaryWep")].className):Clip1())
+    ragdoll:SetNWInt("LauncherAmmo", owner:GetWeapon(EntList[ragdoll:GetNWInt("Launcher")].className):Clip1())
+end
+
+function GM:PlayerUse( ply, ent )
+    if ent:IsRagdoll() and ent:GetOwner():IsPlayer() then
+        net.Start("RagdollLooting")
+        net.WriteUInt(ent:EntIndex(), 32)
+        net.Send(ply)
+    end
 end
 
 net.Receive("NVGPutOn", function(len, ply)

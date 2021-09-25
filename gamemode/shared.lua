@@ -2,6 +2,7 @@ GM.Name = "MilitaryRP"
 GM.Author = "N/A"
 GM.Email = "N/A"
 GM.Website = "N/A"
+DeriveGamemode( "sandbox" )
 
 include( "player_class/player_usmc.lua" )
 include( "player_class/player_survivor.lua" )
