@@ -385,6 +385,10 @@ EntList = {
         className = "ent_ammobox_45acp",
         ammoName = ".45 ACP",
         capacity = 40
+    },
+    [53] = {
+        className = "ent_ifak",
+        wep = "fas2_ifak"
     }
 }
 
@@ -516,19 +520,11 @@ LootList = {
     "ent_ak47",
     "ent_ak74",
     "ent_amd65",
-    "ent_an94",
-    "ent_ares_shrike",
-    "ent_auga3",
-    "ent_aw50",
-    "ent_barret_m82",
     "ent_browningauto5",
     "ent_dbarrel",
     "ent_dragunov",
-    "ent_f2000",
     "ent_fal",
-    "ent_famas",
     "ent_g3a3",
-    "ent_g36",
     "ent_ithacam37",
     "ent_m3",
     "ent_m4a1",
@@ -538,12 +534,9 @@ LootList = {
     "ent_m60",
     "ent_m92beretta",
     "ent_m249lmg",
-    "ent_m416",
-    "ent_matador",
     "ent_mossberg590",
     "ent_nvg",
     "ent_pkm",
-    "ent_scar",
     "ent_gasmask",
     "ent_gasmask",
     "ent_gasmask",
@@ -561,7 +554,7 @@ LootList = {
 }
 -- character size
 minSize = 165
-maxSize = 210
+maxSize = 190
 
 FirstName = {
     [1] = "Noah",

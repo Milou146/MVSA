@@ -2,7 +2,6 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-ENT.Category = "PrimaryWep"
 ENT.WepName = "m9k_famas"
 ENT.Ammo = "5.56x45mm NATO"
 ENT.ID = 22

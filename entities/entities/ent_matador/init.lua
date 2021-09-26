@@ -2,7 +2,6 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-ENT.Category = "Launcher"
 ENT.ID = 11
 ENT.WepName = EntList[ENT.ID].wep
 ENT.Ammo = EntList[ENT.ID].ammo

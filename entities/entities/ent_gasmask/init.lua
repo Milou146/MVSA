@@ -37,12 +37,7 @@ function ENT:Use(activator, caller, useType, value)
             end
         end
         if self.Taken then -- the gas mask is taken
-            local Inventory = {}
-            for k = 1,20 do
-                Inventory[k] = activator:GetNWInt("Inventory" .. tostring(k))
-            end
-            Inventory = table.concat(Inventory, ",")
-            sql.Query("UPDATE mvsa_characters SET Inventory = '" .. Inventory .. "' WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
+            SaveInventoryData(activator)
             self:Remove()
         elseif CurTime() > self.Delay then
             self.Delay = CurTime() + 2

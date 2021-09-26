@@ -2,7 +2,6 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-ENT.Category = "PrimaryWep"
 ENT.ID = 43
 ENT.WepName = EntList[ENT.ID].wep
 ENT.Ammo = EntList[ENT.ID].ammo

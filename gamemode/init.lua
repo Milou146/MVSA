@@ -160,6 +160,8 @@ function RunEquipment(ply)
     for k = 1, 20 do
         if EntList[ply:GetNWInt("Inventory" .. tostring(k))].ammoName then
             ply:GiveAmmo(ply:GetNWInt("AmmoBox" .. tostring(k)), EntList[ply:GetNWInt("Inventory" .. tostring(k))].ammoName, true)
+        elseif EntList[ply:GetNWInt("Inventory" .. tostring(k))].wep then
+            ply:Give(EntList[ply:GetNWInt("Inventory" .. tostring(k))].wep)
         end
     end
 end
@@ -310,7 +312,8 @@ hook.Add("GasMaskNeeded", "TestTeleportHook", function()
 end)
 
 net.Receive("DropRequest", function(len, ply)
-    local ent = ents.Create(net.ReadString())
+    local category = net.ReadString()
+    local ent = ents.Create(EntList[ply:GetNWInt(category)].className)
     if ent.Capacity then
         for k = ent.StartingIndex,ent.StartingIndex + ent.Capacity - 1 do
             ent["Slot" .. tostring(k)] = ply:GetNWInt("Inventory" .. tostring(k))
@@ -325,14 +328,11 @@ net.Receive("DropRequest", function(len, ply)
             end
         end
     end
-    local category = net.ReadString()
-    ply:SetNWInt(category, 1)
     sql.Query("UPDATE mvsa_characters SET " .. category .. " = 1 WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
     if net.ReadBool() then
-        local wep_class = net.ReadString()
-        local wep = ply:GetWeapon(wep_class)
+        local wep = ply:GetWeapon(EntList[ply:GetNWInt(category)].wep)
         ent.PreviousMag = wep:Clip1()
-        ply:StripWeapon(wep_class)
+        ply:StripWeapon(EntList[ply:GetNWInt(category)].wep)
     end
     if net.ReadBool() then
         ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
@@ -344,11 +344,13 @@ net.Receive("DropRequest", function(len, ply)
     end
     ent:Spawn()
     ent:SetPos( ply:EyePos() - Vector(0,0,10) )
+    ply:SetNWInt(category, 1)
 end)
 
 net.Receive("RagdollDropRequest", function(len, ply)
     local ragdoll = ents.GetByIndex(net.ReadUInt(32))
-    local ent = ents.Create(net.ReadString())
+    local category = net.ReadString()
+    local ent = ents.Create(EntList[ragdoll:GetNWInt(category)].className)
     if ent.Capacity then
         for k = ent.StartingIndex,ent.StartingIndex + ent.Capacity - 1 do
             ent["Slot" .. tostring(k)] = ragdoll:GetNWInt("Inventory" .. tostring(k))
@@ -363,8 +365,6 @@ net.Receive("RagdollDropRequest", function(len, ply)
             end
         end
     end
-    local category = net.ReadString()
-    ragdoll:SetNWInt(category, 1)
     if net.ReadBool() then
         ent.PreviousMag = ragdoll:GetNWInt(category .. "Ammo")
     end
@@ -376,6 +376,7 @@ net.Receive("RagdollDropRequest", function(len, ply)
     end
     ent:Spawn()
     ent:SetPos( ragdoll:GetPos() + Vector(0,0,10) )
+    ragdoll:SetNWInt(category, 1)
 end)
 
 net.Receive("UseRequest", function(len, ply)
@@ -481,9 +482,15 @@ function GM:CreateEntityRagdoll( owner, ragdoll )
     ragdoll:SetNWInt("Faction", owner:GetNWInt("Faction"))
     ragdoll:SetNWInt("ModelIndex", owner:GetNWInt("ModelIndex"))
     ragdoll:SetNWInt("GasMaskSet", owner:GetNWInt("GasMaskSet"))
-    ragdoll:SetNWInt("PrimaryWepAmmo", owner:GetWeapon(EntList[ragdoll:GetNWInt("PrimaryWep")].className):Clip1())
-    ragdoll:SetNWInt("SecondaryWepAmmo", owner:GetWeapon(EntList[ragdoll:GetNWInt("SecondaryWep")].className):Clip1())
-    ragdoll:SetNWInt("LauncherAmmo", owner:GetWeapon(EntList[ragdoll:GetNWInt("Launcher")].className):Clip1())
+    if owner:GetNWInt("PrimaryWep") > 1 then
+        ragdoll:SetNWInt("PrimaryWepAmmo", owner:GetWeapon(EntList[owner:GetNWInt("PrimaryWep")].wep):Clip1())
+    end
+    if owner:GetNWInt("SecondaryWep") > 1 then
+        ragdoll:SetNWInt("SecondaryWepAmmo", owner:GetWeapon(EntList[owner:GetNWInt("SecondaryWep")].wep):Clip1())
+    end
+    if owner:GetNWInt("Launcher") > 1 then
+        ragdoll:SetNWInt("LauncherAmmo", owner:GetWeapon(EntList[owner:GetNWInt("Launcher")].wep):Clip1())
+    end
 end
 
 function GM:PlayerUse( ply, ent )
