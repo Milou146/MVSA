@@ -16,11 +16,9 @@ function ENT:Initialize()
     self:PhysWake()
 end
 
-local delay = 0
-
 function ENT:Use(activator, caller, useType, value)
-    if CurTime() > delay then
-        delay = CurTime() + 5
+    if CurTime() * host_timescale > activator:GetNWInt("PickupDelay") then
+        activator:SetNWInt("PickupDelay", CurTime() * host_timescale + 1)
         if activator:GetNWInt( self.Category ) < 2 then
             LootCount = LootCount - 1
             PickupWep(activator, self)

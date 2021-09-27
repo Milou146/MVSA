@@ -3,4 +3,4 @@ ENT.Base = "base_entity"
 
 ENT.Category = "PrimaryWep"
 
-ENT.Model = "models/weapons/w_rif_an_94.mdl"
+ENT.Model = "models/weapons/w_hk_mp5.mdl"

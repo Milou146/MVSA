@@ -27,7 +27,9 @@ util.AddNetworkString("NVGPutOn")
 util.AddNetworkString("NVGPutOff")
 util.AddNetworkString("RagdollLooting")
 
-sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, NVG TINYINT, Inventory VARCHAR(60), AmmoBoxes VARCHAR(120) )")
+sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, VestArmor TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, HelmetArmor TINYINT, NVG TINYINT, Inventory VARCHAR(60), AmmoBoxes VARCHAR(120) )")
+
+host_timescale = game.GetTimeScale()
 
 function SaveInventoryData(ply)
     local Inventory = {}
@@ -207,9 +209,11 @@ net.Receive("CharacterInformation", function(len, ply)
     ply:SetNWInt( "Pant", 1 )
     ply:SetNWInt( "Jacket", 1 )
     ply:SetNWInt( "Vest", 1 )
+    ply:SetNWInt( "VestArmor", 0 )
     ply:SetNWInt( "Rucksack", 1 )
     ply:SetNWInt( "GasMask", 1 )
     ply:SetNWInt( "Helmet", 1 )
+    ply:SetNWInt( "HelmetArmor", 0 )
     ply:SetNWInt( "NVG", 1 )
 
     for k = 1,20 do
@@ -217,7 +221,7 @@ net.Receive("CharacterInformation", function(len, ply)
         ply:SetNWInt( "AmmoBox" .. tostring(k), 0 )
     end
 
-    sql.Query("INSERT INTO mvsa_characters VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply:GetNWInt("ModelIndex")) .. ", " .. tostring(ply:GetNWInt("Size")) .. ", " .. tostring(ply:GetNWInt("Skin")) .. ", '" .. ply.BodyGroups .. "', 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0', '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
+    sql.Query("INSERT INTO mvsa_characters VALUES( " .. ply:SteamID64() .. ", " .. tostring(ply.Faction) .. ", " .. SQLStr(ply.RPName) .. ", " .. tostring(ply:GetNWInt("ModelIndex")) .. ", " .. tostring(ply:GetNWInt("Size")) .. ", " .. tostring(ply:GetNWInt("Skin")) .. ", '" .. ply.BodyGroups .. "', 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0', '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0')")
     ply.BodyGroups = string.Split(ply.BodyGroups, ",")
 
     if ply.Faction == 1 then
@@ -263,12 +267,14 @@ net.Receive("CharacterSelected", function(len, ply)
     ply:SetNWInt( "Pant", tonumber(Character.Pant) )
     ply:SetNWInt( "Jacket", tonumber(Character.Jacket) )
     ply:SetNWInt( "Vest", tonumber(Character.Vest) )
+    ply:SetNWInt( "VestArmor", tonumber(Character.VestArmor) )
     ply:SetNWInt( "Rucksack", tonumber(Character.Rucksack) )
     ply:SetNWInt( "GasMask", tonumber(Character.GasMask) )
     if ply:GetNWInt("GasMask") > 1 then
         ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1] + 1] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[3] -- this is meant to remove the gasmask bodygroup at spawn if the player was wearing a gasmask the last time he disconnected
     end
     ply:SetNWInt( "Helmet", tonumber(Character.Helmet) )
+    ply:SetNWInt( "HelmetArmor", tonumber(Character.HelmetArmor) )
     ply:SetNWInt( "NVG", tonumber(Character.NVG) )
     if ply:GetNWInt("NVG") > 1 then
         ply.BodyGroups[PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1]] = PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[2]
@@ -329,18 +335,21 @@ net.Receive("DropRequest", function(len, ply)
         end
     end
     sql.Query("UPDATE mvsa_characters SET " .. category .. " = 1 WHERE SteamID64 = " .. tostring(ply:SteamID64()) .. " AND RPName = " .. "'" .. ply.RPName .. "'")
-    if net.ReadBool() then
+    if EntList[ply:GetNWInt(category)].wep then
         local wep = ply:GetWeapon(EntList[ply:GetNWInt(category)].wep)
         ent.PreviousMag = wep:Clip1()
         ply:StripWeapon(EntList[ply:GetNWInt(category)].wep)
     end
-    if net.ReadBool() then
+    if ent.BodyGroup then
         ply:SetBodygroup(ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
         SaveBodyGroupsData(ply)
     end
     if ent.AmmoCount then
         ent.AmmoCount = net.ReadUInt(9)
         ply:RemoveAmmo( ent.AmmoCount, net.ReadUInt(5) )
+    end
+    if ent.Armor then
+        ent.Armor = ply:GetNWInt(category .. "Armor")
     end
     ent:Spawn()
     ent:SetPos( ply:EyePos() - Vector(0,0,10) )
@@ -365,14 +374,17 @@ net.Receive("RagdollDropRequest", function(len, ply)
             end
         end
     end
-    if net.ReadBool() then
+    if EntList[ragdoll:GetNWInt(category)].wep then
         ent.PreviousMag = ragdoll:GetNWInt(category .. "Ammo")
     end
-    if net.ReadBool() then
+    if ent.BodyGroup then
         ragdoll:SetBodygroup(ent.BodyGroup[ragdoll:GetNWString("Faction")][ragdoll:GetNWInt("ModelIndex")][1], ent.BodyGroup[ragdoll:GetNWString("Faction")][ragdoll:GetNWInt("ModelIndex")][3])
     end
     if ent.AmmoCount then
         ent.AmmoCount = net.ReadUInt(9)
+    end
+    if ent.Armor then
+        ent.Armor = ragdoll:GetNWInt(category .. "Armor")
     end
     ent:Spawn()
     ent:SetPos( ragdoll:GetPos() + Vector(0,0,10) )
@@ -470,10 +482,12 @@ function GM:CreateEntityRagdoll( owner, ragdoll )
         ragdoll:SetNWInt("AmmoBox" .. tostring(k), owner:GetNWInt("AmmoBox" .. tostring(k)))
     end
     ragdoll:SetNWInt("Helmet", owner:GetNWInt("Helmet"))
+    ragdoll:SetNWInt("HelmetArmor", owner:GetNWInt("HelmetArmor"))
     ragdoll:SetNWInt("NVG", owner:GetNWInt("NVG"))
     ragdoll:SetNWInt("GasMask", owner:GetNWInt("GasMask"))
     ragdoll:SetNWInt("Rucksack", owner:GetNWInt("Rucksack"))
     ragdoll:SetNWInt("Vest", owner:GetNWInt("Vest"))
+    ragdoll:SetNWInt("VestArmor", owner:GetNWInt("VestArmor"))
     ragdoll:SetNWInt("Jacket", owner:GetNWInt("Jacket"))
     ragdoll:SetNWInt("Pant", owner:GetNWInt("Pant"))
     ragdoll:SetNWInt("PrimaryWep", owner:GetNWInt("PrimaryWep"))
@@ -507,3 +521,13 @@ end)
 net.Receive("NVGPutOff", function(len, ply)
     ply:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].nvg_bodygroup[2])
 end)
+
+function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
+    if hitgroup == HITGROUP_HEAD and ply:GetNWInt("Helmet") > 1 then
+        ply:SetNWInt("HelmetArmor", math.Clamp(math.floor(ply:GetNWInt("HelmetArmor") - dmginfo:GetDamage()), 0, EntList[ply:GetNWInt("Helmet")].armor))
+        dmginfo:SetDamage( dmginfo:GetDamage() * (1 - ply:GetNWInt("HelmetArmor") / EntList[ply:GetNWInt("Helmet")].armor))
+    elseif hitgroup == HITGROUP_CHEST and ply:GetNWInt("Vest") > 1 then
+        ply:SetNWInt("VestArmor", math.Clamp(math.floor(ply:GetNWInt("VestArmor") - dmginfo:GetDamage()), 0, EntList[ply:GetNWInt("Vest")].armor))
+        dmginfo:SetDamage( dmginfo:GetDamage() * (1 - ply:GetNWInt("VestArmor") / EntList[ply:GetNWInt("Vest")].armor))
+    end
+end

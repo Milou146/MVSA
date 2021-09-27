@@ -2,6 +2,9 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
+ENT.ID = 6
+ENT.Armor = EntList[ENT.ID].armor
+
 function ENT:Initialize()
     LootCount = LootCount + 1
     self:SetModel(self.Model)
@@ -15,6 +18,7 @@ end
 function ENT:Use(activator, caller, useType, value)
     if activator:GetNWInt( "Helmet" ) < 2 then
         LootCount = LootCount - 1
+        activator:SetNWInt("HelmetArmor", self.Armor)
         activator:SetNWInt( "Helmet", 6 )
         activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
         sql.Query("UPDATE mvsa_characters SET Helmet = 6 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")

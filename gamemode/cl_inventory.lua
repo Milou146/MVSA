@@ -32,8 +32,6 @@ function CreateInventoryPanel()
     local function DropNVG()
         net.Start("DropRequest")
         net.WriteString( "NVG" )
-        net.WriteBool(false) -- the specified entity is a weapon
-        net.WriteBool(true) -- the specified entity is bodygrouped
         net.SendToServer()
         NVG:Remove()
         if NV_Status then
@@ -89,14 +87,17 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "Helmet" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 Helmet:Remove()
                 PlayerModel.Entity:SetBodygroup(Helmet.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], Helmet.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
                 DropNVG()
             end)
             ActionMenu:Open()
+        end
+        if EntList[ply:GetNWInt("Helmet")].armor then
+            Helmet.ProgressBar = vgui.Create("DProgress", Helmet)
+            Helmet.ProgressBar:SetSize(Helmet:GetWide(), Helmet:GetTall() / 10)
+            Helmet.ProgressBar:SetFraction( ply:GetNWInt("HelmetArmor") / EntList[ply:GetNWInt("Helmet")].armor )
         end
     end
 
@@ -123,8 +124,6 @@ function CreateInventoryPanel()
                 if not ply:GetNWInt("GASMASK_SpamDelay") or ply:GetNWInt("GASMASK_SpamDelay") < CurTime() then
                     net.Start("DropRequest")
                     net.WriteString( "GasMask" )
-                    net.WriteBool(false) -- the specified entity is a weapon
-                    net.WriteBool(true) -- the specified entity is bodygrouped
                     net.SendToServer()
                     if ply:GetNWBool("GasMaskSet") then
                         ply:ConCommand("gasmask_toggle")
@@ -170,7 +169,7 @@ function CreateInventoryPanel()
                     Inventory[k]:SetSize( ScrH() / 12, ScrH() / 12 )
                     if EntList[ply:GetNWInt("Inventory" .. tostring(StartingIndex + k + 1))].ammoName then
                         Inventory[k].ProgressBar = vgui.Create("DProgress", InventoryFrame[k])
-                        Inventory[k].ProgressBar:SetSize(Inventory[k]:GetWide(), Inventory[k]:GetTall() / 5)
+                        Inventory[k].ProgressBar:SetSize(Inventory[k]:GetWide(), Inventory[k]:GetTall() / 10)
                         Inventory[k].ProgressBar:SetFraction( ply:GetNWInt("AmmoBox" .. tostring(StartingIndex + k + 1)) / EntList[ply:GetNWInt("Inventory" .. tostring(StartingIndex + k + 1))].capacity )
                     end
                     Inventory[k].DoRightClick = function()
@@ -178,8 +177,6 @@ function CreateInventoryPanel()
                         ActionMenu:AddOption( "Drop", function()
                             net.Start("DropRequest")
                             net.WriteString( "Inventory" .. tostring(StartingIndex + k + 1) )
-                            net.WriteBool(false) -- the specified entity is a weapon
-                            net.WriteBool(false) -- the specified entity is bodygrouped
                             if Inventory[k].Ent.AmmoName ~= nil then
                                 net.WriteUInt(ply:GetNWInt("AmmoBox" .. tostring(StartingIndex + k + 1)), 9)
                                 net.WriteUInt(game.GetAmmoID(Inventory[k].Ent.AmmoName), 5)
@@ -228,8 +225,6 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "Rucksack" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 Rucksack:Remove()
                 PlayerModel.Entity:SetBodygroup(Rucksack.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], Rucksack.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
@@ -273,8 +268,6 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "Vest" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 Vest:Remove()
                 PlayerModel.Entity:SetBodygroup(Vest.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], Vest.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
@@ -288,6 +281,12 @@ function CreateInventoryPanel()
                 end
             end)
             ActionMenu:Open()
+        end
+        if EntList[ply:GetNWInt("Vest")].armor then
+            Vest.ProgressBar = vgui.Create("DProgress", Vest)
+            Vest.ProgressBar:SetSize(Vest:GetWide(), Vest:GetTall() / 10)
+            Vest.ProgressBar:SetFraction( ply:GetNWInt("VestArmor") / EntList[ply:GetNWInt("Vest")].armor )
+            Vest.ProgressBar:SetDrawOnTop(true)
         end
         Vest:SetDrawOnTop(true)
     end
@@ -321,8 +320,6 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "Jacket" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 Jacket:SetImage( "vgui/null.vmt" )
                 PlayerModel.Entity:SetBodygroup(Jacket.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], Jacket.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
@@ -367,8 +364,6 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "Pant" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 PlayerModel.Entity:SetBodygroup(Pant.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], Pant.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
                 if SelectedContainer == Pant then
@@ -401,8 +396,6 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "PrimaryWep" )
-                net.WriteBool(true) -- the specified entity is a weapon
-                net.WriteBool(false) -- the specified entity is bodygrouped
                 net.SendToServer()
                 PrimaryWep:Remove()
             end)
@@ -432,8 +425,6 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "SecondaryWep" )
-                net.WriteBool(true) -- the specified entity is a weapon
-                net.WriteBool(false) -- the specified entity is bodygrouped
                 net.SendToServer()
                 SecondaryWep:Remove()
                 ActionMenu:Remove()
@@ -464,8 +455,6 @@ function CreateInventoryPanel()
             ActionMenu:AddOption( "Drop", function()
                 net.Start("DropRequest")
                 net.WriteString( "Launcher" )
-                net.WriteBool(true) -- the specified entity is a weapon
-                net.WriteBool(false) -- the specified entity is bodygrouped
                 net.SendToServer()
                 Launcher:SetImage( "vgui/null.vmt" )
                 ActionMenu:Remove()
@@ -542,14 +531,12 @@ function CreateRagdollPanel(ragdoll)
         net.Start("RagdollDropRequest")
         net.WriteUInt(ragdollID, 32)
         net.WriteString( "NVG" )
-        net.WriteBool(false) -- the specified entity is a weapon
-        net.WriteBool(true) -- the specified entity is bodygrouped
         net.SendToServer()
         RagdollNVG:Remove()
     end
 
     if ragdoll:GetNWInt("NVG") > 1 then
-        local RagdollNVG = vgui.Create( "DImageButton", RagdollPanel )
+        RagdollNVG = vgui.Create( "DImageButton", RagdollPanel )
         RagdollNVG:SetPos( NVGSlot:GetPos() )
         RagdollNVG:SetImage( EntList[ragdoll:GetNWInt("NVG")].icon )
         RagdollNVG:SetSize( ScrH() / 12, ScrH() / 12 )
@@ -582,12 +569,15 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "Helmet" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 Helmet:Remove()
             end)
             ActionMenu:Open()
+        end
+        if EntList[ragdoll:GetNWInt("Helmet")].armor then
+            Helmet.ProgressBar = vgui.Create("DProgress", Helmet)
+            Helmet.ProgressBar:SetSize(Helmet:GetWide(), Helmet:GetTall() / 10)
+            Helmet.ProgressBar:SetFraction( ragdoll:GetNWInt("HelmetArmor") / EntList[ragdoll:GetNWInt("Helmet")].armor )
         end
     end
 
@@ -614,8 +604,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "GasMask" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 RagdollGasMask:Remove()
             end)
@@ -654,7 +642,7 @@ function CreateRagdollPanel(ragdoll)
                     Inventory[k]:SetSize( ScrH() / 12, ScrH() / 12 )
                     if EntList[ragdoll:GetNWInt("Inventory" .. tostring(StartingIndex + k + 1))].ammoName then
                         Inventory[k].ProgressBar = vgui.Create("DProgress", InventoryFrame[k])
-                        Inventory[k].ProgressBar:SetSize(Inventory[k]:GetWide(), Inventory[k]:GetTall() / 5)
+                        Inventory[k].ProgressBar:SetSize(Inventory[k]:GetWide(), Inventory[k]:GetTall() / 10)
                         Inventory[k].ProgressBar:SetFraction( ragdoll:GetNWInt("AmmoBox" .. tostring(StartingIndex + k + 1)) / EntList[ragdoll:GetNWInt("Inventory" .. tostring(StartingIndex + k + 1))].capacity )
                     end
                     Inventory[k].DoRightClick = function()
@@ -663,8 +651,6 @@ function CreateRagdollPanel(ragdoll)
                             net.Start("RagdollDropRequest")
                             net.WriteUInt(ragdollID, 32)
                             net.WriteString( "Inventory" .. tostring(StartingIndex + k + 1) )
-                            net.WriteBool(false) -- the specified entity is a weapon
-                            net.WriteBool(false) -- the specified entity is bodygrouped
                             if Inventory[k].Ent.AmmoName ~= nil then
                                 net.WriteUInt(ragdoll:GetNWInt("AmmoBox" .. tostring(StartingIndex + k + 1)), 9)
                             end
@@ -712,8 +698,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "Rucksack" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 RagdollRucksack:Remove()
                 if SelectedContainer == RagdollRucksack then
@@ -757,8 +741,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "Vest" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 RagdollVest:Remove()
                 if SelectedContainer == RagdollVest then
@@ -769,6 +751,12 @@ function CreateRagdollPanel(ragdoll)
                 end
             end)
             ActionMenu:Open()
+        end
+        if EntList[ragdoll:GetNWInt("Vest")].armor then
+            RagdollVest.ProgressBar = vgui.Create("DProgress", RagdollVest)
+            RagdollVest.ProgressBar:SetSize(RagdollVest:GetWide(), RagdollVest:GetTall() / 10)
+            RagdollVest.ProgressBar:SetFraction( ragdoll:GetNWInt("VestArmor") / EntList[ragdoll:GetNWInt("Vest")].armor )
+            RagdollVest.ProgressBar:SetDrawOnTop(true)
         end
         RagdollVest:SetDrawOnTop(true)
     end
@@ -803,8 +791,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "Jacket" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 RagdollJacket:SetImage( "vgui/null.vmt" )
                 if SelectedContainer == RagdollJacket then
@@ -849,8 +835,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "Pant" )
-                net.WriteBool(false) -- the specified entity is a weapon
-                net.WriteBool(true) -- the specified entity is bodygrouped
                 net.SendToServer()
                 RagdollPant:SetImage( "vgui/null.vmt" )
                 if SelectedContainer == RagdollPant then
@@ -883,8 +867,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "PrimaryWep" )
-                net.WriteBool(true) -- the specified entity is a weapon
-                net.WriteBool(false) -- the specified entity is bodygrouped
                 net.SendToServer()
                 PrimaryWep:Remove()
             end)
@@ -910,8 +892,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "SecondaryWep" )
-                net.WriteBool(true) -- the specified entity is a weapon
-                net.WriteBool(false) -- the specified entity is bodygrouped
                 net.SendToServer()
                 SecondaryWep:Remove()
             end)
@@ -937,8 +917,6 @@ function CreateRagdollPanel(ragdoll)
                 net.Start("RagdollDropRequest")
                 net.WriteUInt(ragdollID, 32)
                 net.WriteString( "Launcher" )
-                net.WriteBool(true) -- the specified entity is a weapon
-                net.WriteBool(false) -- the specified entity is bodygrouped
                 net.SendToServer()
                 Launcher:Remove()
             end)

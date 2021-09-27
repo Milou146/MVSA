@@ -118,11 +118,13 @@ EntList = {
     },
     [5] = {
         className = "ent_usmc_vest1",
-        icon = "icon64/usmc_vest1.png"
+        icon = "icon64/usmc_vest1.png",
+        armor = 100
     },
     [6] = {
         className = "ent_usmc_helmet",
-        icon = "icon64/usmc_helmet.png"
+        icon = "icon64/usmc_helmet.png",
+        armor = 100
     },
     [7] = {
         className = "ent_nvg",
@@ -161,10 +163,10 @@ EntList = {
         capacity = 60
     },
     [14] = {
-        className = "ent_acr",
-        icon = "vgui/hud/m9k_acr.vmt",
-        wep = "m9k_acr",
-        ammo = "5.56x45mm NATO"
+        className = "ent_remington870",
+        icon = "vgui/hud/m9k_remington870.vmt",
+        wep = "m9k_remington870",
+        ammo = "12 Gauge"
     },
     [15] = {
         className = "ent_ak47",
@@ -185,22 +187,22 @@ EntList = {
         ammo = "7.62x39mm M43"
     },
     [18] = {
-        className = "ent_an94",
-        icon = "vgui/hud/m9k_an94.vmt",
-        wep = "m9k_an94",
-        ammo = "5.45x39mm M74"
+        className = "ent_spas12",
+        icon = "vgui/hud/m9k_spas12.vmt",
+        wep = "m9k_spas12",
+        ammo = "12 Gauge"
     },
     [19] = {
-        className = "ent_auga3",
-        icon = "vgui/hud/m9k_aufa3.vmt",
-        wep = "m9k_auga3",
-        ammo = "5.56x45mm NATO"
+        className = "ent_colt1911",
+        icon = "vgui/hud/m9k_colt1911.vmt",
+        wep = "m9k_colt1911",
+        ammo = ".45 ACP"
     },
     [20] = {
-        className = "ent_f2000",
-        icon = "vgui/hud/m9k_f2000.vmt",
-        wep = "m9k_f2000",
-        ammo = "5.56x45mm NATO"
+        className = "ent_coltpython",
+        icon = "vgui/hud/m9k_coltpython.vmt",
+        wep = "m9k_coltpython",
+        ammo = ".357 Magnum"
     },
     [21] = {
         className = "ent_fal",
@@ -251,16 +253,16 @@ EntList = {
         ammo = "7.62x51mm NATO"
     },
     [29] = {
-        className = "ent_ares_shrike",
-        icon = "vgui/hud/m9k_ares_shrike.vmt",
-        wep = "m9k_ares_shrike",
-        ammo = "5.56x45mm NATO"
+        className = "ent_deagle",
+        icon = "vgui/hud/m9k_deagle.vmt",
+        wep = "m9k_deagle",
+        ammo = ".357 Magnum"
     },
     [30] = {
-        className = "ent_aw50",
-        icon = "vgui/hud/m9k_aw50.vmt",
-        wep = "m9k_aw50",
-        ammo = ".50 BMG"
+        className = "ent_glock",
+        icon = "vgui/hud/m9k_glock.vmt",
+        wep = "m9k_glock",
+        ammo = "9x19mm Parabellum"
     },
     [31] = {
         className = "ent_barret_m82",
@@ -341,10 +343,10 @@ EntList = {
         ammo = "7.62x54mm R"
     },
     [44] = {
-        className = "ent_pkm",
-        icon = "vgui/hud/m9k_pkm.vmt",
-        wep = "m9k_pkm",
-        ammo = "7.62x54mm R"
+        className = "ent_hk45",
+        icon = "vgui/hud/m9k_hk45.vmt",
+        wep = "m9k_hk45",
+        ammo = ".45 ACP"
     },
     [45] = {
         className = "ent_ammobox_545mm",
@@ -389,6 +391,54 @@ EntList = {
     [53] = {
         className = "ent_ifak",
         wep = "fas2_ifak"
+    },
+    [54] = {
+        className = "ent_model627",
+        icon = "vgui/hud/m9k_model627.vmt",
+        wep = "m9k_model627",
+        ammo = ".357 Magnum"
+    },
+    [54] = {
+        className = "ent_model627",
+        icon = "vgui/hud/m9k_model627.vmt",
+        wep = "m9k_model627",
+        ammo = ".357 Magnum"
+    },
+    [55] = {
+        className = "ent_mp5",
+        icon = "vgui/hud/m9k_mp5.vmt",
+        wep = "m9k_mp5",
+        ammo = "9x19mm Parabellum"
+    },
+    [56] = {
+        className = "ent_sig_p229r",
+        icon = "vgui/hud/m9k_sig_p229r.vmt",
+        wep = "m9k_sig_p229r",
+        ammo = "9x19mm Parabellum"
+    },
+    [57] = {
+        className = "ent_tec9",
+        icon = "vgui/hud/m9k_tec9.vmt",
+        wep = "m9k_tec9",
+        ammo = "9x19mm Parabellum"
+    },
+    [58] = {
+        className = "ent_ump45",
+        icon = "vgui/hud/m9k_ump45.vmt",
+        wep = "m9k_ump45",
+        ammo = ".45 ACP"
+    },
+    [59] = {
+        className = "ent_uzi",
+        icon = "vgui/hud/m9k_uzi.vmt",
+        wep = "m9k_uzi",
+        ammo = "9x19mm Parabellum"
+    },
+    [60] = {
+        className = "ent_thompson",
+        icon = "vgui/hud/m9k_thompson.vmt",
+        wep = "m9k_thompson",
+        ammo = ".45 ACP"
     }
 }
 
@@ -461,8 +511,6 @@ NPCList = {
     "npc_vj_zss_czombietors",
     "npc_vj_zss_draggy",
     "npc_vj_zss_zhulk",
-    "npc_vj_zss_zboss",
-    "npc_vj_zss_zminiboss",
     "npc_vj_zss_zombguard",
     "npc_vj_zss_undeadstalker",
     "npc_vj_zss_zp1",
@@ -475,9 +523,9 @@ LootList = {
     "ent_ammobox_556mm",
     "ent_ammobox_556mm",
     "ent_ammobox_556mm",
-    "ent_ammobox_556mm",
-    "ent_ammobox_556mm",
-    "ent_ammobox_556mm",
+    "ent_ammobox_9mm",
+    "ent_ammobox_9mm",
+    "ent_ammobox_9mm",
     "ent_ammobox_9mm",
     "ent_ammobox_9mm",
     "ent_ammobox_9mm",
@@ -485,8 +533,6 @@ LootList = {
     "ent_ammobox_45acp",
     "ent_ammobox_45acp",
     "ent_ammobox_45acp",
-    "ent_ammobox_45acp",
-    "ent_ammobox_357magnum",
     "ent_ammobox_357magnum",
     "ent_ammobox_357magnum",
     "ent_ammobox_357magnum",
@@ -494,21 +540,12 @@ LootList = {
     "ent_ammobox_762_nato",
     "ent_ammobox_762_nato",
     "ent_ammobox_762_nato",
-    "ent_ammobox_762_r",
-    "ent_ammobox_762_r",
+    "ent_ammobox_762_nato",
     "ent_ammobox_762_r",
     "ent_ammobox_762_r",
     "ent_ammobox_762_m43",
     "ent_ammobox_762_m43",
-    "ent_ammobox_762_m43",
-    "ent_ammobox_762_m43",
-    "ent_ammobox_545mm",
-    "ent_ammobox_545mm",
-    "ent_ammobox_545mm",
-    "ent_ammobox_545mm",
-    "ent_ammobox_50bmg",
-    "ent_ammobox_50bmg",
-    "ent_ammobox_50bmg",
+    "ent_ammobox_12gauge",
     "ent_ammobox_12gauge",
     "ent_ammobox_12gauge",
     "ent_ammobox_12gauge",
@@ -517,36 +554,39 @@ LootList = {
     "ent_ammobox_12gauge",
     "ent_usmc_rucksack",
     "ent_usmc_helmet",
-    "ent_ak47",
-    "ent_ak74",
-    "ent_amd65",
+    "ent_m92beretta",
+    "ent_uzi",
+    "ent_glock",
+    "ent_hk45",
+    "ent_mp5",
+    "ent_sig_p229r",
+    "ent_tec9",
     "ent_browningauto5",
     "ent_dbarrel",
+    "ent_ithacam37",
+    "ent_mossberg590",
+    "ent_remington870",
+    "ent_spas12",
+    "ent_m3",
     "ent_dragunov",
+    "ent_pkm",
+    "ent_ak47",
+    "ent_amd65",
     "ent_fal",
     "ent_g3a3",
-    "ent_ithacam37",
-    "ent_m3",
-    "ent_m4a1",
     "ent_m14sp",
-    "ent_m16a4_acog",
-    "ent_m24",
     "ent_m60",
-    "ent_m92beretta",
+    "ent_m24",
+    "ent_m4a1",
     "ent_m249lmg",
-    "ent_mossberg590",
+    "ent_m16a4_acog",
+    "ent_colt1911",
+    "ent_ump45",
+    "ent_thompson",
+    "ent_coltpython",
+    "ent_deagle",
+    "ent_model627",
     "ent_nvg",
-    "ent_pkm",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
-    "ent_gasmask",
     "ent_gasmask",
     "ent_gasmask",
     "ent_gasmask",

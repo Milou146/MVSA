@@ -2,9 +2,9 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-ENT.WepName = "m9k_an94"
-ENT.Ammo = "5.45x39mm M74"
-ENT.ID = 18
+ENT.ID = 14
+ENT.WepName = EntList[ENT.ID].wep
+ENT.Ammo = EntList[ENT.ID].ammo
 
 function ENT:Initialize()
     LootCount = LootCount + 1
@@ -16,11 +16,9 @@ function ENT:Initialize()
     self:PhysWake()
 end
 
-local delay = 0
-
 function ENT:Use(activator, caller, useType, value)
-    if CurTime() > delay then
-        delay = CurTime() + 5
+    if CurTime() * host_timescale > activator:GetNWInt("PickupDelay") then
+        activator:SetNWInt("PickupDelay", CurTime() * host_timescale + 1)
         if activator:GetNWInt( self.Category ) < 2 then
             LootCount = LootCount - 1
             PickupWep(activator, self)
