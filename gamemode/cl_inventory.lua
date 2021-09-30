@@ -90,7 +90,9 @@ function CreateInventoryPanel()
                 net.SendToServer()
                 Helmet:Remove()
                 PlayerModel.Entity:SetBodygroup(Helmet.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][1], Helmet.Ent.BodyGroup[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")][3])
-                DropNVG()
+                if NVG and NVG:IsValid() then
+                    DropNVG()
+                end
             end)
             ActionMenu:Open()
         end
@@ -571,6 +573,9 @@ function CreateRagdollPanel(ragdoll)
                 net.WriteString( "Helmet" )
                 net.SendToServer()
                 Helmet:Remove()
+                if RagdollNVG and RagdollNVG:IsValid() then
+                    DropNVG()
+                end
             end)
             ActionMenu:Open()
         end

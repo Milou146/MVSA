@@ -19,14 +19,6 @@ function GM:Initialize()
 		maxsplash = 15
 	} )
 	game.AddAmmoType( {
-		name = "5.45x39mm M74",
-		dmgtype = DMG_BULLET,
-		tracer = TRACER_LINE_AND_WHIZ,
-		force = 2000,
-		minsplash = 5,
-		maxsplash = 15
-	} )
-	game.AddAmmoType( {
 		name = "9x19mm Parabellum",
 		dmgtype = DMG_BULLET,
 		tracer = TRACER_NONE,

@@ -29,8 +29,6 @@ util.AddNetworkString("RagdollLooting")
 
 sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, VestArmor TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, HelmetArmor TINYINT, NVG TINYINT, Inventory VARCHAR(60), AmmoBoxes VARCHAR(120) )")
 
-host_timescale = game.GetTimeScale()
-
 function SaveInventoryData(ply)
     local Inventory = {}
     for k = 1,20 do
@@ -102,6 +100,25 @@ function PickupContainer( ply, ent )
     ent:Remove()
 end
 
+function PickupWepTrial(activator, newEnt)
+    if CurTime() > activator:GetNWInt("PickupDelay") then
+        activator:SetNWInt("PickupDelay", CurTime() + 1)
+        if activator:GetNWInt( newEnt.Category ) < 2 then
+            LootCount = LootCount - 1
+            PickupWep(activator, newEnt)
+        else
+            local oldEnt = ents.Create(EntList[activator:GetNWInt( newEnt.Category )].className)
+            local wep_class = EntList[activator:GetNWInt( newEnt.Category )].wep
+            local wep = activator:GetWeapon(wep_class)
+            oldEnt.PreviousMag = wep:Clip1()
+            activator:StripWeapon(wep_class)
+            oldEnt:Spawn()
+            oldEnt:SetPos( activator:GetEyeTraceNoCursor()["HitPos"] )
+            PickupWep(activator, newEnt)
+        end
+    end
+end
+
 function PickupWep(ply, ent)
     local wep = ents.Create( ent.WepName )
     wep.Primary.DefaultClip = wep.Primary.ClipSize
@@ -137,7 +154,6 @@ local function CheckData(ply)
 end
 
 function RunEquipment(ply)
-
     if ply:GetNWInt("PrimaryWep") > 1 then
         local ent = ents.Create(EntList[ply:GetNWInt("PrimaryWep")].wep)
         ent.Primary.DefaultClip = 0
