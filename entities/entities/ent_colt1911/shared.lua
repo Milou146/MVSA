@@ -1,5 +1,4 @@
-ENT.Type = "anim"
-ENT.Base = "base_entity"
+ENT.Base = "base_wep_ent"
 
 ENT.Category = "SecondaryWep"
 
