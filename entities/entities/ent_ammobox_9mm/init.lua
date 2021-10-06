@@ -6,7 +6,7 @@ ENT.Delay = 0
 ENT.ID = 13
 
 function ENT:Initialize()
-    LootCount = LootCount + 1
+    loot_spawn_system.LootCount = loot_spawn_system.LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)

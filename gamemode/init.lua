@@ -85,7 +85,7 @@ function PickupAmmoBox(ply, ent)
     if taken then
         SaveInventoryData(ply)
         ent:Remove()
-        npc_spawn_system.LootCount = npc_spawn_system.LootCount - 1
+        loot_spawn_system.LootCount = loot_spawn_system.LootCount - 1
     elseif CurTime() > ent.Delay then
         ent.Delay = CurTime() + 2
         ply:ChatPrint("You are full!")

@@ -7,7 +7,7 @@ ENT.Ammo = ".50 BMG"
 ENT.ID = 31
 
 function ENT:Initialize()
-    LootCount = LootCount + 1
+    loot_spawn_system.LootCount = loot_spawn_system.LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)

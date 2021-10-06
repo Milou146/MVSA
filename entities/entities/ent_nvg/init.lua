@@ -3,7 +3,7 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-    LootCount = LootCount + 1
+    loot_spawn_system.LootCount = loot_spawn_system.LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -14,7 +14,7 @@ end
 
 function ENT:Use(activator, caller, useType, value)
     if activator:GetNWInt( "NVG" ) < 2 and activator:GetNWInt("Helmet") > 1 then
-        LootCount = LootCount - 1
+        loot_spawn_system.LootCount = loot_spawn_system.LootCount - 1
         activator:SetNWInt( "NVG", 7 )
         activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])
         sql.Query("UPDATE mvsa_characters SET NVG = 7 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")

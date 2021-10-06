@@ -6,7 +6,7 @@ ENT.ID = 6
 ENT.Armor = EntList[ENT.ID].armor
 
 function ENT:Initialize()
-    LootCount = LootCount + 1
+    loot_spawn_system.LootCount = loot_spawn_system.LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -17,7 +17,7 @@ end
 
 function ENT:Use(activator, caller, useType, value)
     if activator:GetNWInt( "Helmet" ) < 2 then
-        LootCount = LootCount - 1
+        loot_spawn_system.LootCount = loot_spawn_system.LootCount - 1
         activator:SetNWInt("HelmetArmor", self.Armor)
         activator:SetNWInt( "Helmet", 6 )
         activator:SetBodygroup(self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][1], self.BodyGroup[activator:GetNWString("Faction")][activator:GetNWInt("ModelIndex")][2])

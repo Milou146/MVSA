@@ -9,7 +9,7 @@ ENT.Category = "Pant"
 ENT.ID = 3
 
 function ENT:Initialize()
-    LootCount = LootCount + 1
+    loot_spawn_system.LootCount = loot_spawn_system.LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -20,7 +20,7 @@ end
 
 function ENT:Use(activator, caller, useType, value)
     if activator:GetNWInt( self.Category ) < 2 and player_manager.GetPlayerClass(activator) == "player_usmc" then
-        LootCount = LootCount - 1
+        loot_spawn_system.LootCount = loot_spawn_system.LootCount - 1
         PickupContainer( activator, self )
     elseif player_manager.GetPlayerClass(activator) ~= "player_usmc" then
         activator:ChatPrint("You can't take it")
