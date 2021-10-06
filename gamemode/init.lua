@@ -29,6 +29,20 @@ util.AddNetworkString("RagdollLooting")
 
 sql.Query("CREATE TABLE IF NOT EXISTS mvsa_characters( SteamID64 BIGINT NOT NULL, Faction BOOL, RPName VARCHAR(45), ModelIndex TINYINT, Size SMALLINT NOT NULL, Skin TINYINT, BodyGroups VARCHAR(60), PrimaryWep TINYINT, PrimaryWepAmmo TINYINT, SecondaryWep TINYINT, SecondaryWepAmmo TINYINT, Launcher TINYINT, LauncherAmmo TINYINT, Pant TINYINT, Jacket TINYINT, Vest TINYINT, VestArmor TINYINT, Rucksack TINYINT, GasMask TINYINT, Helmet TINYINT, HelmetArmor TINYINT, NVG TINYINT, Inventory VARCHAR(60), AmmoBoxes VARCHAR(120) )")
 
+loot_spawn_system = {}
+loot_spawn_system.SpawnDelay = 0
+loot_spawn_system.MinSpawnDistance = 3000
+loot_spawn_system.MaxSpawnDistance = 20000
+loot_spawn_system.LootCount = 0
+loot_spawn_system.LootLimit = 30
+
+local npc_spawn_system = {}
+npc_spawn_system.SpawnDelay = 0
+npc_spawn_system.MinSpawnDistance = 3000
+npc_spawn_system.MaxSpawnDistance = 20000
+npc_spawn_system.NPCCount = 0
+npc_spawn_system.NPCLimit = 10
+
 function SaveInventoryData(ply)
     local Inventory = {}
     for k = 1,20 do
@@ -71,7 +85,7 @@ function PickupAmmoBox(ply, ent)
     if taken then
         SaveInventoryData(ply)
         ent:Remove()
-        LootCount = LootCount - 1
+        npc_spawn_system.LootCount = npc_spawn_system.LootCount - 1
     elseif CurTime() > ent.Delay then
         ent.Delay = CurTime() + 2
         ply:ChatPrint("You are full!")
@@ -134,7 +148,7 @@ local function CheckData(ply)
     end
 end
 
-function RunEquipment(ply)
+local function RunEquipment(ply)
     if ply:GetNWInt("PrimaryWep") > 1 then
         local ent = ents.Create(EntList[ply:GetNWInt("PrimaryWep")].wep)
         ent.Primary.DefaultClip = 0
@@ -411,7 +425,7 @@ function GM:PlayerDisconnected(ply)
     end
 end
 
-function RemoveAmmoFromBoxes(index, AmmoCountToRemove, key, ply)
+local function RemoveAmmoFromBoxes(index, AmmoCountToRemove, key, ply)
     for k = index,20 do
         if ply:GetNWInt("Inventory" .. tostring(21 - k)) == AmmoList[key].entID then
             ply:SetNWInt("AmmoBox" .. tostring(21 - k), ply:GetNWInt("AmmoBox" .. tostring(21 - k)) - AmmoCountToRemove)
@@ -458,6 +472,66 @@ function GM:PlayerDeath( ply, inflictor, attacker )
     player_manager.SetPlayerClass(ply, "player_spectator")
 end
 
+local CleanupDelay = 0
+local StartingIndex = 0
+
+local function AutoCleanup()
+    if CurTime() > CleanupDelay then
+        CleanupDelay = CurTime() + 500
+        local TempTable = ents.GetAll()
+        if StartingIndex == 0 then
+            StartingIndex = #TempTable
+        end
+        for k = StartingIndex, #TempTable do
+            TempTable[k]:RemoveAllDecals()
+            if TempTable[k]:IsRagdoll() then
+                TempTable[k]:Remove()
+            end
+        end
+    end
+end
+
+local function NPCSpawnSystem()
+    if npc_spawn_system.SpawnDelay < CurTime() then
+        npc_spawn_system.SpawnDelay = CurTime() + 20
+        for k, v in pairs( player.GetAll() ) do
+            local PlayerPos = v:GetPos()
+            for i, j in pairs( ents.FindByClass( "info_zombie_spawn" ) ) do
+                if not j.npc or not j.npc:IsValid() then
+                    local EntPos = j:GetPos()
+                    local distance = PlayerPos:Distance( EntPos )
+                    if distance > npc_spawn_system.MinSpawnDistance and distance < npc_spawn_system.MaxSpawnDistance and npc_spawn_system.NPCCount < npc_spawn_system.NPCLimit then
+                        j.npc = ents.Create( table.Random(NPCList))
+                        j.npc:SetPos(EntPos)
+                        j.npc:Spawn()
+                        npc_spawn_system.NPCCount = npc_spawn_system.NPCCount + 1
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function LootSpawnSystem()
+    if loot_spawn_system.SpawnDelay < CurTime() and loot_spawn_system.LootCount < loot_spawn_system.LootLimit then
+        loot_spawn_system.SpawnDelay = CurTime() + 20
+        for k, v in pairs( player.GetAll() ) do
+            local PlayerPos = v:GetPos()
+            for i, j in pairs( ents.FindByClass( "info_loot_spawn" ) ) do
+                if not j.ent or not j.ent:IsValid() then
+                    local EntPos = j:GetPos()
+                    local distance = PlayerPos:Distance( EntPos )
+                    if distance > loot_spawn_system.MinSpawnDistance and distance < loot_spawn_system.MaxSpawnDistance then
+                        j.ent = ents.Create( table.Random(LootList) )
+                        j.ent:SetPos(EntPos)
+                        j.ent:Spawn()
+                    end
+                end
+            end
+        end
+    end
+end
+
 function GM:Think()
     AutoCleanup()
     NPCSpawnSystem()
@@ -465,12 +539,12 @@ function GM:Think()
 end
 
 function GM:OnNPCKilled( npc, attacker, inflictor )
-    NPCCount = NPCCount - 1
+    npc_spawn_system.NPCCount = npc_spawn_system.NPCCount - 1
 end
 
 function GM:PostCleanupMap()
-    NPCCount = 0
-    LootCount = 0
+    npc_spawn_system.NPCCount = 0
+    loot_spawn_system.LootCount = 0
 end
 
 function GM:CreateEntityRagdoll( owner, ragdoll )

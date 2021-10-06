@@ -24,7 +24,7 @@ function ENT:Use(activator, caller, useType, value)
         end
         if self.Taken then
             SaveInventoryData(activator)
-            activator:Give("fas2_ifak")
+            activator:Give("weapon_ifak")
             self:Remove()
         elseif CurTime() > self.Delay then
             self.Delay = CurTime() + 2

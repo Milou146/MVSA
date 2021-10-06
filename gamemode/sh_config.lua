@@ -390,7 +390,7 @@ EntList = {
     },
     [53] = {
         className = "ent_ifak",
-        wep = "fas2_ifak"
+        wep = "weapon_ifak"
     },
     [54] = {
         className = "ent_model627",
