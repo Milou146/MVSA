@@ -20,7 +20,7 @@ function ENT:Use(activator, caller, useType, value)
     if CurTime() > activator:GetNWInt("PickupDelay") then
         activator:SetNWInt("PickupDelay", CurTime() + 1)
         if activator:GetNWInt( self.Category ) < 2 then
-            LootCount = LootCount - 1
+            loot_spawn_system.LootCount = loot_spawn_system.LootCount - 1
             PickupWep(activator, self)
         else
             local oldEnt = ents.Create(EntList[activator:GetNWInt( self.Category )].className)
