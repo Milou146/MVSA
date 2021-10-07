@@ -2,6 +2,20 @@ include( "sh_gasmask.lua" )
 CreateClientConVar("g4p_gasmask_sndtype", "1", true, false)
 local meta = FindMetaTable("Player")
 
+local GASMASK_DelayedFunc_ON = {
+    [1] = {time = 0.3, name_sound = "GASMASK_Foley", anim = "put_on"},
+    [2] = {time = 0.6, name_sound = "GASMASK_Inhale", anim = nil},
+    [3] = {time = 1.2, name_sound = "GASMASK_OnOff", anim = nil},
+    [4] = {time = 1.79, name_sound = nil, anim = "idle_on"}
+}
+
+local GASMASK_DelayedFunc_OFF = {
+    [1] = {time = 0.3, name_sound = "GASMASK_Foley", anim = nil},
+    [2] = {time = 0.45, name_sound = "GASMASK_Exhale", anim = nil},
+    [3] = {time = 1.2, name_sound = "GASMASK_DrawHolster", anim = nil},
+    [4] = {time = 1.25, name_sound = nil, anim = "holster"}
+}
+
 function meta:GASMASK_PlayAnim(anim)
     local mask = self.GASMASK_HudModel
 
@@ -28,25 +42,16 @@ net.Receive("GASMASK_RequestToggle", function()
             GasMask:SetAlpha(255)
             PlayerModel.Entity:SetBodygroup(PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[1], PlayerModels[ply:GetNWString("Faction")][ply:GetNWInt("ModelIndex")].gasmask_bodygroup[2])
         end
+
         ply:GASMASK_PlayAnim("draw")
         ply:EmitSound("GASMASK_DrawHolster")
 
-        ply:GASMASK_DelayedFunc(0.3, function()
-            ply:GASMASK_PlayAnim("put_on")
-            ply:EmitSound("GASMASK_Foley")
-        end)
-
-        ply:GASMASK_DelayedFunc(0.6, function()
-            ply:EmitSound("GASMASK_Inhale")
-        end)
-
-        ply:GASMASK_DelayedFunc(1.2, function()
-            ply:EmitSound("GASMASK_OnOff")
-        end)
-
-        ply:GASMASK_DelayedFunc(1.79, function()
-            ply:GASMASK_PlayAnim("idle_on")
-        end)
+        for _, v in ipairs(GASMASK_DelayedFunc_ON) do
+            ply:GASMASK_DelayedFunc(v.time, function()
+                ply:GASMASK_PlayAnim(v.name_sound)
+                ply:EmitSound(v.anim)
+            end)
+        end
     else
         if InventoryPanel and InventoryPanel:IsValid() then
             GasMask:SetAlpha(100)
@@ -54,22 +59,13 @@ net.Receive("GASMASK_RequestToggle", function()
         end
         ply:GASMASK_PlayAnim("take_off")
         ply:EmitSound("GASMASK_OnOff")
-
-        ply:GASMASK_DelayedFunc(0.3, function()
-            ply:EmitSound("GASMASK_Foley")
-        end)
-
-        ply:GASMASK_DelayedFunc(0.45, function()
-            ply:EmitSound("GASMASK_Exhale")
-        end)
-
-        ply:GASMASK_DelayedFunc(1.2, function()
-            ply:EmitSound("GASMASK_DrawHolster")
-        end)
-
-        ply:GASMASK_DelayedFunc(1.25, function()
-            ply:GASMASK_PlayAnim("holster")
-        end)
+        
+        for _, v in ipairs(GASMASK_DelayedFunc_OFF) do
+            ply:GASMASK_DelayedFunc(v.time, function()
+                ply:GASMASK_PlayAnim(v.name_sound)
+                ply:EmitSound(v.anim)
+            end)
+        end
     end
 end)
 
