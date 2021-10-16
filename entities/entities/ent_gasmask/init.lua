@@ -5,7 +5,7 @@ include("shared.lua")
 ENT.Delay = 0
 
 function ENT:Initialize()
-    LootCount = LootCount + 1
+    loot_spawn_system.LootCount = loot_spawn_system.LootCount + 1
     self:SetModel(self.Model)
     self:SetMoveType(MOVETYPE_VPHYSICS)
     self:SetSolid(SOLID_VPHYSICS)
@@ -16,7 +16,7 @@ end
 
 function ENT:Use(activator, caller, useType, value)
     if activator:GetNWInt("GasMask") < 2 then
-        LootCount = LootCount - 1
+        loot_spawn_system.LootCount = loot_spawn_system.LootCount - 1
         activator:SetNWInt("GasMask", 2)
         sql.Query("UPDATE mvsa_characters SET GasMask = 2 WHERE SteamID64 = " .. tostring(activator:SteamID64()) .. " AND RPName = " .. "'" .. activator.RPName .. "'")
         if self.BodyGroup[activator:GetNWString("Faction")] then -- the playermodel might not have this specific bodygroup

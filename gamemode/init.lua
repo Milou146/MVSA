@@ -41,7 +41,7 @@ npc_spawn_system.SpawnDelay = 0
 npc_spawn_system.MinSpawnDistance = 3000
 npc_spawn_system.MaxSpawnDistance = 20000
 npc_spawn_system.NPCCount = 0
-npc_spawn_system.NPCLimit = 10
+npc_spawn_system.NPCLimit = 40
 
 function SaveInventoryData(ply)
     local Inventory = {}
