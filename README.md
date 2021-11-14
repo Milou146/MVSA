@@ -9,5 +9,5 @@ Save the progression of you and your friends in the game thanks to the sql suppo
 
 HOW tO USE
 
-1. Download the git under <steam library>/Garry's Mod/garrysmod/gamemodes/
+1. Download the git under <steam library>/GarrysMod/garrysmod/gamemodes/
 2. Suscribe to the steam collection https://steamcommunity.com/sharedfiles/filedetails/?id=2516799859
