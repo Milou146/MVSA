@@ -9,6 +9,12 @@ include( "player_class/player_spectator.lua" )
 include( "sh_config.lua" )
 
 function GM:Initialize()
+
+	GasDamage = DamageInfo()
+	GasDamage:SetDamage( 1 )
+	GasDamage:SetDamageType( DMG_NERVEGAS )
+
+	game.CleanUpMap()
 	game.AddAmmoType( {
 		name = "5.56x45mm NATO",
 		dmgtype = DMG_BULLET,

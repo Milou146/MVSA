@@ -445,7 +445,7 @@ EntList = {
 AmmoList = {
     [1] = {
         ammoName = "5.56x45mm NATO",
-        entID = 12-- not the ammoID, the entity in this example is ent_556_ammobox
+        entID = 12-- not the ammoID, the entity in this example is ent_ammobox_556mm
     },
     [2] = {
         ammoName = "9x19mm Parabellum",
