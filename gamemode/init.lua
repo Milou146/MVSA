@@ -779,7 +779,7 @@ local function LootSpawnSystem()
 end
 
 local function Gas(ply)
-    if player_manager.GetPlayerClass(ply) ~= "player_spectator" and CurTime() > gasTriggerDelay then
+    if CurTime() > gasTriggerDelay then
         gasTriggerDelay = CurTime() + 2
         plyPos = ply:GetPos()
         map = game.GetMap()

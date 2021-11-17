@@ -48,5 +48,7 @@ hook.Add("EntityTakeDamage", "GASMASK_TakeDamage", function(ent, dmginfo)
         if gasmask_dmgtypes[dmgtype] then
             dmginfo:ScaleDamage(gasmask_dmgtypes[dmgtype])
         end
+    elseif ent:isPlayer() and player_manager.GetPlayerClass(ent) == "player_spectator" then
+        dmginfo:ScaleDamage(0)
     end
 end)
