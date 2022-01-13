@@ -48,8 +48,8 @@ net.Receive("GASMASK_RequestToggle", function()
 
         for _, v in ipairs(GASMASK_DelayedFunc_ON) do
             ply:GASMASK_DelayedFunc(v.time, function()
-                ply:GASMASK_PlayAnim(v.name_sound)
-                ply:EmitSound(v.anim)
+                ply:GASMASK_PlayAnim(v.anim)
+                ply:EmitSound(v.name_sound)
             end)
         end
     else
@@ -62,8 +62,8 @@ net.Receive("GASMASK_RequestToggle", function()
         
         for _, v in ipairs(GASMASK_DelayedFunc_OFF) do
             ply:GASMASK_DelayedFunc(v.time, function()
-                ply:GASMASK_PlayAnim(v.name_sound)
-                ply:EmitSound(v.anim)
+                ply:GASMASK_PlayAnim(v.anim)
+                ply:EmitSound(v.name_sound)
             end)
         end
     end
